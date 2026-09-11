@@ -73,6 +73,26 @@
               </template>
             </el-dropdown>
           </el-form-item>
+          <el-form-item>
+            <el-dropdown
+              :disabled="selectedRow.length === 0"
+              @command="batchNotice"
+            >
+              <el-button
+                type="info"
+                :icon="Bell"
+                :disabled="selectedRow.length === 0"
+              >
+                批量公告
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item :command="true">设为公告</el-dropdown-item>
+                  <el-dropdown-item :command="false">取消公告</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </el-form-item>
         </template>
       </FormSearch>
     </el-card>
@@ -136,12 +156,13 @@
 import { ref, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
-import { Edit, CircleCheck } from '@element-plus/icons-vue'
+import { Edit, CircleCheck, Bell } from '@element-plus/icons-vue'
 import {
   listArticle,
   deleteArticle,
   recommendArticles,
   checkArticles,
+  noticeArticles,
 } from '@/api/article'
 import { listCategory } from '@/api/category'
 import { articleStatusOptions } from '@/utils/enum'
@@ -191,6 +212,20 @@ async function batchCheeck(command: number) {
   const res: any = await checkArticles({
     article_id: ids,
     status: command,
+  })
+  if (res.status === 200) {
+    ElMessage.success('操作成功')
+    fetchList()
+  } else {
+    ElMessage.error(res.data.message)
+  }
+}
+
+async function batchNotice(command: boolean) {
+  const ids = selectedRow.value.map((item) => item.id)
+  const res: any = await noticeArticles({
+    article_id: ids,
+    is_notice: command,
   })
   if (res.status === 200) {
     ElMessage.success('操作成功')
