@@ -9,16 +9,15 @@
     >
       <el-form-item class="download">
         <div>
-          <el-radio v-model="download.payment_type" :label="creditDownload" border
-            >积分下载</el-radio
-          >
-          <el-radio
-            v-model="download.payment_type"
-            :label="codeDownload"
-            v-if="settings.download.enable_code_download"
-            border
-            >下载码下载</el-radio
-          >
+          <el-radio-group v-model="download.payment_type">
+            <el-radio :label="creditDownload" border>积分下载</el-radio>
+            <el-radio
+              v-if="settings.download.enable_code_download"
+              :label="codeDownload"
+              border
+              >下载码下载</el-radio
+            >
+          </el-radio-group>
         </div>
         <div class="tips mgt-20px code-tip">
           <template v-if="download.payment_type === codeDownload">
