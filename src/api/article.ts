@@ -1,0 +1,17 @@
+import service from '@/utils/request'
+
+export const createArticle = (data: any) => service({ url: '/api/v1/article', method: 'post', data })
+export const updateArticle = (data: any) => service({ url: '/api/v1/article', method: 'put', data })
+export const deleteArticle = (params: any) => service({ url: '/api/v1/article', method: 'delete', params })
+export const getArticle = (params: any) => service({ url: '/api/v1/article', method: 'get', params })
+export const listArticle = (params: any) => service({ url: '/api/v1/article/list', method: 'get', params })
+export const listRecycleArticle = (params: any) => service({ url: '/api/v1/article/recycle/list', method: 'get', params })
+export const restoreRecycleArticle = (data: any) => service({ url: '/api/v1/article/recycle/restore', method: 'post', data })
+export const deleteRecycleArticle = (params: any) => service({ url: '/api/v1/article/recycle', method: 'delete', params })
+export const emptyRecycleArticle = (params?: any) => service({ url: '/api/v1/article/recycle/empty', method: 'delete', params })
+export const setArticlesCategory = (data: any) => service({ url: '/api/v1/article/category', method: 'put', data })
+export const recommendArticles = (data: any) => service({ url: '/api/v1/article/recommend', method: 'put', data })
+export const checkArticles = (data: any) => service({ url: '/api/v1/article/check', method: 'put', data })
+export const noticeArticles = (data: any) => service({ url: '/api/v1/article/notice', method: 'put', data })
+export const getRelatedArticles = (params: any) => service({ url: '/api/v1/article/related', method: 'get', params })
+export const searchArticle = (params: any) => service({ url: '/api/v1/article/search', method: 'get', params })

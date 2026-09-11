@@ -1,0 +1,245 @@
+<template>
+  <div class="com-form-update-document">
+    <el-form
+      ref="document"
+      label-position="top"
+      label-width="80px"
+      :model="document"
+    >
+      <el-form-item
+        label="名称"
+        prop="title"
+        :rules="[
+          { required: true, message: '请输入文档名称', trigger: 'blur' },
+        ]"
+      >
+        <el-input
+          v-model="document.title"
+          placeholder="请输入文档名称"
+        ></el-input>
+      </el-form-item>
+      <el-row :gutter="20">
+        <el-col :span="12" :xs="24">
+          <el-form-item
+            label="分类"
+            prop="category_id"
+            :rules="[
+              { required: true, trigger: 'blur', message: '请选择文档分类' },
+            ]"
+          >
+            <el-cascader
+              v-model="document.category_id"
+              :options="categoryTrees.filter((item) => !item.type)"
+              :filterable="true"
+              :props="{
+                checkStrictly: true,
+                expandTrigger: 'hover',
+                label: 'title',
+                value: 'id',
+              }"
+              clearable
+              placeholder="请选择文档分类"
+            ></el-cascader>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12" :xs="24">
+          <el-form-item
+            :label="`价格(${settings.system.credit_name || '魔豆'})`"
+            prop="price"
+          >
+            <el-input-number
+              v-model.number="document.price"
+              placeholder="文档价格"
+              clearable
+              :min="0"
+              :step="1"
+            ></el-input-number> </el-form-item
+        ></el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col v-if="isAdmin" :span="12">
+          <el-form-item
+            label="状态"
+            prop="status"
+            :rules="[
+              { required: true, message: '请选择文档状态', trigger: 'change' },
+            ]"
+          >
+            <el-select
+              v-model="document.status"
+              filterable
+              placeholder="请选择文档状态"
+            >
+              <el-option
+                v-for="item in statusOptions"
+                :key="'status-' + item.value"
+                :value="item.value"
+                :label="item.label"
+                :disabled="item.disabled"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="语言" prop="language">
+            <el-select
+              v-model="document.language"
+              filterable
+              clearable
+              placeholder="请选择文档语言"
+            >
+              <el-option
+                v-for="item in settings.language || []"
+                :key="'language-' + item.code"
+                :value="item.code"
+                :label="item.language"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="来源名称" prop="source">
+            <el-input
+              v-model="document.source"
+              placeholder="请输入文档来源名称，如：xx网站名称"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="来源地址" prop="source_url">
+            <el-input
+              v-model="document.source_url"
+              placeholder="请输入文档来源地址，如：https://www.example.com"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-form-item label="关键字">
+        <el-input
+          v-model="document.keywords"
+          placeholder="请输入文档关键字，多个关键字用英文逗号分隔"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="摘要">
+        <el-input
+          v-model="document.description"
+          placeholder="请输入文档摘要"
+          type="textarea"
+          rows="4 "
+        ></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-checkbox v-model="updateDocuementContent"
+          ><span
+            >编辑文档文本内容(不建议修改，除非有乱码。如文本太大，浏览器页面会崩溃。)</span
+          ></el-checkbox
+        >
+      </el-form-item>
+      <el-form-item v-if="updateDocuementContent" label="文档文本内容">
+        <el-input
+          v-model="document.content"
+          placeholder="请输入文档文本内容"
+          type="textarea"
+          rows="8"
+        ></el-input>
+      </el-form-item>
+
+      <el-form-item>
+        <el-button
+          type="primary"
+          class="btn-block"
+          icon="Check"
+          @click="setDocument"
+          >提交</el-button
+        >
+      </el-form-item>
+    </el-form>
+  </div>
+</template>
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue'
+import type { PropType } from 'vue'
+import { ElMessage } from 'element-plus'
+import { updateDocument } from '@/api/document'
+import { documentStatusOptions } from '@/utils/enum'
+import { useSettingStore } from '@/store/setting'
+
+defineOptions({ name: 'FormUpdateDocument' })
+const props = defineProps({
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  categoryTrees: {
+    type: Array as PropType<any[]>,
+    default: () => [],
+  },
+  initDocument: {
+    type: Object,
+    default: () => ({}),
+  },
+})
+const emit = defineEmits(['success'])
+
+const settingStore = useSettingStore()
+const settings = computed(() => settingStore.settings)
+
+const getInitialDocumentData = () => ({
+  id: 0,
+  title: '',
+  keywords: '',
+  description: '',
+  category_id: [],
+  price: 0,
+  status: 0,
+})
+
+const updateDocuementContent = ref(false)
+const documentEl = ref<any>()
+const document = ref<Record<string, any>>(getInitialDocumentData())
+
+// 转换中 / 已转换 状态不可选中
+const statusOptions = documentStatusOptions.map((item: any) => {
+  if (item.value === 1 || item.value === 2) {
+    item.disabled = true
+  }
+  return item
+})
+
+watch(
+  () => props.initDocument,
+  (val) => {
+    updateDocuementContent.value = false
+    document.value = { price: 0, ...val }
+  },
+  { immediate: true },
+)
+
+const reset = () => {
+  document.value = getInitialDocumentData()
+  documentEl.value.clearValidate()
+}
+
+const setDocument = () => {
+  documentEl.value.validate(async (valid: boolean) => {
+    if (valid) {
+      const res: any = await updateDocument(document.value)
+      if (res.status === 200) {
+        ElMessage.success('更新成功')
+        emit('success')
+      } else {
+        ElMessage.error(res.data.message || '更新失败')
+      }
+    }
+  })
+}
+
+defineExpose({ reset })
+</script>
+<style lang="scss">
+.com-form-update-document {
+  .el-select {
+    width: 100%;
+  }
+}
+</style>

@@ -1,0 +1,8 @@
+import fileService from '@/utils/fileRequest'
+import service from '@/utils/request'
+
+export const updateAttachment = (data: any) => service({ url: '/api/v1/attachment', method: 'put', data })
+export const deleteAttachment = (params: any) => service({ url: '/api/v1/attachment', method: 'delete', params })
+export const getAttachment = (params: any) => service({ url: '/api/v1/attachment', method: 'get', params })
+export const listAttachment = (params: any) => service({ url: '/api/v1/attachment/list', method: 'get', params })
+export const uploadDocument = (data: any, option?: any) => fileService({ url: '/api/v1/upload/document', method: 'post', data, ...option })
