@@ -30,7 +30,7 @@
       >
         <template #actions="scope">
           <el-button
-            type="text"
+            link
             size="small"
             :icon="Setting"
             @click="setUser(scope.row)"
@@ -61,7 +61,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header
           :content="user.id ? '设置用户' : '新增用户'"
           @back="formUserVisible = false"
@@ -83,7 +83,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header
           content="编辑用户"
           @back="formUserProfileVisible = false"
@@ -105,7 +105,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header
           content="删除用户"
           @back="formDeleteUserVisible = false"

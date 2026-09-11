@@ -89,7 +89,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header
           :content="punishment.id ? '编辑惩罚' : '新增惩罚'"
           @back="formPunishmentVisible = false"

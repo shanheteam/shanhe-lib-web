@@ -49,7 +49,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header
           :content="report.id ? '编辑举报' : '新增举报'"
           @back="formReportVisible = false"

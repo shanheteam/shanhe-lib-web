@@ -50,7 +50,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header
           :content="friendlink.id ? '编辑友链' : '新增友链'"
           @back="formFriendlinkVisible = false"

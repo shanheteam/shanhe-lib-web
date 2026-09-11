@@ -169,7 +169,7 @@ export const adminMenus: any[] = [
   {
     page: '/admin/article',
     title: '文章管理',
-    icon: 'Discover',
+    icon: 'Notebook',
     children: [
       { page: '/admin/article/category', title: '文章分类', icon: 'Grid' },
       { page: '/admin/article/list', title: '文章列表', icon: 'Tickets' },

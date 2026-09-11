@@ -30,7 +30,7 @@
         <template #actions="scope">
           <el-tooltip content="网站管理后台管理功能授权" placement="top">
             <el-button
-              type="text"
+              link
               :icon="Coordinate"
               size="small"
               @click="setGroupPermission(scope.row)"
@@ -61,7 +61,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header
           :content="group.id ? '编辑分组' : '新增分组'"
           @back="formGroupVisible = false"

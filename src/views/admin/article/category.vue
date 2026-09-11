@@ -34,7 +34,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header
           :content="category.id ? '编辑分类' : '新增分类'"
           @back="formVisible = false"

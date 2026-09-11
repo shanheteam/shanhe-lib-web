@@ -16,7 +16,7 @@
             <el-tooltip
               content="附件只能查看，不能直接删除，而是由系统直接管理，会随着相应数据的删除而自动删除。"
             >
-              <el-button type="text" :icon="InfoFilled"></el-button>
+              <el-button link :icon="InfoFilled"></el-button>
             </el-tooltip>
           </el-form-item>
         </template>
@@ -59,7 +59,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header content="编辑附件" @back="formVisible = false">
         </el-page-header>
       </template>

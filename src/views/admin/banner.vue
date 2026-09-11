@@ -50,7 +50,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header
           :content="banner.id > 0 ? '编辑轮播图' : '新增轮播图'"
           @back="formVisible = false"

@@ -147,7 +147,7 @@
           <slot name="actions" :row="row"></slot>
           <el-button
             v-if="showView"
-            type="text"
+            link
             size="small"
             icon="View"
             @click="viewRow(row)"
@@ -155,7 +155,7 @@
           >
           <el-button
             v-if="showEdit"
-            type="text"
+            link
             size="small"
             icon="Edit"
             @click="editRow(row)"
@@ -163,7 +163,7 @@
           >
           <el-button
             v-if="showDelete"
-            type="text"
+            link
             size="small"
             icon="Delete"
             :disabled="row.disable_delete"

@@ -68,7 +68,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header content="评论编审" @back="formCommentVisible = false">
         </el-page-header>
       </template>

@@ -136,7 +136,7 @@
               </div>
             </template>
             <el-button
-              type="text"
+              link
               size="small"
               class="text-warning"
               :icon="Warning"
@@ -144,7 +144,7 @@
             >
           </el-tooltip>
           <el-button
-            type="text"
+            link
             size="small"
             :icon="CircleCheck"
             @click="recommendDocument(scope.row)"
@@ -156,7 +156,7 @@
               scope.row.status === 7 ||
               scope.row.status === 4
             "
-            type="text"
+            link
             :icon="Download"
             class="text-warning"
             @click="download2review(scope.row)"
@@ -186,7 +186,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header content="编辑文档" @back="formVisible = false">
         </el-page-header>
       </template>
@@ -205,7 +205,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header
           content="批量分类"
           @back="formDocumentsCategoryVisible = false"
@@ -227,7 +227,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header
           content="批量设置语言"
           @back="formDocumentsLanguageVisible = false"
@@ -248,7 +248,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header
           content="推荐设置"
           @back="formDocumentRecommendVisible = false"

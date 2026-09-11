@@ -69,7 +69,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header
           :content="language.id ? '编辑语言' : '新增语言'"
           @back="formLanguageVisible = false"

@@ -56,7 +56,7 @@
       >
         <template #actions="scope">
           <el-button
-            type="text"
+            link
             :icon="RefreshLeft"
             size="small"
             @click="recoverRow(scope.row)"

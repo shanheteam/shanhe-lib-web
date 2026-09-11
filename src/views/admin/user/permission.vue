@@ -46,7 +46,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header content="编辑附件" @back="formVisible = false">
         </el-page-header>
       </template>

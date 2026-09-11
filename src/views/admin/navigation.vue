@@ -50,7 +50,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header
           :content="navigation.id ? '编辑导航' : '新增导航'"
           @back="formNavigationVisible = false"

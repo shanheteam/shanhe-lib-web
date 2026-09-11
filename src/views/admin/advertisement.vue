@@ -49,7 +49,7 @@
       :size="isMobile ? '90%' : '50%'"
       :wrapper-closable="false"
     >
-      <template #title>
+      <template #header>
         <el-page-header
           :content="advertisement.id ? '编辑广告' : '新增广告'"
           @back="formAdvertisementVisible = false"
