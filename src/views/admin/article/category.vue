@@ -22,7 +22,7 @@
         :show-edit="true"
         :show-delete="true"
         :show-select="true"
-        :tree-props="{ children: 'children' }"
+        :tree-props="{ childrenField: 'children' }"
         @selectRow="selectRow"
         @editRow="editRow"
         @deleteRow="deleteRow"

@@ -78,7 +78,7 @@
         <el-input
           v-model="banner.description"
           type="textarea"
-          rows="5"
+          :rows="5"
           placeholder="请输入附件相关描述或备注"
         ></el-input>
       </el-form-item>

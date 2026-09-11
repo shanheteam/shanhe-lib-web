@@ -143,7 +143,7 @@
             <template #default="scope">
               <div class="article-cell article-cell--actions">
                 <el-button
-                  type="text"
+                  link
                   icon="EditPen"
                   size="mini"
                   @click="updateArticle(scope.row)"
@@ -151,7 +151,7 @@
                   编辑
                 </el-button>
                 <el-button
-                  type="text"
+                  link
                   icon="Delete"
                   class="is-danger"
                   size="mini"

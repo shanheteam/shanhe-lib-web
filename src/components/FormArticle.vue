@@ -45,7 +45,7 @@
                 <el-input
                   v-model="article.content"
                   type="textarea"
-                  rows="15"
+                  :rows="15"
                   :disabled="true"
                   placeholder="你未登录或没有权限发布文章"
                 />
@@ -344,12 +344,13 @@ const init = {
   skin_url: '/static/tinymce/skins/ui/oxide',
   height: 1213,
   branding: true,
+  license_key: 'gpl',
   placeholder: '请输入内容',
   menubar: true,
   toolbar:
     'undo redo | styleselect blocks | kityformula-editor codesample code table link bold italic | bullist numlist alignleft aligncenter alignright alignjustify indent outdent | image media | searchreplace preview fullscreen help',
   plugins:
-    'kityformula-editor image media wordcount codesample code link charmap emoticons table searchreplace visualblocks fullscreen table help wordcount lists preview paste',
+    'kityformula-editor image media wordcount codesample code link charmap emoticons table searchreplace visualblocks fullscreen table help wordcount lists preview',
   relative_urls: false,
   images_upload_handler,
   setup(editor: any) {

@@ -43,8 +43,8 @@
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item :command="true">推荐选中</el-dropdown-item>
-                  <el-dropdown-item :command="false">取消推荐</el-dropdown-item>
+                  <el-dropdown-item :command="1">推荐选中</el-dropdown-item>
+                  <el-dropdown-item :command="0">取消推荐</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -87,8 +87,8 @@
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item :command="true">设为公告</el-dropdown-item>
-                  <el-dropdown-item :command="false">取消公告</el-dropdown-item>
+                  <el-dropdown-item :command="1">设为公告</el-dropdown-item>
+                  <el-dropdown-item :command="0">取消公告</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -193,11 +193,11 @@ const selectedRow = ref<any[]>([])
 const formArticlesCategoryVisible = ref(false)
 const categoryArticles = ref<any[]>([])
 
-async function batchRecommend(command: boolean) {
+async function batchRecommend(command: number) {
   const ids = selectedRow.value.map((item) => item.id)
   const res: any = await recommendArticles({
     article_id: ids,
-    is_recommend: command,
+    is_recommend: command === 1,
   })
   if (res.status === 200) {
     ElMessage.success('操作成功')
@@ -221,11 +221,11 @@ async function batchCheeck(command: number) {
   }
 }
 
-async function batchNotice(command: boolean) {
+async function batchNotice(command: number) {
   const ids = selectedRow.value.map((item) => item.id)
   const res: any = await noticeArticles({
     article_id: ids,
-    is_notice: command,
+    is_notice: command === 1,
   })
   if (res.status === 200) {
     ElMessage.success('操作成功')

@@ -220,7 +220,7 @@
         <!-- 清除筛选 -->
         <div v-if="hasActiveFilters()" class="filter-actions">
           <el-button
-            type="text"
+            link
             size="small"
             class="clear-filters-btn"
             @click="clearAllFilters"
@@ -247,7 +247,7 @@
                 <!-- 移动端显示所有筛选条件 -->
                 <div class="hidden-sm-and-up mobile-filters">
                   <el-dropdown :show-timeout="showTimeout">
-                    <el-button type="text" :size="filterSize">
+                    <el-button link :size="filterSize">
                       {{ filterCategoryName(query.category_id)
                       }}<el-icon><ArrowDown /></el-icon>
                     </el-button>
@@ -289,7 +289,7 @@
                     v-if="(settings.language || []).length > 0 && !searchType"
                     :show-timeout="showTimeout"
                   >
-                    <el-button type="text" :size="filterSize">
+                    <el-button link :size="filterSize">
                       {{ filterLanguageName(query.language) }}
                       <el-icon><ArrowDown /></el-icon>
                     </el-button>
@@ -324,7 +324,7 @@
                     </template>
                   </el-dropdown>
                   <el-dropdown v-if="!searchType" :show-timeout="showTimeout">
-                    <el-button type="text" :size="filterSize">
+                    <el-button link :size="filterSize">
                       <img
                         v-if="query.ext != 'all' && query.ext != ''"
                         :src="`/static/images/${query.ext}_24.png`"
@@ -362,7 +362,7 @@
                 </div>
                 <!-- 排序和时间范围 -->
                 <el-dropdown class="hidden-xs-only" :show-timeout="showTimeout">
-                  <el-button type="text" :size="filterSize">
+                  <el-button link :size="filterSize">
                     {{ filterSortName(query.sort)
                     }}<el-icon><ArrowDown /></el-icon>
                   </el-button>
@@ -393,7 +393,7 @@
                   </template>
                 </el-dropdown>
                 <el-dropdown class="hidden-xs-only" :show-timeout="showTimeout">
-                  <el-button type="text" :size="filterSize">
+                  <el-button link :size="filterSize">
                     {{ filterDurationName(query.duration) }}
                     <el-icon><ArrowDown /></el-icon>
                   </el-button>

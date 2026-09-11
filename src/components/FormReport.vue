@@ -36,7 +36,7 @@
             v-model="report.remark"
             placeholder="请输入文档处理相关备注"
             type="textarea"
-            rows="3"
+            :rows="3"
           ></el-input>
         </el-form-item>
       </template>

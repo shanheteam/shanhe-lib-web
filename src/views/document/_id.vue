@@ -43,14 +43,14 @@
                 >
                   <el-button
                     v-if="accessUpdate"
-                    type="text"
+                    link
                     :loading="showUpdating"
                     @click="showUpdateDocument"
                     ><el-icon><Edit /></el-icon>编辑文档</el-button
                   >
                   <el-button
                     v-if="accessDelete"
-                    type="text"
+                    link
                     @click="deleteDocument"
                     ><el-icon><Delete /></el-icon>删除文档</el-button
                   >
@@ -58,7 +58,7 @@
                     <!-- 管理员权限 -->
                     <el-dropdown v-if="accessForbiden" @command="setForbiden">
                       <span class="el-dropdown-link">
-                        <el-button type="text">文档启禁</el-button>
+                        <el-button link>文档启禁</el-button>
                       </span>
                       <template #dropdown>
                         <el-dropdown-menu>
@@ -74,7 +74,7 @@
                     &nbsp;
                     <el-dropdown v-if="accessRecommend" @command="setRecommend">
                       <span class="el-dropdown-link">
-                        <el-button type="text"
+                        <el-button link
                           ><i class="fa fa-thumbs-up"></i> 推荐设置</el-button
                         >
                       </span>
@@ -227,14 +227,14 @@
                   <div class="text-center">
                     <el-button
                       v-if="showContent"
-                      type="text"
+                      link
                       size="small"
                       @click="toggleContent"
                       >收起内容</el-button
                     >
                     <el-button
                       v-else
-                      type="text"
+                      link
                       size="small"
                       @click="toggleContent"
                       >展开内容</el-button

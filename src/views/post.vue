@@ -20,7 +20,7 @@
             <span>编辑中</span>
           </div>
           <el-button
-            type="text"
+            link
             class="back-link"
             @click="back"
           >

@@ -77,7 +77,7 @@
         <el-input
           v-model="advertisement.content"
           type="textarea"
-          rows="5"
+          :rows="5"
           placeholder="请输入广告内容代码"
         ></el-input>
       </el-form-item>
@@ -85,7 +85,7 @@
         <el-input
           v-model="advertisement.remark"
           type="textarea"
-          rows="3"
+          :rows="3"
           placeholder="请输入广告相关描述或备注"
         ></el-input>
       </el-form-item>

@@ -66,15 +66,6 @@ const query = ref<Record<string, any>>({
 const dynamics = ref<any[]>([])
 const total = ref(0)
 
-watch(
-  () => route.query,
-  (val) => {
-    query.value.page = parseInt((val.page as string) || '1') || 1
-    getDynamicsList()
-  },
-  { immediate: true },
-)
-
 const pageChange = (page: number) => {
   router.push({
     query: {
@@ -93,6 +84,15 @@ const getDynamicsList = async () => {
   }
   loading.value = false
 }
+
+watch(
+  () => route.query,
+  (val) => {
+    query.value.page = parseInt((val.page as string) || '1') || 1
+    getDynamicsList()
+  },
+  { immediate: true },
+)
 </script>
 
 <style lang="scss">

@@ -132,7 +132,7 @@
               ></ArticleSimpleList>
               <el-button
                 v-if="recommend.totalPage > 1"
-                type="text"
+                link
                 class="mgb-5px"
                 @click="getRecommendArticles"
                 ><el-icon><Refresh /></el-icon>换一批</el-button

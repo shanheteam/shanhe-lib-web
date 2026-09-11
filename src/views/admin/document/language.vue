@@ -23,8 +23,8 @@
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item :command="true">启用</el-dropdown-item>
-                  <el-dropdown-item :command="false">禁用</el-dropdown-item>
+                  <el-dropdown-item :command="1">启用</el-dropdown-item>
+                  <el-dropdown-item :command="0">禁用</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -219,8 +219,8 @@ function onSuccess() {
   fetchList()
 }
 
-function batchStatus(cmd: boolean) {
-  update(cmd)
+function batchStatus(cmd: number) {
+  update(cmd === 1)
 }
 
 function editRow(row: any) {

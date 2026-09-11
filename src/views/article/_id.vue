@@ -35,7 +35,7 @@
                 >
                   <el-button
                     v-if="accessDelete"
-                    type="text"
+                    link
                     @click="deleteArticle"
                     ><el-icon><Delete /></el-icon>删除文章</el-button
                   >
@@ -43,7 +43,7 @@
                     v-if="accessUpdate"
                     :to="`/post?identifier=${article.identifier}`"
                   >
-                    <el-button type="text"
+                    <el-button link
                       ><el-icon><Edit /></el-icon>编辑文章</el-button
                     >
                   </router-link>
@@ -51,7 +51,7 @@
                     <!-- 管理员权限 -->
                     <el-dropdown v-if="accessForbiden" @command="checkArticle">
                       <span class="el-dropdown-link">
-                        <el-button type="text"
+                        <el-button link
                           ><el-icon><DocumentChecked /></el-icon
                           >文章审批</el-button
                         >
@@ -72,7 +72,7 @@
                       @command="recommendArticle"
                     >
                       <span class="el-dropdown-link">
-                        <el-button type="text"
+                        <el-button link
                           ><i class="fa fa-thumbs-up"></i> 推荐设置</el-button
                         >
                       </span>

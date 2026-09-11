@@ -1,8 +1,9 @@
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import VxeUITable from 'vxe-table'
+import VxeUI from 'vxe-pc-ui'
 import 'vxe-pc-ui/lib/style.css'
+import VxeUITable from 'vxe-table'
 import 'vxe-table/lib/style.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
@@ -22,6 +23,7 @@ const app = createApp(App)
 app.use(pinia)
 app.use(router)
 app.use(ElementPlus, { locale: zhCn })
+app.use(VxeUI)
 app.use(VxeUITable)
 
 // 注册 Element Plus 图标（全局）

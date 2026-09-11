@@ -33,7 +33,7 @@
               v-model="configs[index]['value']"
               type="textarea"
               :placeholder="item.placeholder"
-              rows="5"
+              :rows="5"
             ></el-input>
             <el-select
               v-else-if="item.input_type === 'select'"
@@ -126,6 +126,12 @@ const normalize = (data: any) => {
       } catch (error) {
         // ignore
       }
+    } else if (item.input_type === 'number') {
+      // el-input-number 要求 modelValue 为 Number | Null
+      item.value =
+        item.value === '' || item.value === null || item.value === undefined
+          ? null
+          : Number(item.value)
     }
   })
   return configsObj

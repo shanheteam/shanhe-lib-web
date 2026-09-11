@@ -140,7 +140,7 @@
           v-model="document.content"
           placeholder="请输入文档文本内容"
           type="textarea"
-          rows="8"
+          :rows="8"
         ></el-input>
       </el-form-item>
 

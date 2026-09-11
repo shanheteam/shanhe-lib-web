@@ -171,7 +171,7 @@
           <template #default="scope">
             <div class="document-cell document-cell--actions">
               <el-button
-                type="text"
+                link
                 icon="EditPen"
                 :loading="updating"
                 size="mini"
@@ -180,7 +180,7 @@
                 编辑
               </el-button>
               <el-button
-                type="text"
+                link
                 icon="Delete"
                 class="is-danger"
                 size="mini"

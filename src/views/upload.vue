@@ -229,7 +229,7 @@
                   <template #header>
                     <span>📄 文档</span>
                     <el-button
-                      type="text"
+                      link
                       size="small"
                       :disabled="loading"
                       style="margin-left: 8px"
@@ -292,7 +292,7 @@
                         }}</span>
                         <el-button
                           size="small"
-                          type="text"
+                          link
                           :disabled="loading"
                           class="remove-btn"
                           @click="handleRemove($index)"

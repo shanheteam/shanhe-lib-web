@@ -64,7 +64,7 @@
         <el-input
           v-model="friendlink.description"
           type="textarea"
-          rows="3"
+          :rows="3"
           placeholder="请输入友链相关描述或备注"
         ></el-input>
       </el-form-item>

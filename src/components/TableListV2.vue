@@ -2,11 +2,11 @@
   <div class="com-table-list-v2 custom-vxe-table">
     <vxe-table
       v-table-drag
-      resizable
       stripe
       :loading="loading"
       :data="tableData"
       :tree-config="treeProps"
+      :column-config="{ resizable: true }"
       :row-config="{ isHover: true }"
       border="none"
       :checkbox-config="checkboxConfig"
@@ -182,9 +182,9 @@ import { VxeTable, VxeColumn } from 'vxe-table'
 import UploadImage from './UploadImage.vue'
 import { Link, ArrowRight } from '@element-plus/icons-vue'
 import { formatDatetime, formatBytes } from '@/utils/utils'
-import type { PropType } from 'vue'
+import { computed, type PropType } from 'vue'
 
-defineProps({
+const props = defineProps({
   tableData: {
     type: Array as PropType<any[]>,
     default: () => [],
@@ -200,7 +200,7 @@ defineProps({
   },
   treeProps: {
     type: Object,
-    default: () => ({}),
+    default: null,
   },
   treeNode: {
     type: String,
@@ -233,14 +233,19 @@ defineProps({
 })
 const emit = defineEmits(['viewRow', 'editRow', 'deleteRow', 'selectRow'])
 
-const checkboxConfig = {
+// 与 vxe-table 内部的 `props.treeConfig &&` 判断保持一致，
+// 只要传入了 tree-config 对象就视为树形表格，禁用 checkbox-config.range
+const isTreeTable = computed(() => !!props.treeProps)
+
+const checkboxConfig = computed(() => ({
   checkMethod: ({ row }: { row: any }) => {
     return !row.disable_delete
   },
-  range: true,
+  // 树结构不支持 range，仅在非树表格中启用范围选择
+  range: !isTreeTable.value,
   highlight: true,
   field: 'id',
-}
+}))
 
 const viewRow = (row: any) => {
   emit('viewRow', row)

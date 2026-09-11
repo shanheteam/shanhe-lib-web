@@ -131,7 +131,7 @@
         <el-input
           v-model="group.description"
           type="textarea"
-          rows="5"
+          :rows="5"
           placeholder="请输入分组描述"
         ></el-input>
       </el-form-item>
