@@ -339,8 +339,7 @@
             <el-button
               type="primary"
               :size="isMobile ? 'medium' : ''"
-              :loading="downloading"
-              @click="downloadDocument"
+              @click="showDownload"
               ><el-icon><Download /></el-icon>下载文档({{
                 formatBytes(document.size)
               }})</el-button
@@ -539,8 +538,7 @@
               </el-button>
               <el-button
                 type="primary"
-                :loading="downloading"
-                @click="downloadDocument"
+                @click="showDownload"
               >
                 <el-icon><Download /></el-icon>
                 下载文档
@@ -597,6 +595,14 @@
         />
       </div>
     </el-drawer>
+    <el-dialog
+      v-model="downloadVisible"
+      title="文档下载"
+      width="480px"
+      :close-on-click-modal="false"
+    >
+      <form-download :document="document" @success="downloadSuccess" />
+    </el-dialog>
   </div>
 </template>
 
@@ -619,6 +625,7 @@ import { getAdvertisementByPosition } from '@/api/advertisement'
 import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
+import FormDownload from '@/components/FormDownload.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -646,7 +653,7 @@ const updateDocument = ref<any>({})
 const showContent = ref(false)
 const score = ref<any>(null)
 const disabledScore = ref(false)
-const downloading = ref(false)
+const downloadVisible = ref(false)
 
 const routeId = route.params.id as string
 const documentId = ref(routeId.length === 16 ? 0 : parseInt(routeId))
@@ -1073,21 +1080,14 @@ function commentSuccess() {
   if (cl && cl.getComments) cl.getComments()
 }
 
-async function downloadDocument() {
+async function showDownload() {
   await userStore.checkAndRefreshUser()
+  downloadVisible.value = true
+}
 
-  downloading.value = true
-  const res: any = await documentApi.downloadDocument({
-    id: document.value.id,
-  })
-  if (res.status === 200) {
-    userStore.getUser()
-    // 跳转下载
-    window.location.href = res.data.url
-  } else {
-    ElMessage.error(res.data.message || '下载失败')
-  }
-  downloading.value = false
+function downloadSuccess() {
+  downloadVisible.value = false
+  userStore.getUser()
 }
 
 async function getRelatedDocuments() {

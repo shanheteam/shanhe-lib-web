@@ -65,6 +65,8 @@
     </div>
 
     <div class="page-shell">
+      <el-row :gutter="24">
+        <el-col :span="16" :xs="24" class="home-left">
       <section class="section-block recommend-section">
         <div class="section-header">
           <div class="recommend-header-wrap">
@@ -309,6 +311,11 @@
           </div>
         </div>
       </section>
+        </el-col>
+        <el-col :span="8" :xs="24" class="home-right">
+          <home-sidebar :latest-documents="latestDocuments" />
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>
@@ -628,6 +635,15 @@ onMounted(() => {
   max-width: $max-width;
   margin: 0 auto;
   padding-top: 10px;
+
+  .home-left,
+  .home-right {
+    min-width: 0;
+  }
+
+  .home-right {
+    padding-top: 16px;
+  }
 }
 
 .section-block {
