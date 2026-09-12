@@ -36,6 +36,7 @@
                 v-if="canIPublish"
                 v-model="article.content"
                 :init="init"
+                license-key="gpl"
               />
               <div v-else class="wp-no-permission-editor">
                 <div class="wp-no-permission-hint">
@@ -344,7 +345,6 @@ const init = {
   skin_url: '/static/tinymce/skins/ui/oxide',
   height: 1213,
   branding: true,
-  license_key: 'gpl',
   placeholder: '请输入内容',
   menubar: true,
   toolbar:

@@ -102,7 +102,7 @@ watch(
   { immediate: true },
 )
 
-const getDownloads = async () => {
+async function getDownloads() {
   loading.value = true
   const res: any = await getUserDownloads({
     page: query.value.page,

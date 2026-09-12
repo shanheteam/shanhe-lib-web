@@ -95,7 +95,7 @@ const onSubmit = async () => {
   }
   loading.value = false
 }
-const loadAllPermissions = async () => {
+async function loadAllPermissions() {
   if (groupPermission.value.group_id > 0) {
     groupPermission.value.permission_id = [] // 重置授权信息
     const [resPermissions, resGroupPermissions] = await Promise.all([

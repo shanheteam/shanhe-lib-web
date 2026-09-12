@@ -12,7 +12,7 @@
               v-model="query.wd"
               placeholder="搜索文章标题..."
               clearable
-              size="medium"
+              size="default"
               :prefix-icon="Search"
               @keydown.enter="onSearch"
             ></el-input>
@@ -20,7 +20,7 @@
           <div class="article-filter-form__actions">
             <el-button
               type="primary"
-              size="medium"
+              size="default"
               icon="Search"
               :loading="loading"
               @click="onSearch"
@@ -39,7 +39,7 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               align="right"
-              size="medium"
+              size="default"
               value-format="yyyy-MM-dd HH:mm:ss"
             >
             </el-date-picker>
@@ -126,7 +126,7 @@
                 <el-tag
                   v-if="showPrivateData"
                   :type="filterStatus(scope.row.status).type"
-                  size="mini"
+                  size="small"
                   effect="plain"
                 >
                   {{ filterStatus(scope.row.status).label }}
@@ -145,7 +145,7 @@
                 <el-button
                   link
                   icon="EditPen"
-                  size="mini"
+                  size="small"
                   @click="updateArticle(scope.row)"
                 >
                   编辑
@@ -154,7 +154,7 @@
                   link
                   icon="Delete"
                   class="is-danger"
-                  size="mini"
+                  size="small"
                   @click="deleteArticle(scope.row)"
                 >
                   删除
@@ -297,7 +297,7 @@ const onSearch = () => {
   })
 }
 
-const getArticles = async () => {
+async function getArticles() {
   if (props.userId === 0 || loading.value) return
   loading.value = true
   let res: any

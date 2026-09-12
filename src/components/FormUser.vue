@@ -1,6 +1,6 @@
 <template>
   <div class="com-form-user">
-    <el-form ref="user" label-position="top" label-width="80px" :model="user">
+    <el-form ref="userForm" label-position="top" label-width="80px" :model="user">
       <el-form-item
         label="用户名"
         prop="username"

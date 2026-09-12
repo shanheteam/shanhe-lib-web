@@ -12,7 +12,7 @@
               v-model="query.wd"
               placeholder="搜索文档标题..."
               clearable
-              size="medium"
+              size="default"
               :prefix-icon="Search"
               @keydown.enter="onSearch"
             ></el-input>
@@ -20,7 +20,7 @@
           <div class="document-filter-form__actions">
             <el-button
               type="primary"
-              size="medium"
+              size="default"
               icon="Search"
               :loading="loading"
               @click="onSearch"
@@ -42,7 +42,7 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               align="right"
-              size="medium"
+              size="default"
               value-format="yyyy-MM-dd HH:mm:ss"
             >
             </el-date-picker>
@@ -111,7 +111,7 @@
                   <el-tag
                     v-if="showPrivateData"
                     :type="filterStatus(scope.row.status).type"
-                    size="mini"
+                    size="small"
                     effect="plain"
                   >
                     {{ filterStatus(scope.row.status).label }}
@@ -154,7 +154,7 @@
                 >
               </div>
               <div class="document-row__rating">
-                <el-rate :value="scope.row.score || 0.0" disabled></el-rate>
+                <el-rate :model-value="scope.row.score || 0.0" disabled></el-rate>
                 <span class="document-row__rating-value">{{
                   formatScore(scope.row.score)
                 }}</span>
@@ -174,7 +174,7 @@
                 link
                 icon="EditPen"
                 :loading="updating"
-                size="mini"
+                size="small"
                 @click="updateDocument(scope.row)"
               >
                 编辑
@@ -183,7 +183,7 @@
                 link
                 icon="Delete"
                 class="is-danger"
-                size="mini"
+                size="small"
                 @click="deleteDocument(scope.row)"
               >
                 删除
@@ -377,7 +377,7 @@ const onSearch = () => {
   })
 }
 
-const getDocuments = async () => {
+async function getDocuments() {
   if (props.userId === 0 || loading.value) return
   loading.value = true
   let res: any
