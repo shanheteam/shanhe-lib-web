@@ -38,6 +38,7 @@
             <el-select
               v-else-if="item.input_type === 'select'"
               v-model="configs[index]['value']"
+              @change="onChange(item)"
             >
               <el-option
                 v-for="option in item.options.split('\n')"
@@ -70,6 +71,10 @@
               :inactive-value="'false'"
             >
             </el-switch>
+            <el-color-picker
+              v-else-if="item.input_type === 'color'"
+              v-model="configs[index]['value']"
+            ></el-color-picker>
             <UploadImage
               v-else-if="item.input_type === 'image'"
               :action="'/api/v1/upload/config'"
@@ -88,7 +93,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item>
+      <el-form-item v-if="showButton">
         <el-button
           type="primary"
           icon="Check"
@@ -96,6 +101,7 @@
           @click="onSubmit"
           >提交</el-button
         >
+        <slot name="buttons"></slot>
       </el-form-item>
     </el-form>
   </div>
@@ -111,7 +117,16 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  showMessage: {
+    type: Boolean,
+    default: true,
+  },
+  showButton: {
+    type: Boolean,
+    default: true,
+  },
 })
+const emit = defineEmits(['change', 'onSuccess', 'onError'])
 
 const loading = ref(false)
 // 转成对象的方式来处理，解决采用数组方式，数据不响应的问题
@@ -160,15 +175,22 @@ const onSubmit = async () => {
   })
   const res: any = await updateConfig({ config: list })
   if (res.status === 200) {
-    ElMessage.success('配置更新成功')
+    if (props.showMessage) ElMessage.success('配置更新成功')
+    emit('onSuccess', res.data)
   } else {
-    ElMessage.error(res.data.message || '配置更新失败')
+    if (props.showMessage) ElMessage.error(res.data.message || '配置更新失败')
+    emit('onError', res.data)
   }
   loading.value = false
+}
+const onChange = (item: any) => {
+  emit('change', item)
 }
 const success = (res: any, index: any) => {
   configs.value[index] = { ...configs.value[index], value: res.data.path }
 }
+
+defineExpose({ onSubmit })
 </script>
 <style lang="scss">
 .com-form-config {

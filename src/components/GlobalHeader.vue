@@ -174,10 +174,10 @@
                     >上传文档</el-dropdown-item
                   >
                   <el-dropdown-item command="post"
-                    ><el-icon><Plus /></el-icon>发布文章</el-dropdown-item
+                    ><el-icon><Plus /></el-icon>&nbsp;发布文章</el-dropdown-item
                   >
                   <el-dropdown-item v-if="allowPages.length > 0" command="admin">
-                    <el-icon><Box /></el-icon> 管理后台</el-dropdown-item
+                    <el-icon><Box /></el-icon>&nbsp;管理后台</el-dropdown-item
                   >
                   <el-dropdown-item command="logout"
                     ><i class="fa fa-sign-out"></i> 退出登录</el-dropdown-item
@@ -265,7 +265,7 @@
           </li>
           <li>
             <div class="el-link el-link--default" @click="goToLink(`/upload`)">
-              <el-icon><Upload /></el-icon> 上传文档
+              <el-icon><Upload /></el-icon> &nbsp;上传文档
             </div>
           </li>
           <li>
@@ -295,8 +295,7 @@
           name="categories"
         >
           <template #title
-            ><el-icon><Document /></el-icon> &nbsp;
-            <span>{{
+            ><el-icon><Document /></el-icon>&nbsp; <span>{{
               navigations.filter(
                 (item) => item.enable && item.fixed && item.href === '/category'
               )[0].title || '文库资料'

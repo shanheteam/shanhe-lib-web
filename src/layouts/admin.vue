@@ -52,16 +52,16 @@
       </transition>
     </el-aside>
     <el-container>
-      <el-header>
+      <el-header class="admin-header">
         <el-button v-if="isCollapse" class="fold" link @click="isCollapse = false">
           <el-icon><Expand /></el-icon>
         </el-button>
         <el-button v-else class="fold" link @click="isCollapse = true">
           <el-icon><Fold /></el-icon>
         </el-button>
-        <el-dropdown style="float: right" trigger="click" @command="command">
+        <el-dropdown class="user-dropdown" trigger="click" @command="command">
           <el-button>
-            <el-icon><User /></el-icon>
+            <el-icon style="margin-right: 4px"><User /></el-icon>
             <span>{{ user.username }}</span>
           </el-button>
           <template #dropdown>
@@ -202,16 +202,29 @@ export default {
       overflow-y: auto;
     }
   }
-  .el-header {
+  .el-header.admin-header {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
     border-bottom: 1px solid #e6e6e6;
-    line-height: 60px;
+    padding: 0 16px;
     .fold {
       padding: 0 15px 0 0;
       font-size: 20px;
       color: #999;
       cursor: pointer;
+      margin-right: auto;
       &:hover {
         color: #555;
+      }
+    }
+    .user-dropdown {
+      display: inline-flex;
+      align-items: center;
+      .el-button {
+        display: inline-flex;
+        align-items: center;
+        margin: 0;
       }
     }
   }

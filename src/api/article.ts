@@ -15,3 +15,4 @@ export const checkArticles = (data: any) => service({ url: '/api/v1/article/chec
 export const noticeArticles = (data: any) => service({ url: '/api/v1/article/notice', method: 'put', data })
 export const getRelatedArticles = (params: any) => service({ url: '/api/v1/article/related', method: 'get', params })
 export const searchArticle = (params: any) => service({ url: '/api/v1/article/search', method: 'get', params })
+export const crawlArticle = (data: any) => service({ url: '/api/v1/article/crawl', method: 'post', data })

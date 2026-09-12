@@ -83,19 +83,6 @@
         >{{ settings.system.sec_icp }}</el-link
       >
     </div>
-    <div class="powered-by">
-      Powered By
-      <el-link
-        underline="never"
-        type="primary"
-        target="_blank"
-        href="https://mnt.ltd/#services"
-        title="MOREDOC"
-        >MOREDOC</el-link
-      >
-      CE
-      <span>{{ settings.system.version }}</span>
-    </div>
     <FixedRightBar />
   </div>
 </template>

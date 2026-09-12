@@ -185,159 +185,6 @@
           <template #label> 操作系统 </template>
           {{ stats.os }}
         </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label> 程序名称 </template>
-          moredoc · 魔豆文库
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label> 程序版本 </template>
-          <span class="ver-item">{{ stats.version }}</span>
-          <span v-if="release.tag_name != stats.version" class="ver-item">
-            <a
-              href="https://gitee.com/mnt-ltd/moredoc/releases"
-              target="_blank"
-            >
-              <el-tooltip content="点击查看">
-                <el-badge value="new" class="item">
-                  <el-button size="small"
-                    >新版本: {{ release.tag_name }}</el-button
-                  >
-                </el-badge>
-              </el-tooltip>
-            </a>
-            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          </span>
-          <el-button
-            size="small"
-            link
-            class="ver-item"
-            :loading="releaseRefreshing"
-            @click="refreshRelease"
-          >
-            <el-icon><Refresh /></el-icon>
-            检测新版本
-          </el-button>
-          <el-dropdown class="ver-item" @command="setReleaseSource">
-            <el-button size="small" link>
-              <el-icon><Setting /></el-icon>
-              检测设置
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item command="none">
-                  <template #icon>
-                    <el-icon>
-                      <Check v-if="release.source === 'none'" />
-                      <Minus v-else />
-                    </el-icon>
-                  </template>
-                  不主动检测新版本
-                </el-dropdown-item>
-                <el-dropdown-item command="auto">
-                  <template #icon>
-                    <el-icon>
-                      <Check v-if="release.source === 'auto'" />
-                      <Minus v-else />
-                    </el-icon>
-                  </template>
-                  自动选择检测方式
-                </el-dropdown-item>
-                <el-dropdown-item command="gitee">
-                  <template #icon>
-                    <el-icon>
-                      <Check v-if="release.source === 'gitee'" />
-                      <Minus v-else />
-                    </el-icon>
-                  </template>
-                  从Gitee检测新版本
-                </el-dropdown-item>
-                <el-dropdown-item command="github">
-                  <template #icon>
-                    <el-icon>
-                      <Check v-if="release.source === 'github'" />
-                      <Minus v-else />
-                    </el-icon>
-                  </template>
-                  从Github检测新版本
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label> Git Hash </template>
-          {{ stats.hash }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label> 构建时间 </template>
-          {{ formatDatetime(stats.build_at) }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label> 程序开发 </template>
-          深圳市摩枫网络科技有限公司 <b>M</b>orefun <b>N</b>etwork
-          <b>T</b>echnology Co., <b>Ltd</b>.
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label> 服务邮箱 </template>
-          <a href="mailto:truthhun@mnt.ltd" class="el-link el-link--primary"
-            >truthhun@mnt.ltd</a
-          >
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label> 服务官网 </template>
-          <a
-            href="https://mnt.ltd"
-            class="el-link el-link--primary"
-            target="_blank"
-            title="摩枫网络科技 MNT.Ltd"
-            >https://mnt.ltd</a
-          >
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label> 使用手册 </template>
-          <a
-            href="https://www.bookstack.cn/books/moredoc"
-            class="el-link el-link--primary"
-            target="_blank"
-            title="程序使用手册"
-            >https://www.bookstack.cn/books/moredoc</a
-          >
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label> 开源地址 </template>
-          <ul class="opensource">
-            <li>
-              MNT：
-              <a
-                href="https://git.mnt.ltd/mnt/moredoc"
-                class="el-link el-link--primary"
-                target="_blank"
-                title="摩枫Git"
-                >https://git.mnt.ltd/mnt/moredoc</a
-              >
-            </li>
-            <li>
-              Gitee：
-              <a
-                href="https://gitee.com/mnt-ltd/moredoc"
-                class="el-link el-link--primary"
-                target="_blank"
-                title="Gitee"
-                >https://gitee.com/mnt-ltd/moredoc</a
-              >
-            </li>
-            <li>
-              Github：
-              <a
-                href="https://github.com/mnt-ltd/moredoc"
-                class="el-link el-link--primary"
-                target="_blank"
-                title="Github"
-                >https://github.com/mnt-ltd/moredoc</a
-              >
-            </li>
-          </ul>
-        </el-descriptions-item>
       </el-descriptions>
     </el-card>
     <el-card shadow="never" class="mgt-20px">
@@ -459,22 +306,14 @@ const stats = ref<any>({
   banner_count: 0,
   friendlink_count: 0,
   user_pending_count: 0,
-  os: '-',
-  version: '-',
-  hash: '-',
-  build_at: '',
-})
+    os: '-',
+  })
 const envs = ref<any[]>([])
 const loading = ref(false)
 const envLoading = ref(false)
 const gauges = ref<any[]>([])
 let timeouter: any = null
 const mysqlGroupBy = ref<any>({})
-const release = ref<any>({
-  tag_name: '-',
-  source: 'auto',
-})
-const releaseRefreshing = ref(false)
 
 function getGaugeOption(name: string, percent: any) {
   return {
@@ -584,35 +423,6 @@ async function getStats() {
   }
 }
 
-async function getLatestRelease() {
-  const res: any = await configApi.getLatestRelease()
-  if (res.status === 200) {
-    release.value = res.data
-  }
-}
-
-async function setReleaseSource(cmd: any) {
-  const res: any = await configApi.setReleaseSource({ source: cmd })
-  if (res.status === 200) {
-    release.value.source = cmd
-    ElMessage.success('设置成功')
-  } else {
-    ElMessage.error(res.data.message || '设置失败')
-  }
-}
-
-async function refreshRelease() {
-  releaseRefreshing.value = true
-  const res: any = await configApi.refreshLatestRelease()
-  releaseRefreshing.value = false
-  if (res.status === 200) {
-    release.value = res.data
-    ElMessage.success('检测成功')
-  } else {
-    ElMessage.error(res.data.message || '检测失败')
-  }
-}
-
 async function getEnvs() {
   envLoading.value = true
   const res: any = await configApi.getEnvs()
@@ -708,7 +518,7 @@ async function getDevice() {
 
 onMounted(() => {
   initDevice()
-  Promise.all([getStats(), getEnvs(), loopGetDevice(), getLatestRelease()])
+  Promise.all([getStats(), getEnvs(), loopGetDevice()])
 })
 
 onBeforeUnmount(() => {
@@ -718,20 +528,8 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 .page-admin-dashboard {
-  .ver-item {
-    display: inline-block;
-    margin-right: 20px;
-  }
   .el-descriptions-item__label.is-bordered-label {
     width: 150px;
-  }
-  .systeminfo {
-    b {
-      color: crimson;
-    }
-  }
-  .opensource .el-link {
-    margin-top: -3px;
   }
   .chart {
     height: 234px;
