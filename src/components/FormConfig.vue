@@ -187,7 +187,7 @@ const onChange = (item: any) => {
   emit('change', item)
 }
 const success = (res: any, index: any) => {
-  configs.value[index] = { ...configs.value[index], value: res.data.path }
+  configs.value[index] = { ...configs.value[index], value: res.path || res?.data?.path }
 }
 
 defineExpose({ onSubmit })

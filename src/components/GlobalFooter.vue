@@ -73,49 +73,42 @@
           v-html="settings.display.copyright_statement"
         ></div>
       </div>
-      <div>
-        <el-link
+      <div class="footer-copyright">
+        <a
           v-if="settings.system.domain"
-          underline="never"
           :title="settings.system.sitename || ''"
           :href="settings.system.domain"
         >
           {{ settings.system.sitename }}
-        </el-link>
-        <span class="copyright-year"
-          ><span v-if="settings.system.copyright_start_year == currentYear"
+        </a>
+        <span class="copyright-year">
+          <span v-if="settings.system.copyright_start_year == currentYear"
             >©{{ currentYear }}</span
           >
           <span v-else>
             ©{{ settings.system.copyright_start_year }} - {{ currentYear }}
-          </span></span
-        >
+          </span>
+        </span>
         <span>|</span>
-        <el-link
-          underline="never"
-          target="_blank"
-          title="站点地图"
-          href="/sitemap.xml"
-          >站点地图</el-link
+        <a target="_blank" title="站点地图" href="/sitemap.xml"
+          >站点地图</a
         >
-        <el-link
+        <a
           v-if="settings.system.icp"
-          underline="never"
           target="_blank"
           :title="settings.system.icp"
           href="https://beian.miit.gov.cn/"
-          >{{ settings.system.icp }}</el-link
+          >{{ settings.system.icp }}</a
         >
-        <el-link
+        <a
           v-if="settings.system.sec_icp"
-          underline="never"
           target="_blank"
           :title="settings.system.sec_icp"
           :href="`http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=${settings.system.sec_icp.replace(
             /[^\d]/g,
             ''
           )}`"
-          >{{ settings.system.sec_icp }}</el-link
+          >{{ settings.system.sec_icp }}</a
         >
       </div>
     </div>
@@ -207,6 +200,36 @@ Promise.all([fetchFriendlink(), getAdvertisements('global')])
       box-sizing: border-box;
       padding: 0 20px;
     }
+    .footer-copyright {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      a {
+        display: inline-flex;
+        align-items: center;
+        color: #a4acb7;
+        text-decoration: none;
+        margin: 0 5px;
+        font-size: 13px;
+        line-height: 1;
+        &:hover {
+          color: #409eff;
+        }
+      }
+      .copyright-year {
+        display: inline-flex;
+        align-items: center;
+        color: #a4acb7;
+        margin: 0 5px;
+        font-size: 13px;
+        line-height: 1;
+      }
+      > span {
+        display: inline-flex;
+        align-items: center;
+        line-height: 1;
+      }
+    }
     .el-link {
       color: #a4acb7;
       margin: 5px;
@@ -225,21 +248,7 @@ Promise.all([fetchFriendlink(), getAdvertisements('global')])
     }
     .copyright-year {
       font-size: 13px;
-      position: relative;
-      top: 1px;
-      margin-left: -5px;
       margin-right: 5px;
-    }
-    .powered-by {
-      float: right;
-      font-size: 13px !important;
-      margin-left: 0;
-      margin-right: 0;
-      .el-link {
-        position: relative;
-        top: -1px;
-        color: #409eff;
-      }
     }
   }
   .footer-links {
