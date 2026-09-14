@@ -78,7 +78,7 @@ function imagesUploadHandler(blobInfo: any, progress: (v: number) => void) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
     xhr.withCredentials = false
-    xhr.open('POST', props.uploadUrl)
+    xhr.open('POST', `${import.meta.env.VITE_API_BASE_URL || ''}${props.uploadUrl}`)
     const userStore = useUserStore()
     const token = userStore.token
     if (token) xhr.setRequestHeader('Authorization', 'Bearer ' + token)

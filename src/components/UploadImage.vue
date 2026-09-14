@@ -2,7 +2,7 @@
   <div class="com-upload-image">
     <el-upload
       class="image-uploader"
-      :action="action"
+      :action="actionUrl"
       :headers="{ authorization: `bearer ${token}` }"
       :show-file-list="false"
       :on-success="success"
@@ -44,6 +44,7 @@
 </template>
 <script setup lang="ts">
 import { computed } from 'vue'
+import { assetUrl } from '@/utils/asset'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user'
 
@@ -78,6 +79,9 @@ const props = defineProps({
   },
 })
 const emit = defineEmits(['success', 'remove'])
+
+// 生产下 action 为相对路径（/api/v1/upload/...），需拼上后端域名，否则原生 XHR 会按前端域名解析失败
+const actionUrl = computed(() => assetUrl(props.action))
 
 const userStore = useUserStore()
 const token = computed(() => userStore.token)

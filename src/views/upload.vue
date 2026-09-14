@@ -181,7 +181,7 @@
               ref="uploadRef"
               drag
               multiple
-              :action="'/api/v1/upload/document'"
+              :action="assetUrl('/api/v1/upload/document')"
               :headers="{ authorization: `bearer ${token}` }"
               :show-file-list="false"
               :disabled="loading || !canIUploadDocument"
@@ -526,6 +526,7 @@ import { useSettingStore } from '@/store/setting'
 import { formatBytes } from '@/utils/utils'
 import { createDocument as createDocumentApi } from '@/api/document'
 import { uploadDocument as uploadDocumentApi } from '@/api/attachment'
+import { assetUrl } from '@/utils/asset'
 import {
   wordExtEnum,
   excelExtEnum,

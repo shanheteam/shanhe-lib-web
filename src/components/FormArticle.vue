@@ -284,7 +284,7 @@ const images_upload_handler = (blobInfo: any, progress: any) => {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
     xhr.withCredentials = false
-    xhr.open('POST', '/api/v1/upload/article?type=image')
+    xhr.open('POST', `${import.meta.env.VITE_API_BASE_URL || ''}/api/v1/upload/article?type=image`)
     xhr.setRequestHeader('Authorization', 'Bearer ' + userStore.token)
     xhr.upload.onprogress = (e) => {
       progress((e.loaded / e.total) * 100)
