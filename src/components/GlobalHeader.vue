@@ -137,21 +137,11 @@
           </el-input>
         </div>
         <div class="header-user">
-          <button
-            v-if="isMobile"
-            type="button"
-            class="mobile-search-btn"
-            aria-label="搜索"
-            @click="openSearchModal"
-          >
-            <el-icon><Search /></el-icon>
-          </button>
           <template v-if="user.id > 0">
-            <el-dropdown trigger="hover" @command="handleDropdown">
+            <el-dropdown :trigger="isMobile ? 'click' : 'hover'" @command="handleDropdown">
               <span class="el-dropdown-link">
-                <UserAvatar class="nav-user-avatar" :user="user" :size="42" />
-                <span>{{ user.username }}</span
-                ><el-icon><ArrowDown /></el-icon>
+                <UserAvatar class="nav-user-avatar" :user="user" :size="36" />
+                <span class="mobile-username">{{ user.username }}</span>
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
@@ -962,6 +952,7 @@ init()
 @media screen and (max-width: $mobile-width) {
   .com-global-header {
     .nav-menu {
+      flex: none !important;
       .el-menu-item:not(.logo) {
         display: none !important;
       }
@@ -970,15 +961,26 @@ init()
       display: none !important;
     }
     .header-user {
-      padding: 0 8px;
-      .mobile-search-btn {
-        display: none !important;
-      }
+      position: absolute;
+      right: 8px;
+      top: 0;
+      z-index: 10;
+      padding: 0;
+      margin-left: 0;
+      height: 70px;
       .el-dropdown-link {
+        display: flex;
+        align-items: center;
+        gap: 6px;
         height: auto;
         font-size: 14px;
-        span {
-          display: none;
+        cursor: pointer;
+        .mobile-username {
+          display: inline;
+          max-width: 80px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
         .nav-user-avatar {
           margin-right: 0;
