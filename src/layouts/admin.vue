@@ -2,8 +2,8 @@
   <el-container class="layout-admin">
     <el-aside :class="isCollapse ? 'layout-aside-collapsed' : ''" :width="'240px'">
       <div class="logo" title="文库管理后台" @click="gohome">
-        <img v-if="isCollapse" src="/static/images/logo-icon.png" />
-        <img v-else src="/static/images/logo.png" />
+        <img v-if="isCollapse" :src="settings.system.logo || '/static/images/logo-icon.png'" />
+        <img v-else :src="settings.system.logo || '/static/images/logo.png'" />
       </div>
       <transition :duration="{ enter: 800, leave: 800 }" mode="out-in" name="el-fade-in-linear">
         <el-menu
