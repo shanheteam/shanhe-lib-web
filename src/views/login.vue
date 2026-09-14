@@ -4,7 +4,7 @@
     :style="
       settings.system.login_background
         ? 'background:url(' +
-          settings.system.login_background +
+          assetUrl(settings.system.login_background) +
           ') no-repeat center center'
         : ''
     "
@@ -51,6 +51,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
+import { assetUrl } from '@/utils/asset'
 
 const route = useRoute()
 const userStore = useUserStore()

@@ -15,7 +15,7 @@
       >
         <UploadImage
           :action="'/api/v1/upload/banner'"
-          :image="banner.path"
+          :image="assetUrl(banner.path)"
           :error-image="'/static/images/banner.png'"
           @success="success"
         />
@@ -101,6 +101,7 @@ import { ElMessage } from 'element-plus'
 import UploadImage from './UploadImage.vue'
 import { createBanner, updateBanner } from '@/api/banner'
 import { bannerTypeOptions } from '@/utils/enum'
+import { assetUrl } from '@/utils/asset'
 
 defineOptions({ name: 'FormBanner' })
 const props = defineProps({

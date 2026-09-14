@@ -29,7 +29,7 @@
         <el-popover placement="left" trigger="hover" width="200">
           <div class="qrcode">
             <img
-              :src="settings.display.wechat_qrcode"
+              :src="assetUrl(settings.display.wechat_qrcode)"
               :alt="settings.display.wechat_tip || '扫码关注'"
               style="width: 100%"
             />
@@ -87,6 +87,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useSettingStore } from '@/store/setting'
+import { assetUrl } from '@/utils/asset'
 
 defineOptions({ name: 'FixedRightBar' })
 

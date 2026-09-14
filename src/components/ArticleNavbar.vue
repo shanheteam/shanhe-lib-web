@@ -28,7 +28,7 @@
           class="el-link el-link--default"
           :class="activeId === cate.id ? 'active' : ''"
         >
-          <el-image :src="cate.icon || '/favicon.ico'" class="icon">
+          <el-image :src="assetUrl(cate.icon) || '/favicon.ico'" class="icon">
             <template #error>
               <div class="image-slot">
                 <el-icon><Picture /></el-icon>
@@ -44,6 +44,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { assetUrl } from '@/utils/asset'
 import { useCategoryStore } from '@/store/category'
 
 const route = useRoute()

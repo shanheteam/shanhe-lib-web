@@ -293,11 +293,11 @@
             <div v-if="isMobile">
               <div v-for="(page, index) in pages" :key="index + page.src">
                 <el-image
-                  :src="page.src"
+                  :src="assetUrl(page.src)"
                   :alt="page.alt"
-                  :data-source="page.lazySrc"
+                  :data-source="assetUrl(page.lazySrc)"
                   lazy
-                  :preview-src-list="pages.map((p) => p.lazySrc)"
+                  :preview-src-list="pages.map((p) => assetUrl(p.lazySrc))"
                   :initial-index="index"
                   preview-teleported
                   class="doc-page"
@@ -316,9 +316,9 @@
             <div v-else>
               <div v-for="(page, index) in pages" :key="index + page.src">
                 <el-image
-                  :src="page.src"
+                  :src="assetUrl(page.src)"
                   :alt="page.alt"
-                  :data-source="page.lazySrc"
+                  :data-source="assetUrl(page.lazySrc)"
                   lazy
                   class="doc-page"
                   :style="{
@@ -625,6 +625,7 @@ import { getAdvertisementByPosition } from '@/api/advertisement'
 import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
+import { assetUrl } from '@/utils/asset'
 import FormDownload from '@/components/FormDownload.vue'
 
 const route = useRoute()

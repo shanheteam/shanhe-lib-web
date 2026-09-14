@@ -4,7 +4,7 @@
       <el-col :span="7">
         <div class="avatar">
           <router-link :to="'/user/' + user.id">
-            <el-avatar :src="user.avatar">
+            <el-avatar :src="assetUrl(user.avatar)">
               <img src="/static/images/avatar.png" alt="" />
             </el-avatar>
           </router-link>
@@ -31,6 +31,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { assetUrl } from '@/utils/asset'
 import { listUser } from '@/api/user'
 
 defineOptions({ name: 'UserList' })

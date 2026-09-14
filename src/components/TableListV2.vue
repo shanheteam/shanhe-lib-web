@@ -42,7 +42,7 @@
           <el-avatar
             v-if="item.type === 'avatar'"
             :size="45"
-            :src="row[item.prop]"
+            :src="assetUrl(row[item.prop])"
           >
             <img src="/static/images/blank.png" />
           </el-avatar>
@@ -110,7 +110,7 @@
             <UploadImage
               v-if="row[item.prop]"
               :disabled="true"
-              :image="row[item.prop]"
+              :image="assetUrl(row[item.prop])"
               :width="item.width ? item.width + 'px' : 'auto'"
               style="margin-left: -10px; margin-right: -10px"
             />
@@ -217,6 +217,7 @@ import { VxeTable, VxeColumn } from 'vxe-table'
 import UploadImage from './UploadImage.vue'
 import { Link, ArrowRight } from '@element-plus/icons-vue'
 import { formatDatetime, formatBytes } from '@/utils/utils'
+import { assetUrl } from '@/utils/asset'
 import { computed, type PropType } from 'vue'
 
 const props = defineProps({

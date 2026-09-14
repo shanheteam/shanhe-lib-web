@@ -19,6 +19,8 @@ const removeUnderscoreParams = (obj: any): any => {
 }
 
 const service: AxiosInstance = axios.create({
+  // 生产部署到 EdgeOne Makers 时，通过 VITE_API_BASE_URL 指向后端域名（如 https://apilib.shanhe.co）
+  baseURL: import.meta.env.VITE_API_BASE_URL || '',
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',

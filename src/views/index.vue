@@ -17,7 +17,7 @@
           <el-carousel-item
             :style="
               'background: url(' +
-              (carouselIndexes.indexOf(index) > -1 ? banner.path : '') +
+              assetUrl(carouselIndexes.indexOf(index) > -1 ? banner.path : '') +
               ') center center no-repeat;'
             "
           ></el-carousel-item>
@@ -278,7 +278,7 @@
               >
                 <span class="category-badge">
                   <img
-                    :src="category.icon || '/static/images/logo-icon.png'"
+                    :src="assetUrl(category.icon) || '/static/images/logo-icon.png'"
                     :alt="category.title"
                   />
                 </span>
@@ -327,6 +327,7 @@ import { listDocument } from '@/api/document'
 import { listArticle } from '@/api/article'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
+import { assetUrl } from '@/utils/asset'
 
 const settingStore = useSettingStore()
 const categoryStore = useCategoryStore()

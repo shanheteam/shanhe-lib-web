@@ -6,7 +6,7 @@
           :error-image="'/static/images/avatar.png'"
           :width="'64px'"
           :action="'/api/v1/upload/avatar'"
-          :image="user.avatar"
+          :image="assetUrl(user.avatar)"
           @success="getUser"
           class="edit-avatar"
         />
@@ -89,6 +89,7 @@
 import { ref, computed } from 'vue'
 import { useUserStore } from '@/store/user'
 import { formatDatetime } from '@/utils/utils'
+import { assetUrl } from '@/utils/asset'
 
 defineOptions({ name: 'FormUserinfo' })
 

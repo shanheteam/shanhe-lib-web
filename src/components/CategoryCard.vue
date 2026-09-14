@@ -16,7 +16,7 @@
           "
           @click="$emit('close')"
         >
-          <el-avatar :size="20" :src="cate.icon"></el-avatar>
+          <el-avatar :size="20" :src="assetUrl(cate.icon)"></el-avatar>
           <span>{{ cate.title }}</span>
         </router-link>
       </div>
@@ -42,6 +42,7 @@ import { ref, computed, watch } from 'vue'
 import { useCategoryStore } from '@/store/category'
 import { useSettingStore } from '@/store/setting'
 import { categoryToTrees } from '@/utils/utils'
+import { assetUrl } from '@/utils/asset'
 
 const props = defineProps({
   type: {

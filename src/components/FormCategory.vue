@@ -34,7 +34,7 @@
       >
         <UploadImage
           :action="'/api/v1/upload/category'"
-          :image="category.icon"
+          :image="assetUrl(category.icon)"
           :width="'48px'"
           @success="successUploadIcon"
         />
@@ -51,7 +51,7 @@
       >
         <UploadImage
           :action="'/api/v1/upload/category'"
-          :image="category.cover"
+          :image="assetUrl(category.cover)"
           :width="'180px'"
           @success="successUpload"
         />
@@ -144,6 +144,7 @@ import { ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import UploadImage from './UploadImage.vue'
 import { createCategory, updateCategory } from '@/api/category'
+import { assetUrl } from '@/utils/asset'
 
 defineOptions({ name: 'FormCategory' })
 const props = defineProps({

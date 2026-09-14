@@ -24,7 +24,7 @@
               ><el-avatar
                 :size="16"
                 class="avatar"
-                :src="article.user && article.user.avatar"
+                :src="assetUrl(article.user && article.user.avatar)"
               ></el-avatar
               >{{ article.user && article.user.username }}</router-link
             >
@@ -62,6 +62,7 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import { formatRelativeTime } from '@/utils/utils'
+import { assetUrl } from '@/utils/asset'
 
 defineProps({
   articles: {

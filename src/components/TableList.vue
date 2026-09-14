@@ -29,7 +29,7 @@
           <el-avatar
             v-if="item.type === 'avatar'"
             :size="45"
-            :src="scope.row[item.prop]"
+            :src="assetUrl(scope.row[item.prop])"
           >
             <img src="/static/images/blank.png" />
           </el-avatar>
@@ -76,7 +76,7 @@
             <UploadImage
               v-if="scope.row[item.prop]"
               :disabled="true"
-              :image="scope.row[item.prop]"
+              :image="assetUrl(scope.row[item.prop])"
               :width="item.width ? item.width + 'px' : 'auto'"
               style="margin-left: -10px; margin-right: -10px"
             />
@@ -169,6 +169,7 @@
 import UploadImage from './UploadImage.vue'
 import { Link, ArrowRight } from '@element-plus/icons-vue'
 import { formatDatetime, formatBytes } from '@/utils/utils'
+import { assetUrl } from '@/utils/asset'
 import type { PropType } from 'vue'
 
 defineProps({

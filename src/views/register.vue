@@ -4,7 +4,7 @@
     :style="
       settings.system.register_background
         ? 'background:url(' +
-          settings.system.register_background +
+          assetUrl(settings.system.register_background) +
           ') no-repeat center center'
         : ''
     "
@@ -34,6 +34,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useSettingStore } from '@/store/setting'
+import { assetUrl } from '@/utils/asset'
 
 const route = useRoute()
 const settingStore = useSettingStore()

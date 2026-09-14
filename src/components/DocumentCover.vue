@@ -4,9 +4,11 @@
       ref="image"
       class="com-document-cover"
       :src="
-        document.attachment && document.attachment.hash
-          ? `/view/cover/${document.attachment.hash}`
-          : document.cover || ''
+        assetUrl(
+          document.attachment && document.attachment.hash
+            ? `/view/cover/${document.attachment.hash}`
+            : document.cover || ''
+        )
       "
       :lazy="lazy"
       :alt="document.title"
@@ -23,6 +25,7 @@
 <script setup lang="ts">
 import { ref, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { getIcon } from '@/utils/utils'
+import { assetUrl } from '@/utils/asset'
 
 const props = withDefaults(
   defineProps<{

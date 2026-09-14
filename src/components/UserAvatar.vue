@@ -3,7 +3,7 @@
     <el-avatar
       :size="size"
       :alt="user.username"
-      :src="user.avatar"
+      :src="assetUrl(user.avatar)"
       @error="errorAvatar"
     >
       <img src="/static/images/avatar.png" />
@@ -11,6 +11,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { assetUrl } from '@/utils/asset'
 defineProps({
   size: {
     type: Number,

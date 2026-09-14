@@ -78,7 +78,7 @@
             <UploadImage
               v-else-if="item.input_type === 'image'"
               :action="'/api/v1/upload/config'"
-              :image="configs[index]['value']"
+              :image="assetUrl(configs[index]['value'])"
               :width="'200px'"
               :show-remove="true"
               @remove="configs[index]['value'] = ''"
@@ -109,6 +109,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
+import { assetUrl } from '@/utils/asset'
 import { updateConfig } from '@/api/config'
 
 defineOptions({ name: 'FormConfig' })
