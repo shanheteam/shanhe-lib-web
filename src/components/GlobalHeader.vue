@@ -116,17 +116,8 @@
               />
             </template>
           </template>
-          <el-menu-item
-            v-if="isMobile"
-            class="menu-drawer float-right"
-            index="menuDrawer"
-            @click="showMenuDrawer"
-          >
-            <el-icon><Operation /></el-icon>
-          </el-menu-item>
         </el-menu>
-        <div
-          class="header-search hidden-xs-only"
+        <div class="header-search hidden-xs-only"
           :class="navigations.length <= 2 ? 'nav-searchbox-large' : ''"
         >
           <el-input
@@ -145,7 +136,16 @@
             </template>
           </el-input>
         </div>
-        <div class="header-user hidden-xs-only">
+        <div class="header-user">
+          <button
+            v-if="isMobile"
+            type="button"
+            class="mobile-search-btn"
+            aria-label="搜索"
+            @click="openSearchModal"
+          >
+            <el-icon><Search /></el-icon>
+          </button>
           <template v-if="user.id > 0">
             <el-dropdown trigger="hover" @command="handleDropdown">
               <span class="el-dropdown-link">
@@ -801,6 +801,9 @@ init()
         line-height: normal;
         padding: 0;
       }
+      .mobile-search-btn {
+        display: none;
+      }
     }
     .header-search {
       display: flex;
@@ -958,6 +961,40 @@ init()
 
 @media screen and (max-width: $mobile-width) {
   .com-global-header {
+    .nav-menu {
+      .el-menu-item:not(.logo) {
+        display: none !important;
+      }
+    }
+    .header-search {
+      display: none !important;
+    }
+    .header-user {
+      padding: 0 8px;
+      .mobile-search-btn {
+        display: none !important;
+      }
+      .el-dropdown-link {
+        height: auto;
+        font-size: 14px;
+        span {
+          display: none;
+        }
+        .nav-user-avatar {
+          margin-right: 0;
+        }
+        .el-icon {
+          display: none;
+        }
+      }
+      .header-login-btn {
+        .el-button {
+          height: 36px;
+          padding: 0 16px;
+          font-size: 14px;
+        }
+      }
+    }
     .search-modal-overlay {
       padding-top: 70px;
       padding-right: 16px;
