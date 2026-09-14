@@ -67,7 +67,7 @@
           /></router-link>
         </el-col>
         <el-col :span="16" class="search-form">
-          <div class="search-form-shell">
+          <div class="search-box-wrapper">
             <el-input
               v-model="query.wd"
               clearable
@@ -244,122 +244,7 @@
                 <span class="el-link el-link--danger">{{ total || 0 }}</span> 个.
               </div>
               <div class="search-filter">
-                <!-- 移动端显示所有筛选条件 -->
-                <div class="hidden-sm-and-up mobile-filters">
-                  <el-dropdown :show-timeout="showTimeout">
-                    <el-button link :size="filterSize">
-                      {{ filterCategoryName(query.category_id)
-                      }}<el-icon><ArrowDown /></el-icon>
-                    </el-button>
-                    <template #dropdown>
-                      <el-dropdown-menu>
-                        <el-dropdown-item
-                          v-for="item in [
-                            { id: 0, title: '全部分类' },
-                            ...categoryTrees.filter(
-                              (item) =>
-                                (!searchType && !item.type) ||
-                                (searchType && item.type == searchType)
-                            ),
-                          ]"
-                          :key="'cate-' + item.id"
-                          :value="item.id"
-                        >
-                          <router-link
-                            class="el-link el-link--default"
-                            :class="
-                              item.id == query.category_id
-                                ? 'el-link--primary'
-                                : ''
-                            "
-                            :to="{
-                              query: {
-                                ...route.query,
-                                category_id: item.id,
-                                page: 1,
-                              },
-                            }"
-                            >{{ item.title }}</router-link
-                          >
-                        </el-dropdown-item>
-                      </el-dropdown-menu>
-                    </template>
-                  </el-dropdown>
-                  <el-dropdown
-                    v-if="(settings.language || []).length > 0 && !searchType"
-                    :show-timeout="showTimeout"
-                  >
-                    <el-button link :size="filterSize">
-                      {{ filterLanguageName(query.language) }}
-                      <el-icon><ArrowDown /></el-icon>
-                    </el-button>
-                    <template #dropdown>
-                      <el-dropdown-menu>
-                        <el-dropdown-item
-                          v-for="item in [
-                            { code: '', language: '全部语言' },
-                            ...(settings.language || []),
-                          ]"
-                          :key="'lang-' + item.code"
-                          :value="item.code"
-                        >
-                          <router-link
-                            class="el-link el-link--default"
-                            :class="
-                              item.code == query.language
-                                ? 'el-link--primary'
-                                : ''
-                            "
-                            :to="{
-                              query: {
-                                ...route.query,
-                                language: item.code,
-                                page: 1,
-                              },
-                            }"
-                            >{{ item.language }}</router-link
-                          >
-                        </el-dropdown-item>
-                      </el-dropdown-menu>
-                    </template>
-                  </el-dropdown>
-                  <el-dropdown v-if="!searchType" :show-timeout="showTimeout">
-                    <el-button link :size="filterSize">
-                      <img
-                        v-if="query.ext != 'all' && query.ext != ''"
-                        :src="`/static/images/${query.ext}_24.png`"
-                        :alt="`${query.ext}文档`"
-                      />
-                      {{ filterExtName(query.ext)
-                      }}<el-icon><ArrowDown /></el-icon>
-                    </el-button>
-                    <template #dropdown>
-                      <el-dropdown-menu>
-                        <el-dropdown-item
-                          v-for="item in searchExts"
-                          :key="'se-' + item.value"
-                        >
-                          <router-link
-                            class="el-link el-link--default"
-                            :class="
-                              item.value == query.ext ? 'el-link--primary' : ''
-                            "
-                            :to="{
-                              query: { ...route.query, ext: item.value, page: 1 },
-                            }"
-                          >
-                            <img
-                              v-if="item.value != 'all' && item.value != ''"
-                              :src="`/static/images/${item.value}_24.png`"
-                              :alt="`${item.label}文档`"
-                            />
-                            {{ item.label }}</router-link
-                          >
-                        </el-dropdown-item>
-                      </el-dropdown-menu>
-                    </template>
-                  </el-dropdown>
-                </div>
+                <!-- 移动端筛选（分类/语言/格式下拉已移除，请使用左侧栏筛选） -->
                 <!-- 排序和时间范围 -->
                 <el-dropdown class="hidden-xs-only" :show-timeout="showTimeout">
                   <el-button link :size="filterSize">
@@ -567,9 +452,6 @@ const spend = ref('')
 const keywords = ref<any[]>([])
 const stats = ref<any>({ document_count: '-' })
 const searchType = ref(0)
-const searchLeftWidth = ref(0)
-const searchRightWidth = ref(0)
-const cardOffsetTop = ref(35)
 const showTimeout = ref(50)
 const advertisements = ref<any[]>([])
 
@@ -587,9 +469,9 @@ const searchPlaceholder = computed(() =>
       : '搜索文档标题、标签、摘要'
 )
 
-function getEl(refVal: any): any {
-  const v = refVal && refVal.value != null ? refVal.value : refVal
-  return v && v.$el ? v.$el : v
+function handleScroll() {
+  // 列的吸顶固定由 CSS position: sticky 实现，无需 JS 手算 DOM 样式。
+  // 原 JS fixed 方案会把列移出文档流，导致翻页 / 滚动态下左右错位。
 }
 
 watch(
@@ -658,64 +540,6 @@ function changeSearchType(value: any) {
       type: value,
     },
   })
-}
-
-function handleScroll() {
-  if (isMobile.value) return
-  const scrollTop =
-    document.documentElement.scrollTop || document.body.scrollTop
-  const searchLeftEl = getEl(searchLeft)
-  const searchMainEl = getEl(searchMain)
-  const searchRightEl = getEl(searchRight)
-  const searchBoxEl = getEl(searchBox)
-
-  if (searchLeftEl && searchMainEl) {
-    let maxHeight = 0
-    try {
-      maxHeight = searchMainEl.offsetHeight - scrollTop - 70
-    } catch (error) {
-      console.log(error)
-    }
-
-    if (searchLeftWidth.value === 0) {
-      searchLeftWidth.value = searchLeftEl.offsetWidth
-      if (searchRightEl) {
-        searchRightWidth.value = searchRightEl.offsetWidth
-      }
-    }
-
-    const fixed = 'fixed'
-    const top = '105px'
-    const zIndex = '100'
-    if (scrollTop > cardOffsetTop.value) {
-      searchLeftEl.style.position = fixed
-      searchLeftEl.style.top = top
-      searchLeftEl.style.zIndex = zIndex
-      searchLeftEl.style.width = searchLeftWidth.value + 'px'
-      if (maxHeight > 0) {
-        searchLeftEl.style.maxHeight = maxHeight + 'px'
-        if (searchRightEl) {
-          searchRightEl.style.maxHeight = maxHeight + 'px'
-        }
-      }
-
-      if (searchRightEl) {
-        searchRightEl.style.position = fixed
-        searchRightEl.style.top = top
-        searchRightEl.style.zIndex = zIndex
-        searchRightEl.style.width = searchRightWidth.value + 'px'
-      }
-      searchBoxEl.style.top = '0'
-      searchBoxEl.style.position = fixed
-      searchBoxEl.style.zIndex = zIndex
-    } else {
-      searchLeftEl.style = null
-      if (searchRightEl) {
-        searchRightEl.style = null
-      }
-      searchBoxEl.style = null
-    }
-  }
 }
 
 async function getStatsData() {
@@ -922,16 +746,16 @@ onBeforeUnmount(() => {
 })
 </script>
 <style lang="scss">
-.search-page {
+.layout-default:has(.page-search) {
+  padding-top: 0;
+  .el-main {
+    padding-top: 0;
+  }
+}
+.page-search {
   .logo {
     img {
       height: 40px;
-    }
-  }
-  .layout-default {
-    padding-top: 0;
-    .el-main {
-      padding-top: 0;
     }
   }
   .el-dropdown-menu__item {
@@ -955,6 +779,12 @@ onBeforeUnmount(() => {
   }
   .header-links {
     padding: 0 10px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: #fff;
+    // 吸顶时与下方区域自然分隔
+    border-bottom: 1px solid transparent;
     .el-link {
       line-height: 35px;
       margin-right: 10px;
@@ -992,6 +822,15 @@ onBeforeUnmount(() => {
       }
     }
     .search-form {
+      .search-box-wrapper {
+        border: 2px solid #4e9bff;
+        border-radius: 26px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(64, 158, 255, 0.12);
+        display: flex;
+        align-items: center;
+        background: #fff;
+      }
       .search-form-shell {
         display: flex;
         flex-direction: column;
@@ -1016,71 +855,79 @@ onBeforeUnmount(() => {
       }
     }
     .search-type-select {
-      .el-input {
-        width: 112px;
+      &.el-select {
+        width: 130px;
       }
-      .el-input__inner {
+      .el-select__wrapper {
         height: 52px;
-        line-height: 52px;
-        padding: 0 32px 0 18px;
+        padding: 0 14px;
         border: 0;
-        border-radius: 16px 0 0 16px;
-        font-weight: 600;
-        color: #243b53;
-        background: #fff;
+        border-radius: 25px 0 0 25px;
+        box-shadow: none;
+        background: transparent;
       }
-      .el-input__suffix {
+      .el-select__selected-item,
+      .el-select__placeholder {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #243b53 !important;
+        font-weight: 600;
+      }
+      .el-select__caret {
         right: 10px;
       }
     }
     .search-input {
+      flex: 1;
+      .el-input__wrapper {
+        padding: 0;
+        box-shadow: none;
+        background: transparent;
+      }
       .el-input__inner {
         height: 52px;
         line-height: 52px;
-        border: 2px solid #4e9bff;
-        border-right: 0;
-        box-shadow: 0 8px 24px rgba(64, 158, 255, 0.12);
+        border: 0;
         padding-left: 18px;
-        border-left: 0;
+        background: transparent;
       }
       & > .el-input__inner {
         border-radius: 0 !important;
       }
       .el-input-group__prepend {
-        border: 2px solid #4e9bff;
-        border-right: 0;
-        border-radius: 18px 0 0 18px;
-        &::after {
-          content: '';
-          position: absolute;
-          top: 20%;
-          right: -2px;
-          width: 1px;
-          height: 60%;
-          background-color: #ccc;
-        }
+        border: 0;
+        border-right: 1px solid #e4e7ed;
+        border-radius: 0;
+        padding: 0;
+        background: transparent;
       }
       .el-input-group__append {
-        border: 2px solid #4e9bff;
-        border-left: 0;
-        border-radius: 0 18px 18px 0;
-        overflow: hidden;
-        box-shadow: 0 8px 24px rgba(64, 158, 255, 0.12);
-      }
-      .el-input__inner:focus {
-        border-color: #409eff;
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+        background: transparent;
       }
       .btn-search {
-        min-width: 108px;
+        position: relative;
+        width: 140px;
         height: 52px;
-        padding: 0 28px;
+        padding: 0;
         border: 0;
-        border-radius: 0 14px 14px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         background: linear-gradient(135deg, #5ba7ff 0%, #409eff 100%);
         font-size: 18px;
         font-weight: 600;
-        letter-spacing: 1px;
         color: #fff;
+        .el-icon {
+          position: absolute;
+          left: 18px;
+          top: 50%;
+          transform: translateY(-50%);
+        }
       }
     }
   }
@@ -1265,11 +1112,25 @@ onBeforeUnmount(() => {
     }
   }
   .search-filter {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
     .el-dropdown {
-      margin-right: 15px;
+      margin-right: 0;
+    }
+    .el-dropdown {
+      display: inline-flex;
+      align-items: center;
     }
     .el-button--text {
+      display: inline-flex;
+      align-items: center;
       color: #6b7a88;
+      .el-icon {
+        margin-left: 4px;
+        vertical-align: middle;
+      }
       &:hover {
         color: #409eff;
       }
@@ -1297,14 +1158,15 @@ onBeforeUnmount(() => {
         gap: 0;
       }
       .search-type-select {
-        .el-input {
+        &.el-select {
           width: 86px;
         }
-        .el-input__inner {
+        .el-select__wrapper {
           height: 44px;
-          line-height: 44px;
           padding: 0 24px 0 12px;
           border-radius: 12px 0 0 12px;
+          box-shadow: none;
+          background: transparent;
         }
       }
       .search-input {
@@ -1324,11 +1186,14 @@ onBeforeUnmount(() => {
           border-radius: 0 12px 12px 0;
         }
         .btn-search {
-          min-width: 84px;
+          width: 88px;
           height: 44px;
-          padding: 0 16px;
+          padding: 0;
           font-size: 15px;
-          border-radius: 0 10px 10px 0;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 0 12px 12px 0;
         }
       }
     }
@@ -1450,5 +1315,18 @@ onBeforeUnmount(() => {
 .header {
   display: flex;
   justify-content: space-between;
+}
+/* 左右侧栏吸顶固定：使用 sticky 保持列在文档流内，避免 JS fixed 造成的翻页错位 */
+.search-left,
+.search-right {
+  position: sticky;
+  top: 105px;
+  align-self: flex-start;
+  height: fit-content;
+}
+.search-box {
+  position: sticky;
+  top: 35px;
+  z-index: 100;
 }
 </style>

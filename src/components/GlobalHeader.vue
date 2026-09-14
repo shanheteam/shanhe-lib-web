@@ -285,67 +285,62 @@
           </li></template
         >
       </ul>
-      <el-collapse v-model="activeCollapse">
-        <el-collapse-item
-          v-if="
+      <div class="com-mobile-nav">
+        <div
+          class="mobile-nav-title"
+          @click="activeCollapse = activeCollapse === 'categories' ? '' : 'categories'"
+        >
+          <el-icon><Document /></el-icon>&nbsp;
+          <span>{{
             navigations.filter(
               (item) => item.enable && item.fixed && item.href === '/category'
-            ).length > 0
-          "
-          name="categories"
+            )[0]?.title || '文库资料'
+          }}</span>
+        </div>
+        <ul
+          v-show="activeCollapse === 'categories' && navigations.filter((item) => item.enable && item.fixed && item.href === '/category').length > 0"
+          class="mobile-nav-items"
         >
-          <template #title
-            ><el-icon><Document /></el-icon>&nbsp; <span>{{
-              navigations.filter(
-                (item) => item.enable && item.fixed && item.href === '/category'
-              )[0].title || '文库资料'
-            }}</span>
-          </template>
-          <ul>
-            <li
-              v-for="item in categoryDocumentTrees"
-              :key="'collapse-sub-cate-' + item.id"
+          <li
+            v-for="item in categoryDocumentTrees"
+            :key="'collapse-sub-cate-' + item.id"
+          >
+            <div
+              class="el-link el-link--default"
+              @click="goToLink(`/category/${item.id}`)"
             >
-              <div
-                class="el-link el-link--default"
-                @click="goToLink(`/category/${item.id}`)"
-              >
-                {{ item.title }}
-              </div>
-            </li>
-          </ul>
-        </el-collapse-item>
-        <el-collapse-item
-          v-if="
+              {{ item.title }}
+            </div>
+          </li>
+        </ul>
+        <div
+          class="mobile-nav-title"
+          @click="activeCollapse = activeCollapse === 'article' ? '' : 'article'"
+        >
+          <el-icon><Tickets /></el-icon>&nbsp;
+          <span>{{
             navigations.filter(
               (item) => item.enable && item.fixed && item.href === '/article'
-            ).length > 0
-          "
-          name="article"
+            )[0]?.title || '文章资讯'
+          }}</span>
+        </div>
+        <ul
+          v-show="activeCollapse === 'article' && navigations.filter((item) => item.enable && item.fixed && item.href === '/article').length > 0"
+          class="mobile-nav-items"
         >
-          <template #title
-            ><el-icon><Tickets /></el-icon> &nbsp;
-            <span>{{
-              navigations.filter(
-                (item) => item.enable && item.fixed && item.href === '/article'
-              )[0].title || '文章资讯'
-            }}</span>
-          </template>
-          <ul>
-            <li
-              v-for="item in categoryArticleTrees"
-              :key="'collapse-sub-cate-' + item.id"
+          <li
+            v-for="item in categoryArticleTrees"
+            :key="'collapse-sub-cate-' + item.id"
+          >
+            <div
+              class="el-link el-link--default"
+              @click="goToLink(`/article?category_id=${item.id}`)"
             >
-              <div
-                class="el-link el-link--default"
-                @click="goToLink(`/article?category_id=${item.id}`)"
-              >
-                {{ item.title }}
-              </div>
-            </li>
-          </ul>
-        </el-collapse-item>
-      </el-collapse>
+              {{ item.title }}
+            </div>
+          </li>
+        </ul>
+      </div>
       <el-menu :default-active="route.path" class="el-menu-mobile">
         <template
           v-for="item in navigations.filter(
@@ -975,6 +970,29 @@ init()
       .search-submit-btn {
         width: 100%;
       }
+    }
+  }
+}
+</style>
+<style lang="scss">
+.com-mobile-nav {
+  .mobile-nav-title {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #ebedf0;
+    color: #333;
+    font-size: 14px;
+  }
+  .mobile-nav-items {
+    list-style: none;
+    margin: 0;
+    padding: 0 16px 8px 40px;
+    border-bottom: 1px solid #ebedf0;
+    li {
+      padding: 8px 0;
     }
   }
 }

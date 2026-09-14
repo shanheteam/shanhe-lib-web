@@ -305,7 +305,7 @@ const categories = computed(() => categoryStore.categories || [])
 const user = computed(() => userStore.user || { id: 0 })
 const permissions = computed(() => userStore.permissions || [])
 
-const article = ref<any>({})
+const article = ref<any>({ user: {} })
 const favorite = ref<any>({ id: 0 })
 const breadcrumbs = ref<any[]>([])
 const relatedArticles = ref<any[]>([])
@@ -371,6 +371,7 @@ async function getArticle() {
   }
   const articleData: any = {
     favorite_count: 0,
+    user: {},
     ...res.data,
   }
 
@@ -464,7 +465,11 @@ function handleScroll() {
         relArtEl.style.zIndex = '999'
         relArtEl.style.width = `${cardWidth.value}px`
       } else {
-        relArtEl.style = null
+        // 重置固定定位样式（不要使用 style = null，会销毁 CSSStyleDeclaration 对象导致后续报错）
+        relArtEl.style.position = ''
+        relArtEl.style.top = ''
+        relArtEl.style.zIndex = ''
+        relArtEl.style.width = ''
       }
     }
   } catch (error) {
