@@ -175,7 +175,7 @@ const reset = () => {
   clearValidate()
 }
 const success = (res: any) => {
-  banner.value.path = res.data.path
+  banner.value.path = res?.data?.path || res?.path || ''
 }
 
 defineExpose({ onSubmit, clearValidate, resetFields, reset, success })

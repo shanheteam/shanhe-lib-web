@@ -249,10 +249,10 @@ const reset = () => {
   clearValidate()
 }
 const successUpload = (res: any) => {
-  category.value.cover = res.data.path
+  category.value.cover = res?.data?.path || res?.path || ''
 }
 const successUploadIcon = (res: any) => {
-  category.value.icon = res.data.path
+  category.value.icon = res?.data?.path || res?.path || ''
 }
 
 defineExpose({ onSubmit, clearValidate, resetFields, reset, successUpload, successUploadIcon })
