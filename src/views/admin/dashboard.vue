@@ -57,63 +57,6 @@
       </el-row>
     </el-card>
     <el-card shadow="never" class="mgt-20px">
-      <template #header>
-        <span>授权信息</span>
-      </template>
-      <el-descriptions class="margin-top" :column="2" border>
-        <el-descriptions-item>
-          <template #label>
-            <el-icon><Document /></el-icon>
-            最大文档数
-          </template>
-          不限
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label>
-            <el-icon><Tickets /></el-icon>
-            最大文章数
-          </template>
-          不限
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label>
-            <el-icon><User /></el-icon>
-            最大用户数
-          </template>
-          不限
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label>
-            <el-icon><Cpu /></el-icon>
-            授权协议
-          </template>
-          Apache License 2.0
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label>
-            <el-icon><Clock /></el-icon>
-            授权截止日期
-          </template>
-          <span>-</span>
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label>
-            <el-icon><Guide /></el-icon>
-            授权类型
-          </template>
-          <span class="opensource">
-            <span>魔豆文库 · 社区版</span>
-            （<a
-              href="https://www.bookstack.cn/read/moredoc/price.md"
-              target="_blank"
-              class="el-link el-link--primary"
-              >版本划分与定价策略 <el-icon><TopRight /></el-icon> </a
-            >）
-          </span>
-        </el-descriptions-item>
-      </el-descriptions>
-    </el-card>
-    <el-card shadow="never" class="mgt-20px">
       <template #header>数据统计</template>
       <el-descriptions class="margin-top" :column="3" border>
         <el-descriptions-item>
