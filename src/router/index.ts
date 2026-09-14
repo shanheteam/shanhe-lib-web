@@ -172,7 +172,7 @@ router.afterEach((to) => {
   const settingStore = useSettingStore()
   const sitename = settingStore.settings?.system?.sitename
   if (typeof document !== 'undefined') {
-    document.title = sitename ? sitename : '魔豆文库'
+    document.title = sitename ? sitename : '图书馆 - 山河大学'
   }
 })
 
