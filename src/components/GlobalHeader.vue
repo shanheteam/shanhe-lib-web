@@ -360,30 +360,31 @@
       </el-menu>
     </el-drawer>
 
-    <!-- OAuth 授权 iframe 弹窗 -->
+    <!-- OAuth 登录对话框 -->
     <el-dialog
-      v-model="oauthIframeVisible"
-      title="授权登录"
-      width="560px"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :show-close="true"
-      @close="closeOauthIframe"
+      v-model="loginDialogVisible"
+      title="登录"
+      width="580px"
+      :close-on-click-modal="true"
+      :close-on-press-escape="true"
     >
-      <div v-if="loginLoading" style="text-align: center; padding: 60px 0">
+      <div v-if="loginLoading" style="text-align: center; padding: 20px 0">
         <el-icon class="is-loading" :size="30"><Loading /></el-icon>
         <p style="margin-top: 10px; color: #666">加载中...</p>
       </div>
-      <div v-else-if="!oauthIframeUrl" style="text-align: center; padding: 60px 0; color: #999">
+      <div v-else-if="oauths.length === 0" style="text-align: center; padding: 20px 0; color: #999">
         暂无可用的登录方式
       </div>
-      <div v-else class="oauth-iframe-wrapper">
-        <iframe
-          ref="oauthIframe"
-          :src="oauthIframeUrl"
-          class="oauth-iframe"
-          frameborder="0"
-        ></iframe>
+      <div v-else class="oauth-login-list">
+        <el-button
+          v-for="oauth in oauths"
+          :key="oauth.type"
+          type="primary"
+          class="oauth-login-btn"
+          @click="handleOAuthLogin(oauth)"
+        >
+          {{ oauth.name }} 登录
+        </el-button>
       </div>
     </el-dialog>
 
@@ -491,12 +492,9 @@ const popover0 = ref<any>()
 const popover1 = ref<any>()
 
 // OAuth 登录弹窗
+const loginDialogVisible = ref(false)
 const loginLoading = ref(false)
-
-// OAuth iframe 弹窗
-const oauthIframeVisible = ref(false)
-const oauthIframeUrl = ref('')
-const oauthIframe = ref<HTMLIFrameElement | null>(null)
+const oauths = ref<any[]>([])
 
 const searchPlaceholder = computed(() =>
   search.value.type === 1 ? '搜索文章...' : '搜索文档...',
@@ -564,57 +562,14 @@ const showMenuDrawer = () => {
 }
 
 const showLoginDialog = async () => {
-  oauthIframeVisible.value = true
+  loginDialogVisible.value = true
   loginLoading.value = true
-  oauthIframeUrl.value = ''
   try {
     const res: any = await getOauths()
     console.log('[OAuth] 后端返回配置:', res)
     if (res.status === 200 && res.data.oauths) {
-      const enabledOauths = res.data.oauths.filter((o: any) => o.enable)
-      console.log('[OAuth] 启用的 OAuth:', enabledOauths)
-      if (enabledOauths.length === 0) {
-        loginLoading.value = false
-        ElMessage.warning('暂无可用的登录方式')
-        return
-      }
-      // 取第一个启用的 OAuth 配置，直接构建授权 URL
-      const oauth = enabledOauths[0]
-      const codeVerifier = generateRandomString(64)
-      const codeChallenge = await generateCodeChallenge(codeVerifier)
-      const state = generateRandomString(32)
-      savePkceParams(codeVerifier, state)
-
-      const params = new URLSearchParams({
-        response_type: 'code',
-        client_id: oauth.client_id,
-        redirect_uri: oauth.redirect_url,
-        scope: oauth.scope || 'openid profile email',
-        state: state,
-        code_challenge: codeChallenge,
-        code_challenge_method: 'S256',
-      })
-
-      // 获取授权地址：优先 authorize_url_base，其次 authorize_url，最后从 redirect_url 推断域名
-      let baseUrl = oauth.authorize_url_base || ''
-      if (!baseUrl && oauth.authorize_url) {
-        baseUrl = oauth.authorize_url.split('?')[0]
-      }
-      
-      // 如果还是没有，尝试从 redirect_url 推断（假设 OAuth 服务商和本站同源）
-      if (!baseUrl && oauth.redirect_url) {
-        const url = new URL(oauth.redirect_url)
-        baseUrl = `${url.origin}/oauth/authorize`
-      }
-
-      console.log('[OAuth] 最终授权 URL:', baseUrl)
-
-      if (baseUrl) {
-        oauthIframeUrl.value = `${baseUrl}?${params.toString()}`
-      } else {
-        ElMessage.error('授权地址未配置，请联系管理员')
-        oauthIframeVisible.value = false
-      }
+      oauths.value = res.data.oauths.filter((o: any) => o.enable)
+      console.log('[OAuth] 启用的 OAuth:', oauths.value)
     }
   } catch (e) {
     console.error('获取OAuth配置失败:', e)
@@ -624,15 +579,50 @@ const showLoginDialog = async () => {
   }
 }
 
-const closeOauthIframe = () => {
-  oauthIframeVisible.value = false
-  oauthIframeUrl.value = ''
+const handleOAuthLogin = async (oauth: any) => {
+  const codeVerifier = generateRandomString(64)
+  const codeChallenge = await generateCodeChallenge(codeVerifier)
+  const state = generateRandomString(32)
+  savePkceParams(codeVerifier, state)
+
+  const params = new URLSearchParams({
+    response_type: 'code',
+    client_id: oauth.client_id,
+    redirect_uri: oauth.redirect_url,
+    scope: oauth.scope || 'openid profile email',
+    state: state,
+    code_challenge: codeChallenge,
+    code_challenge_method: 'S256',
+  })
+
+  let baseUrl = oauth.authorize_url_base || ''
+  if (!baseUrl && oauth.authorize_url) {
+    baseUrl = oauth.authorize_url.split('?')[0]
+  }
+
+  if (!baseUrl) {
+    ElMessage.error('授权地址未配置，请联系管理员')
+    return
+  }
+
+  const authorizeUrl = `${baseUrl}?${params.toString()}`
+  console.log('[OAuth] 打开授权窗口:', authorizeUrl)
+  
+  // 使用 window.open 打开授权页面
+  const oauthWindow = window.open(authorizeUrl, 'oauth-login', 'width=600,height=700,scrollbars=yes')
+  
+  if (!oauthWindow) {
+    ElMessage.error('弹窗被浏览器拦截，请允许弹窗后重试')
+    return
+  }
+
+  // 关闭登录对话框
+  loginDialogVisible.value = false
 }
 
 // 监听弹窗登录成功消息
 const handleOAuthMessage = (event: MessageEvent) => {
   if (event.data?.type === 'oauth-login-success') {
-    closeOauthIframe()
     ElMessage.success('登录成功')
     // 刷新用户信息
     userStore.getUser()
@@ -1129,17 +1119,6 @@ init()
   }
 }
 
-.oauth-iframe-wrapper {
-  width: 100%;
-  height: 600px;
-  overflow: hidden;
-  border-radius: 4px;
-}
-.oauth-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
 .oauth-login-list {
   display: flex;
   flex-direction: column;
