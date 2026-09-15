@@ -448,7 +448,7 @@
             class="mgt-20px"
             @success="commentSuccess"
           />
-          <comment-list ref="commentList" :document-id="document.id" />
+          <CommentList ref="commentList" :document-id="document.id" />
         </el-card>
       </el-col>
       <el-col :span="24 - scaleSpan" class="hidden-xs-only document-author">
@@ -627,6 +627,7 @@ import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
 import { assetUrl } from '@/utils/asset'
 import FormDownload from '@/components/FormDownload.vue'
+import CommentList from '@/components/CommentList.vue'
 
 const route = useRoute()
 const router = useRouter()

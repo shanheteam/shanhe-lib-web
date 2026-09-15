@@ -235,15 +235,15 @@
         </el-card>
         <el-card shadow="never" class="mgt-20px">
           <FormComment
-            :document-id="article.id"
+            :document-id="Number(article.id)"
             :type="1"
             class="mgt-20px"
             @success="commentSuccess"
           />
-          <comment-list
+          <CommentList
             v-if="article.id > 0"
             ref="commentList"
-            :document-id="article.id"
+            :document-id="Number(article.id)"
             :type="1"
           />
         </el-card>
@@ -290,6 +290,7 @@ import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
 import { useUserStore } from '@/store/user'
 import { isMobile } from '@/utils/responsive'
+import CommentList from '@/components/CommentList.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -357,8 +358,14 @@ const accessForbiden = computed(() => {
 })
 
 function getEl(refVal: any): any {
-  const v = refVal && refVal.value != null ? refVal.value : refVal
-  return v && v.$el ? v.$el : v
+  if (!refVal) return null
+  // 模板 ref：取 .value（目标未渲染时为 null）
+  if (refVal.value !== undefined) {
+    if (refVal.value == null) return null
+    const v = refVal.value
+    return v.$el ? v.$el : v
+  }
+  return refVal.$el ? refVal.$el : refVal
 }
 
 async function getArticle() {

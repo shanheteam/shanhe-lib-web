@@ -44,6 +44,11 @@ const toPascal = (name: string) =>
     .split(/[-_]/)
     .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
     .join('')
+// 驼峰转短横线：CommentList -> comment-list
+const toKebab = (name: string) =>
+  name
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .toLowerCase()
 for (const path in componentModules) {
   const mod = componentModules[path] as any
   const comp = mod.default
@@ -53,9 +58,12 @@ for (const path in componentModules) {
   const dirPascal = parts.map(toPascal).join('')
   const kebab = parts.join('-')
   const barePascal = toPascal(parts[parts.length - 1])
+  const kebabName = toKebab(barePascal)
   app.component(dirPascal, comp)
   if (kebab !== dirPascal) app.component(kebab, comp)
   if (barePascal !== dirPascal) app.component(barePascal, comp)
+  if (kebabName !== dirPascal && kebabName !== kebab && kebabName !== barePascal)
+    app.component(kebabName, comp)
   if (comp.name && comp.name !== dirPascal) app.component(comp.name, comp)
 }
 

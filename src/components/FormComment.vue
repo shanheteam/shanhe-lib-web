@@ -12,9 +12,7 @@
           v-model="comment.content"
           type="textarea"
           :placeholder="placeholder"
-          :autosize="
-            isMobile ? { minRows: 3, maxRows: 6 } : { minRows: 4, maxRows: 6 }
-          "
+          :autosize="autosize"
         />
       </el-form-item>
       <el-form-item class="comment-btns">
@@ -59,9 +57,7 @@
               </el-form-item>
               <el-form-item
                 prop="captcha"
-                :rules="[
-                  { required: true, trigger: 'blur', message: '请输入验证码' },
-                ]"
+                :rules="captchaRules"
               >
                 <el-input
                   v-model="comment.captcha"
@@ -91,6 +87,7 @@ import { ElMessage } from 'element-plus'
 import { getUserCaptcha } from '@/api/user'
 import { createComment } from '@/api/comment'
 import { useSettingStore } from '@/store/setting'
+import { isMobile } from '@/utils/responsive'
 
 defineOptions({ name: 'FormComment' })
 const props = defineProps({
@@ -117,6 +114,10 @@ const settingStore = useSettingStore()
 const settings = computed(() => settingStore.settings)
 
 const form = ref<any>()
+// autosize 必须使用计算属性缓存，避免每次渲染创建新对象导致 el-input 递归更新
+const autosize = computed(() =>
+  isMobile.value ? { minRows: 3, maxRows: 6 } : { minRows: 4, maxRows: 6 }
+)
 const comment = ref<Record<string, any>>({
   document_id: props.documentId,
   parent_id: props.parentId,
@@ -133,6 +134,9 @@ const captcha = ref<Record<string, any>>({
 const rules = {
   content: [{ required: true, message: '请输入评论内容', trigger: 'blur' }],
 }
+const captchaRules = [
+  { required: true, trigger: 'blur', message: '请输入验证码' },
+]
 
 watch(
   () => props.documentId,
