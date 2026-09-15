@@ -124,14 +124,14 @@ async function fetchList() {
   })
   if (res.status === 200) {
     comments.value = (res.data.comment || []).map((item: any) => {
-      item.username = item.user.realname || item.user.username
+      item.realname = item.user?.realname || '匿名'
       item.document_title_html = genLinkHTML(
         item.document_title,
         item.type === 1
           ? `/article/${item.document_uuid}`
           : `/document/${item.document_uuid}`
       )
-      item.username_html = genLinkHTML(item.username, `/user/${item.user_id}`)
+      item.username_html = genLinkHTML(item.realname, `/user/${item.user_id}`)
       return item
     })
     total.value = res.data.total

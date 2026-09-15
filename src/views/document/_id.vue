@@ -366,7 +366,7 @@
               <router-link
                 :to="`/user/${document.user_id}`"
                 class="el-link el-link--primary"
-                >{{ document.user.realname || document.user.username || '匿名用户' }}</router-link
+                >{{ document.user.realname || '未命名用户' }}</router-link
               >
               于
               <span class="text-muted">
@@ -959,7 +959,7 @@ async function getDocument(withAllContent = false) {
       }
     : {
         label: '上传',
-        value: doc.user.realname || doc.user.username,
+        value: doc.user.realname || '未命名用户',
         icon: 'el-icon-user',
         name: 'username',
       }

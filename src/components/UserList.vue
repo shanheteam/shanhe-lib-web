@@ -15,7 +15,7 @@
           <router-link
             :to="'/user/' + user.id"
             class="el-link el-link--default"
-            >{{ user.realname || user.username }}</router-link
+            >{{ user.realname || '未命名用户' }}</router-link
           >
           <div class="doc-info">
             <span class="el-link el-link--primary">{{

@@ -69,7 +69,7 @@ const comments2tree = (list: any[]) => {
     let replyUser = ''
     if (comment.parent_id && parent) {
       try {
-        replyUser = `<a href="/user/${parent.user.id}" class="el-link el-link--primary" target="blank">@${parent.user.realname || parent.user.username}</a>`
+        replyUser = `<a href="/user/${parent.user.id}" class="el-link el-link--primary" target="blank">@${parent.user.realname || '匿名'}</a>`
       } catch (error) {}
     }
     while (parent && parent.parent_id) {

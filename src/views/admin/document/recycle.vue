@@ -154,7 +154,7 @@ async function fetchList() {
     docs.forEach((item: any) => {
       item.title_html = genLinkHTML(item.title, `/document/${item.uuid}`)
       item.username_html = genLinkHTML(
-        item.realname || item.user?.realname || item.username,
+        item.realname || item.user?.realname || '未命名用户',
         `/user/${item.user_id}`)
     })
 
@@ -349,7 +349,7 @@ function initTableListFields() {
       type: 'html',
     },
     { prop: 'username_html', label: '上传者', width: 120, type: 'html' },
-    { prop: 'deleted_username', label: '删除者', width: 120 },
+    { prop: 'deleted_realname', label: '删除者', width: 120 },
     { prop: 'deleted_at', label: '删除时间', width: 170, type: 'datetime' },
     {
       prop: 'status',

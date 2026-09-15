@@ -467,10 +467,7 @@ function changeRecommendBatch() {
 function getRecommendAuthor(item: any) {
   return (
     item.realname ||
-    item.nickname ||
-    item.username ||
-    (item.user &&
-      (item.user.realname || item.user.nickname || item.user.username)) ||
+    (item.user && item.user.realname) ||
     '未知作者'
   )
 }

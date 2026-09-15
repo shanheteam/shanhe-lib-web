@@ -24,7 +24,7 @@
               <el-option
                 v-for="user in users"
                 :key="'userid' + user.id"
-                :label="user.realname || user.username"
+                :label="user.realname || '未命名用户'"
                 :value="user.id"
               >
               </el-option>
@@ -98,7 +98,7 @@ async function searchUser(wd: string, userId: any[] = []) {
     size: 10,
     wd,
     id: userId || [],
-    field: ['id', 'username'],
+    field: ['id', 'realname'],
   })
   userLoading.value = false
   if (res.status === 200) {
@@ -114,7 +114,7 @@ async function fetchList() {
     list.forEach((item) => {
       if (item.user_id) {
         item.user_html = genLinkHTML(
-          item.realname || item.user?.realname || item.username,
+          item.realname || item.user?.realname || '未命名用户',
           `/user/${item.user_id}`)
       } else {
         item.user_html = '-'

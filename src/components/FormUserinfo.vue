@@ -12,7 +12,7 @@
         />
         <!-- 上传成功之后，重新获取用户资料 -->
         <div>
-          <h3>{{ user.realname || user.username }}</h3>
+          <h3>{{ user.realname || '未命名用户' }}</h3>
         </div>
       </el-col>
       <el-col :span="14">
@@ -44,9 +44,6 @@
     <el-tabs v-model="activeTab">
       <el-tab-pane label="个人资料" name="profile">
         <el-form label-width="80px">
-          <el-form-item label="用户名">
-            <el-input v-model="user.username" disabled></el-input>
-          </el-form-item>
           <el-form-item label="真实姓名">
             <el-input v-model="user.realname" disabled></el-input>
           </el-form-item>

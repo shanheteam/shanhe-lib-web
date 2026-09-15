@@ -2,17 +2,6 @@
   <div class="com-form-user">
     <el-form ref="userForm" label-position="top" label-width="80px" :model="user">
       <el-form-item
-        label="用户名"
-        prop="username"
-        :rules="[{ required: true, message: '请输入用户名', trigger: 'blur' }]"
-      >
-        <el-input
-          v-model="user.username"
-          placeholder="请输入用户名"
-          :disabled="user.id > 0 ? true : false"
-        ></el-input>
-      </el-form-item>
-      <el-form-item
         label="密码"
         prop="password"
         :rules="
@@ -88,7 +77,6 @@ const props = defineProps({
     default: () => ({
       id: 0,
       email: '',
-      username: '',
       password: '',
       group_id: [],
     }),
@@ -113,7 +101,6 @@ const setUser = () => {
       if (user.value.id > 0) {
         const res: any = await setUserApi({
           id: user.value.id,
-          username: user.value.username,
           password: user.value.password,
           group_id: user.value.group_id,
         })

@@ -21,7 +21,6 @@ interface UserState {
 
 const emptyUser = () => ({
   id: 0,
-  username: '',
   realname: '',
   email: '',
   mobile: '',

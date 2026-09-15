@@ -1,10 +1,10 @@
 <template>
   <div class="com-form-login">
     <el-form label-position="top" label-width="80px" :model="user">
-      <el-form-item label="用户名">
+      <el-form-item label="邮箱">
         <el-input
-          v-model="user.username"
-          placeholder="请输入您的登录用户名"
+          v-model="user.email"
+          placeholder="请输入您的邮箱"
         ></el-input>
       </el-form-item>
       <el-form-item label="密码">
@@ -74,7 +74,7 @@ const settingStore = useSettingStore()
 const settings = computed(() => settingStore.settings)
 
 const user = ref<Record<string, any>>({
-  username: '',
+  email: '',
   password: '',
   captcha: '',
   captcha_id: '',

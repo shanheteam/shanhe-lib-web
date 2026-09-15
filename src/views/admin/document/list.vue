@@ -367,7 +367,7 @@ async function fetchList() {
       item.disable_delete = item.status === 1
       item.title_html = genLinkHTML(item.title, `/document/${item.uuid}`)
       item.username_html = genLinkHTML(
-        item.realname || item.user?.realname || item.username,
+        item.realname || item.user?.realname || '未命名用户',
         `/user/${item.user_id}`)
     })
 

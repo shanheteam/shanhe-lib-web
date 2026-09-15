@@ -19,7 +19,7 @@
         <router-link
           class="el-link el-link--default"
           :to="{ name: 'user-id', params: { id: comment.user_id } }"
-          >{{ comment.user.realname || comment.user.username }}</router-link
+          >{{ comment.user.realname || '匿名' }}</router-link
         >
       </div>
       <div
@@ -54,7 +54,7 @@
         v-if="replyComment"
         :document-id="comment.document_id"
         :parent-id="comment.id"
-        :placeholder="`回复 ${comment.user.realname || comment.user.username}`"
+        :placeholder="`回复 ${comment.user.realname || '匿名'}`"
         :type="comment.type"
         @success="commentSuccess"
       />

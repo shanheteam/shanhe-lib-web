@@ -7,26 +7,39 @@
       :model="user"
     >
       <el-form-item
-        label="用户名"
-        prop="username"
+        label="电子邮箱"
+        prop="email"
         :rules="[
           {
             required: true,
-            message: '请输入您用于登录的用户名',
+            message: '请输入您的邮箱地址，以便忘记密码时找回',
             trigger: 'blur',
           },
           {
-            min: 3,
-            max: 32,
-            message: '用户名长度在 3 到 32 个字符',
+            type: 'email',
+            message: '请输入正确的邮箱地址',
             trigger: 'blur',
           },
         ]"
       >
         <el-input
-          v-model="user.username"
-          placeholder="请输入您用于登录的用户名，限 3 ~ 32 个字符"
-        ></el-input>
+          v-model="user.email"
+          placeholder="请输入您的邮箱地址，以便忘记密码时找回"
+        >
+          <template #append>
+            <el-button
+              v-if="settings.security.enable_verify_register_email"
+              :disabled="leftSeconds > 0"
+              icon="Message"
+              @click="sendEmailCode"
+            >
+              <template v-if="leftSeconds > 0"
+                >剩余 {{ leftSeconds }} 秒</template
+              >
+              <template v-else>获取邮箱验证码</template>
+            </el-button>
+          </template>
+        </el-input>
       </el-form-item>
       <el-form-item
         label="登录密码"
@@ -111,41 +124,6 @@
           </el-col>
         </el-row>
       </el-form-item>
-      <el-form-item
-        label="电子邮箱"
-        prop="email"
-        :rules="[
-          {
-            required: true,
-            message: '请输入您的邮箱地址，以便忘记密码时找回',
-            trigger: 'blur',
-          },
-          {
-            type: 'email',
-            message: '请输入正确的邮箱地址',
-            trigger: 'blur',
-          },
-        ]"
-      >
-        <el-input
-          v-model="user.email"
-          placeholder="请输入您的邮箱地址，以便忘记密码时找回"
-        >
-          <template #append>
-            <el-button
-              v-if="settings.security.enable_verify_register_email"
-              :disabled="leftSeconds > 0"
-              icon="Message"
-              @click="sendEmailCode"
-            >
-              <template v-if="leftSeconds > 0"
-                >剩余 {{ leftSeconds }} 秒</template
-              >
-              <template v-else>获取邮箱验证码</template>
-            </el-button>
-          </template>
-        </el-input>
-      </el-form-item>
       <!-- 邮箱验证码 -->
       <el-form-item
         v-if="settings.security.enable_verify_register_email"
@@ -211,7 +189,6 @@ const settings = computed(() => settingStore.settings)
 const formRegister = ref<any>()
 const user = ref<Record<string, any>>({
   email: '',
-  username: '',
   password: '',
   repeat_password: '',
   captcha: '',

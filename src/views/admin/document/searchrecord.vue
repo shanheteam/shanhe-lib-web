@@ -80,7 +80,7 @@ async function fetchList() {
       item.username_html = '-'
       if (item.user_id > 0) {
         item.username_html = genLinkHTML(
-          item.realname || item.user?.realname || item.username,
+          item.realname || item.user?.realname || '未命名用户',
           `/user/${item.user_id}`)
       }
 

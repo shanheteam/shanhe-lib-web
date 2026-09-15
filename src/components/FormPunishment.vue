@@ -29,12 +29,12 @@
           <el-option
             v-for="user in users"
             :key="'userid' + user.id"
-            :label="user.realname || user.username"
+            :label="user.realname || '未命名用户'"
             :value="user.id"
           >
           </el-option>
         </el-select>
-        <el-input v-else v-model="punishment.username" :disabled="true" />
+        <el-input v-else v-model="punishment.realname" :disabled="true" />
       </el-form-item>
       <el-form-item
         prop="type"
@@ -211,7 +211,7 @@ const searchUser = async (wd: string, userId: any[] = []) => {
     size: 10,
     wd,
     id: userId || [],
-    field: ['id', 'username'],
+    field: ['id', 'realname'],
   })
   if (res.status === 200) {
     users.value = res.data.user || []

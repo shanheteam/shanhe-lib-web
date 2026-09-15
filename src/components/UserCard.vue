@@ -6,7 +6,7 @@
       </router-link>
     </div>
     <div class="user-card-username">
-      <strong>{{ user.realname || user.username }}</strong>
+      <strong>{{ user.realname || '未命名用户' }}</strong>
     </div>
     <div class="user-card-stat">
       <el-row class="help-block">

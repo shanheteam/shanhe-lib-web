@@ -2,13 +2,6 @@
   <!-- 更新当前用户自身资料 -->
   <div class="com-form-profile">
     <el-form ref="profileForm" label-width="80px" :model="profile">
-      <el-form-item label="用户名">
-        <el-input
-          v-model="profile.username"
-          placeholder="请输入您的登录用户名"
-          :disabled="true"
-        ></el-input>
-      </el-form-item>
       <el-form-item label="真实姓名" prop="realname">
         <el-input v-model="profile.realname" clearable></el-input>
       </el-form-item>

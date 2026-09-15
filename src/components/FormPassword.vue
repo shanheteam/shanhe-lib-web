@@ -6,13 +6,6 @@
       label-width="80px"
       :model="profile"
     >
-      <el-form-item label="用户名">
-        <el-input
-          v-model="profile.username"
-          placeholder="请输入您的登录用户名"
-          :disabled="true"
-        ></el-input>
-      </el-form-item>
       <el-form-item
         label="原密码"
         prop="old_password"
@@ -66,7 +59,6 @@ const user = computed(() => userStore.user)
 const formPassword = ref<any>()
 
 const profile = ref<Record<string, any>>({
-  username: user.value.username,
   old_password: '',
   new_password: '',
   repeat_password: '',

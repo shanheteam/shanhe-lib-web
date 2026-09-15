@@ -269,7 +269,7 @@ async function fetchList() {
       item.title_html = genLinkHTML(item.title, `/article/${item.identifier}`)
 
       item.user_html = genLinkHTML(
-        item.user.realname || item.user.username,
+        item.user.realname || '未命名用户',
         `/user/${item.user_id}`)
       return item
     })

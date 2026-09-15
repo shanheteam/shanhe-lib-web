@@ -6,7 +6,7 @@
       </router-link>
     </div>
     <div class="user-card__body">
-      <h2 class="user-card__username">{{ user.realname || user.username || '未命名用户' }}</h2>
+      <h2 class="user-card__username">{{ user.realname || '未命名用户' }}</h2>
       <div v-if="!hideSignature" class="user-card__signature">
         {{ user.signature || '这个人很懒，暂时还没有留下个性签名。' }}
       </div>

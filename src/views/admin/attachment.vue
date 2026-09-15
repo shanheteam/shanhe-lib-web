@@ -247,7 +247,7 @@ function initTableListFields() {
       width: 80,
       type: 'bool',
     },
-    { prop: 'username', label: '上传者', width: 120 },
+    { prop: 'realname', label: '上传者', width: 120 },
     { prop: 'ip', label: 'IP', width: 120 },
     { prop: 'size', label: '大小', width: 90, type: 'bytes' },
     { prop: 'width', label: '宽', width: 90 },

@@ -159,7 +159,7 @@ async function fetchList() {
     const list: any[] = res.data.user || []
     list.map((item: any) => {
       item.username_html = genLinkHTML(
-        item.realname || item.user?.realname || item.username,
+        item.realname || item.user?.realname || '未命名用户',
         `/user/${item.id}`)
       const groupsList = (item.group_id || []).map((id: any) => {
         const group = groups.value.find((g) => g.id === id)

@@ -171,7 +171,7 @@ function initTableListFields() {
     { prop: 'status', label: '状态', width: 90, type: 'enum', enum: statusMap },
     { prop: 'payment_type', label: '支付方式', width: 110, type: 'enum', enum: paymentTypeMap },
     { prop: 'order_type', label: '订单类型', width: 110, type: 'enum', enum: orderTypeMap },
-    { prop: 'username', label: '用户', width: 120 },
+    { prop: 'realname', label: '用户', width: 120 },
     { prop: 'quantity', label: '数量', width: 80, type: 'number' },
     { prop: 'price', label: '价格', width: 90, type: 'number' },
     { prop: 'coupon_amount', label: '优惠', width: 80, type: 'number' },

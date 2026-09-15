@@ -5,8 +5,8 @@
         <el-table :data="users" style="width: 100%">
           <el-table-column prop="id" label="ID" width="80"></el-table-column>
           <el-table-column
-            prop="username"
-            label="用户名"
+            prop="realname"
+            label="真实姓名"
             width="150"
           ></el-table-column>
           <el-table-column prop="doc_count" label="文档" :width="80">

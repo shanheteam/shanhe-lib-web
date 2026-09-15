@@ -159,7 +159,7 @@
                   class="el-link el-link--default"
                   :to="'/user/' + article.user_id"
                 >
-                  <strong>{{ article.user.realname || article.user.username }}</strong>
+                  <strong>{{ article.user.realname || '未命名用户' }}</strong>
                 </router-link>
                 <div>
                   <small class="help-block">
