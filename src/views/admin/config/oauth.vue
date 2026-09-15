@@ -223,77 +223,90 @@ async function onTest() {
   // 3. 测试授权地址可达性
   addLog('info', '步骤 3：测试授权地址可达性...')
   try {
-    const res = await service({
-      url: authorizeUrl,
-      method: 'get',
-      params: {
-        client_id: clientId,
-        redirect_uri: redirectUrl,
-        response_type: 'code',
-        scope: scope || 'user',
+    const res: any = await service({
+      url: '/api/v1/config/oauth-test',
+      method: 'post',
+      data: {
+        url: authorizeUrl,
+        method: 'get',
+        params: {
+          client_id: clientId,
+          redirect_uri: redirectUrl,
+          response_type: 'code',
+          scope: scope || 'user',
+        },
       },
-      timeout: 10000,
     })
-    if (res.status === 200) {
-      addLog('success', `授权地址可达，HTTP ${res.status}`)
+    const httpStatus = res.data?.status || res.status
+    if (httpStatus === 200) {
+      addLog('success', `授权地址可达，HTTP ${httpStatus}`)
+    } else if (httpStatus > 0) {
+      addLog('warn', `授权地址返回 HTTP ${httpStatus}`)
     } else {
-      addLog('warn', `授权地址返回 HTTP ${res.status}`)
+      addLog('error', `授权地址请求失败：${res.data?.message || '未知错误'}`)
     }
   } catch (err: any) {
-    const msg = err?.message || err?.response?.statusText || '未知错误'
+    const msg = err?.message || err?.response?.data?.message || '未知错误'
     addLog('error', `授权地址请求失败：${msg}`)
   }
 
   // 4. 测试 Token 地址可达性
   addLog('info', '步骤 4：测试 Token 地址可达性...')
   try {
-    const res = await service({
-      url: tokenUrl,
+    const res: any = await service({
+      url: '/api/v1/config/oauth-test',
       method: 'post',
       data: {
-        client_id: clientId,
-        client_secret: clientSecret,
-        grant_type: 'authorization_code',
-        code: 'test_code',
-        redirect_uri: redirectUrl,
+        url: tokenUrl,
+        method: 'post',
+        data: {
+          client_id: clientId,
+          client_secret: clientSecret,
+          grant_type: 'authorization_code',
+          code: 'test_code',
+          redirect_uri: redirectUrl,
+        },
       },
-      timeout: 10000,
     })
-    if (res.status === 200) {
-      addLog('success', `Token 地址可达，HTTP ${res.status}`)
+    const httpStatus = res.data?.status || res.status
+    if (httpStatus === 200) {
+      addLog('success', `Token 地址可达，HTTP ${httpStatus}`)
+    } else if (httpStatus >= 400 && httpStatus < 500) {
+      addLog('success', `Token 地址可达，返回 HTTP ${httpStatus}（预期行为，code 无效）`)
+    } else if (httpStatus > 0) {
+      addLog('warn', `Token 地址返回 HTTP ${httpStatus}`)
     } else {
-      addLog('warn', `Token 地址返回 HTTP ${res.status}（预期行为，code 无效）`)
+      addLog('error', `Token 地址请求失败：${res.data?.message || '未知错误'}`)
     }
   } catch (err: any) {
-    const msg = err?.message || err?.response?.statusText || '未知错误'
-    // 4xx 是预期行为（因为 code 是假的）
-    if (err?.response?.status >= 400 && err?.response?.status < 500) {
-      addLog('success', `Token 地址可达，返回 HTTP ${err.response.status}（预期行为）`)
-    } else {
-      addLog('error', `Token 地址请求失败：${msg}`)
-    }
+    const msg = err?.message || err?.response?.data?.message || '未知错误'
+    addLog('error', `Token 地址请求失败：${msg}`)
   }
 
   // 5. 测试用户信息地址可达性
   addLog('info', '步骤 5：测试用户信息地址可达性...')
   try {
-    const res = await service({
-      url: userinfoUrl,
-      method: 'get',
-      timeout: 10000,
+    const res: any = await service({
+      url: '/api/v1/config/oauth-test',
+      method: 'post',
+      data: {
+        url: userinfoUrl,
+        method: 'get',
+      },
     })
-    if (res.status === 200) {
-      addLog('success', `用户信息地址可达，HTTP ${res.status}`)
+    const httpStatus = res.data?.status || res.status
+    if (httpStatus === 200) {
+      addLog('success', `用户信息地址可达，HTTP ${httpStatus}`)
+    } else if (httpStatus >= 400 && httpStatus < 500) {
+      addLog('success', `用户信息地址可达，返回 HTTP ${httpStatus}（预期行为，未携带 token）`)
+    } else if (httpStatus > 0) {
+      addLog('warn', `用户信息地址返回 HTTP ${httpStatus}`)
     } else {
-      addLog('warn', `用户信息地址返回 HTTP ${res.status}（预期行为，未携带 token）`)
+      addLog('error', `用户信息地址请求失败：${res.data?.message || '未知错误'}`)
     }
   } catch (err: any) {
-    const msg = err?.message || err?.response?.statusText || '未知错误'
-    if (err?.response?.status >= 400 && err?.response?.status < 500) {
-      addLog('success', `用户信息地址可达，返回 HTTP ${err.response.status}（预期行为）`)
-    } else {
-      addLog('error', `用户信息地址请求失败：${msg}`)
-    }
+    const msg = err?.message || err?.response?.data?.message || '未知错误'
+    addLog('error', `用户信息地址请求失败：${msg}`)
   }
 
   addLog('info', '测试完成！')
