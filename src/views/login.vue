@@ -97,22 +97,8 @@ onMounted(async () => {
 })
 
 const handleOAuthLogin = (oauth: any) => {
-  // 构建授权URL
-  const authorizeUrl = oauth.authorize_url
-  if (authorizeUrl) {
-    window.location.href = authorizeUrl
-  } else {
-    // 如果没有预构建的URL，手动构建
-    const params = new URLSearchParams({
-      client_id: oauth.client_id,
-      redirect_uri: oauth.redirect_url,
-      response_type: 'code',
-      scope: oauth.scope || 'user',
-    })
-    const baseUrl = oauth.authorize_url || oauth.dev_url
-    if (baseUrl) {
-      window.location.href = `${baseUrl}?${params.toString()}`
-    }
+  if (oauth.authorize_url) {
+    window.location.href = oauth.authorize_url
   }
 }
 </script>
