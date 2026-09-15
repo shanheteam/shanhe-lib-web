@@ -569,10 +569,13 @@ const showLoginDialog = async () => {
   oauthIframeUrl.value = ''
   try {
     const res: any = await getOauths()
+    console.log('[OAuth] 后端返回配置:', res)
     if (res.status === 200 && res.data.oauths) {
       const enabledOauths = res.data.oauths.filter((o: any) => o.enable)
+      console.log('[OAuth] 启用的 OAuth:', enabledOauths)
       if (enabledOauths.length === 0) {
         loginLoading.value = false
+        ElMessage.warning('暂无可用的登录方式')
         return
       }
       // 取第一个启用的 OAuth 配置，直接构建授权 URL
@@ -592,17 +595,30 @@ const showLoginDialog = async () => {
         code_challenge_method: 'S256',
       })
 
+      // 获取授权地址：优先 authorize_url_base，其次 authorize_url，最后从 redirect_url 推断域名
       let baseUrl = oauth.authorize_url_base || ''
       if (!baseUrl && oauth.authorize_url) {
         baseUrl = oauth.authorize_url.split('?')[0]
       }
+      
+      // 如果还是没有，尝试从 redirect_url 推断（假设 OAuth 服务商和本站同源）
+      if (!baseUrl && oauth.redirect_url) {
+        const url = new URL(oauth.redirect_url)
+        baseUrl = `${url.origin}/oauth/authorize`
+      }
+
+      console.log('[OAuth] 最终授权 URL:', baseUrl)
 
       if (baseUrl) {
         oauthIframeUrl.value = `${baseUrl}?${params.toString()}`
+      } else {
+        ElMessage.error('授权地址未配置，请联系管理员')
+        oauthIframeVisible.value = false
       }
     }
   } catch (e) {
     console.error('获取OAuth配置失败:', e)
+    ElMessage.error('获取登录配置失败')
   } finally {
     loginLoading.value = false
   }
