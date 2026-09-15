@@ -604,8 +604,18 @@ const handleOAuthLogin = async (oauth: any) => {
   }
 
   const authorizeUrl = `${baseUrl}?${params.toString()}`
-  console.log('[OAuth] 跳转授权:', authorizeUrl)
-  window.location.href = authorizeUrl
+  console.log('[OAuth] 弹窗授权:', authorizeUrl)
+  window.open(authorizeUrl, 'shanhe-oauth', 'width=560,height=640,popup=yes')
+}
+
+// 监听弹窗登录成功消息
+const handleOAuthMessage = (event: MessageEvent) => {
+  if (event.data?.type === 'oauth-login-success') {
+    loginDialogVisible.value = false
+    ElMessage.success('登录成功')
+    // 刷新用户信息
+    userStore.getUser()
+  }
 }
 
 const resetActivePath = () => {
@@ -773,12 +783,14 @@ const init = async () => {
 onMounted(() => {
   window.addEventListener('focus', handleWindowFocus)
   window.addEventListener('scroll', handleScroll, { passive: true })
+  window.addEventListener('message', handleOAuthMessage)
   handleScroll()
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('focus', handleWindowFocus)
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('message', handleOAuthMessage)
 })
 
 init()

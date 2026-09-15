@@ -91,8 +91,18 @@ onMounted(async () => {
       } else {
         // 登录成功
         loading.value = false
-        const redirect = (route.query.redirect as string) || '/me'
-        router.push(redirect)
+        
+        // 检查是否在弹窗中
+        if (window.opener) {
+          // 通知主窗口登录成功
+          window.opener.postMessage({ type: 'oauth-login-success' }, window.location.origin)
+          // 关闭弹窗
+          window.close()
+        } else {
+          // 非弹窗模式，直接跳转
+          const redirect = (route.query.redirect as string) || '/me'
+          router.push(redirect)
+        }
       }
     } else {
       error.value = res.data?.message || '登录失败'
