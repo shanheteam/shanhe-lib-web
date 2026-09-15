@@ -176,12 +176,12 @@
               </template>
             </el-dropdown>
           </template>
-          <router-link v-else to="/login" class="header-login-btn">
-            <el-button type="primary" round>
+          <div v-else class="header-login-btn">
+            <el-button type="primary" round @click="showLoginDialog">
               <el-icon style="color: #fff; font-size: 1.2em"><User /></el-icon>
               登录
             </el-button>
-          </router-link>
+          </div>
         </div>
       </div>
     </el-header>
@@ -360,6 +360,33 @@
       </el-menu>
     </el-drawer>
 
+    <!-- OAuth 登录对话框 -->
+    <el-dialog
+      v-model="loginDialogVisible"
+      title="登录"
+      width="400px"
+      :close-on-click-modal="true"
+    >
+      <div v-if="loginLoading" style="text-align: center; padding: 20px 0">
+        <el-icon class="is-loading" :size="30"><Loading /></el-icon>
+        <p style="margin-top: 10px; color: #666">加载中...</p>
+      </div>
+      <div v-else-if="oauths.length === 0" style="text-align: center; padding: 20px 0; color: #999">
+        暂无可用的登录方式
+      </div>
+      <div v-else class="oauth-login-list">
+        <el-button
+          v-for="oauth in oauths"
+          :key="oauth.type"
+          type="primary"
+          class="oauth-login-btn"
+          @click="handleOAuthLogin(oauth)"
+        >
+          {{ oauth.name }} 登录
+        </el-button>
+      </div>
+    </el-dialog>
+
     <div
       class="search-modal-overlay"
       :class="{ show: searchModalVisible }"
@@ -416,6 +443,7 @@ import {
   Tickets,
   Search,
   Close,
+  Loading,
 } from '@element-plus/icons-vue'
 import { getSignedToday as getSignedTodayApi, signToday as signTodayApi } from '@/api/user'
 import { getAdvertisementByPosition } from '@/api/advertisement'
@@ -424,6 +452,8 @@ import { categoryToTrees, requireLogin } from '@/utils/utils'
 import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
+import { getOauths } from '@/api/oauth'
+import { generateRandomString, generateCodeChallenge, savePkceParams } from '@/utils/pkce'
 
 defineOptions({ name: 'GlobalHeader' })
 
@@ -459,6 +489,11 @@ const advertisements = ref<any[]>([])
 const searchModalInput = ref<any>()
 const popover0 = ref<any>()
 const popover1 = ref<any>()
+
+// OAuth 登录弹窗
+const loginDialogVisible = ref(false)
+const loginLoading = ref(false)
+const oauths = ref<any[]>([])
 
 const searchPlaceholder = computed(() =>
   search.value.type === 1 ? '搜索文章...' : '搜索文档...',
@@ -523,6 +558,54 @@ const closeSearchModal = () => {
 const showMenuDrawer = () => {
   getSignedToday()
   menuDrawerVisible.value = true
+}
+
+const showLoginDialog = async () => {
+  loginDialogVisible.value = true
+  loginLoading.value = true
+  try {
+    const res: any = await getOauths()
+    if (res.status === 200 && res.data.oauths) {
+      oauths.value = res.data.oauths.filter((o: any) => o.enable)
+    }
+  } catch (e) {
+    console.error('获取OAuth配置失败:', e)
+  } finally {
+    loginLoading.value = false
+  }
+}
+
+const handleOAuthLogin = async (oauth: any) => {
+  const codeVerifier = generateRandomString(64)
+  const codeChallenge = await generateCodeChallenge(codeVerifier)
+  const state = generateRandomString(32)
+
+  savePkceParams(codeVerifier, state)
+
+  const params = new URLSearchParams({
+    response_type: 'code',
+    client_id: oauth.client_id,
+    redirect_uri: oauth.redirect_url,
+    scope: oauth.scope || 'openid profile email',
+    state: state,
+    code_challenge: codeChallenge,
+    code_challenge_method: 'S256',
+  })
+
+  // 兼容新旧后端：优先用 authorize_url_base，其次用 authorize_url 去掉 query 参数
+  let baseUrl = oauth.authorize_url_base || ''
+  if (!baseUrl && oauth.authorize_url) {
+    baseUrl = oauth.authorize_url.split('?')[0]
+  }
+
+  if (!baseUrl) {
+    ElMessage.error('授权地址未配置，请联系管理员')
+    return
+  }
+
+  const authorizeUrl = `${baseUrl}?${params.toString()}`
+  console.log('[OAuth] 跳转授权:', authorizeUrl)
+  window.location.href = authorizeUrl
 }
 
 const resetActivePath = () => {

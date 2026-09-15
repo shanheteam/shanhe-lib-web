@@ -70,6 +70,7 @@ import { Loading } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { assetUrl } from '@/utils/asset'
+import { generateRandomString, generateCodeChallenge, savePkceParams } from '@/utils/pkce'
 
 const router = useRouter()
 const route = useRoute()
@@ -96,10 +97,28 @@ onMounted(async () => {
   }
 })
 
-const handleOAuthLogin = (oauth: any) => {
-  if (oauth.authorize_url) {
-    window.location.href = oauth.authorize_url
-  }
+const handleOAuthLogin = async (oauth: any) => {
+  // 生成 PKCE 参数
+  const codeVerifier = generateRandomString(64)
+  const codeChallenge = await generateCodeChallenge(codeVerifier)
+  const state = generateRandomString(32)
+
+  // 保存到 sessionStorage，回调时使用
+  savePkceParams(codeVerifier, state)
+
+  // 构建授权 URL
+  const params = new URLSearchParams({
+    response_type: 'code',
+    client_id: oauth.client_id,
+    redirect_uri: oauth.redirect_url,
+    scope: oauth.scope || 'openid profile email',
+    state: state,
+    code_challenge: codeChallenge,
+    code_challenge_method: 'S256',
+  })
+
+  const authorizeUrl = `${oauth.authorize_url_base}?${params.toString()}`
+  window.location.href = authorizeUrl
 }
 </script>
 

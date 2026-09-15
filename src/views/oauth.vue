@@ -23,6 +23,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Loading, CircleClose, SuccessFilled } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/user'
+import { getPkceParams, clearPkceParams } from '@/utils/pkce'
 
 const router = useRouter()
 const route = useRoute()
@@ -38,9 +39,24 @@ const goHome = () => {
 onMounted(async () => {
   const code = route.query.code as string
   const type = route.query.type as string
+  const state = route.query.state as string
 
   if (!code) {
     error.value = '缺少授权码'
+    loading.value = false
+    return
+  }
+
+  // 验证 state 防 CSRF
+  const pkceParams = getPkceParams()
+  if (!pkceParams) {
+    error.value = 'PKCE 参数丢失，请重新登录'
+    loading.value = false
+    return
+  }
+  if (pkceParams.state !== state) {
+    error.value = 'State 验证失败，请重新登录'
+    clearPkceParams()
     loading.value = false
     return
   }
@@ -61,7 +77,12 @@ onMounted(async () => {
   }
 
   try {
-    const res: any = await userStore.loginOauth({ code, oauth_type: oauthType })
+    const res: any = await userStore.loginOauth({
+      code,
+      oauth_type: oauthType,
+      code_verifier: pkceParams.codeVerifier,
+    })
+    clearPkceParams()
     if (res.status === 200) {
       if (res.data.oauth) {
         // 需要绑定账号
