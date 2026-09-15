@@ -377,30 +377,47 @@
         <p style="color: #999">暂无可用的登录方式</p>
       </div>
       <div v-else class="oauth-login-body">
-        <!-- 左侧：第三方登录 -->
+        <!-- 左侧：账号密码登录 -->
         <div class="oauth-login-left">
           <h2 class="oauth-login-title">登录后内容更精彩</h2>
           <p class="oauth-login-subtitle">请使用以下方式登录</p>
-          <div class="oauth-login-buttons">
-            <button
-              v-for="oauth in oauths"
-              :key="oauth.type"
-              class="oauth-btn"
-              :class="'oauth-btn-' + oauth.type"
-              @click="handleOAuthLogin(oauth)"
+          <el-form
+            ref="pwdFormRef"
+            :model="pwdForm"
+            :rules="pwdRules"
+            label-position="top"
+            class="oauth-login-form"
+          >
+            <el-form-item prop="email">
+              <el-input
+                v-model="pwdForm.email"
+                placeholder="请输入邮箱"
+                size="large"
+                :prefix-icon="Message"
+                @keydown.enter="onPasswordLogin"
+              />
+            </el-form-item>
+            <el-form-item prop="password">
+              <el-input
+                v-model="pwdForm.password"
+                type="password"
+                placeholder="请输入密码"
+                size="large"
+                show-password
+                :prefix-icon="Lock"
+                @keydown.enter="onPasswordLogin"
+              />
+            </el-form-item>
+            <el-button
+              type="primary"
+              size="large"
+              class="pwd-submit-btn"
+              :loading="pwdLoading"
+              @click="onPasswordLogin"
             >
-              <span class="oauth-btn-icon">
-                <i v-if="oauth.type === 6" class="fa fa-user-circle-o"></i>
-                <i v-else-if="oauth.type === 1" class="fa fa-qq"></i>
-                <i v-else-if="oauth.type === 2" class="fa fa-wechat"></i>
-                <i v-else-if="oauth.type === 4" class="fa fa-github"></i>
-                <i v-else-if="oauth.type === 3" class="fa fa-gitlab"></i>
-                <i v-else-if="oauth.type === 7" class="fa fa-google"></i>
-                <i v-else class="fa fa-sign-in"></i>
-              </span>
-              <span class="oauth-btn-text">{{ oauth.name }}登录</span>
-            </button>
-          </div>
+              登 录
+            </el-button>
+          </el-form>
           <div class="oauth-login-agreement">
             <el-checkbox v-model="agreeTerms" size="small" />
             <span class="agreement-text">
@@ -483,6 +500,8 @@ import {
   Search,
   Close,
   Loading,
+  Message,
+  Lock,
 } from '@element-plus/icons-vue'
 import { getSignedToday as getSignedTodayApi, signToday as signTodayApi } from '@/api/user'
 import { getAdvertisementByPosition } from '@/api/advertisement'
@@ -492,7 +511,6 @@ import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
 import { getOauths } from '@/api/oauth'
-import { generateRandomString, generateCodeChallenge, savePkceParams } from '@/utils/pkce'
 
 defineOptions({ name: 'GlobalHeader' })
 
@@ -534,6 +552,18 @@ const loginDialogVisible = ref(false)
 const loginLoading = ref(false)
 const oauths = ref<any[]>([])
 const agreeTerms = ref(true)
+
+// 账号密码登录
+const pwdFormRef = ref()
+const pwdLoading = ref(false)
+const pwdForm = ref({
+  email: '',
+  password: '',
+})
+const pwdRules = {
+  email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+}
 
 const searchPlaceholder = computed(() =>
   search.value.type === 1 ? '搜索文章...' : '搜索文档...',
@@ -603,6 +633,8 @@ const showMenuDrawer = () => {
 const showLoginDialog = async () => {
   loginDialogVisible.value = true
   loginLoading.value = true
+  pwdForm.value = { email: '', password: '' }
+  pwdFormRef.value?.clearValidate()
   try {
     const res: any = await getOauths()
     console.log('[OAuth] 后端返回配置:', res)
@@ -618,48 +650,29 @@ const showLoginDialog = async () => {
   }
 }
 
-const handleOAuthLogin = async (oauth: any) => {
-  const codeVerifier = generateRandomString(64)
-  const codeChallenge = await generateCodeChallenge(codeVerifier)
-  const state = generateRandomString(32)
-  savePkceParams(codeVerifier, state)
-
-  const params = new URLSearchParams({
-    response_type: 'code',
-    client_id: oauth.client_id,
-    redirect_uri: oauth.redirect_url,
-    scope: oauth.scope || 'openid profile email',
-    state: state,
-    code_challenge: codeChallenge,
-    code_challenge_method: 'S256',
-  })
-
-  let baseUrl = oauth.authorize_url_base || ''
-  if (!baseUrl && oauth.authorize_url) {
-    baseUrl = oauth.authorize_url.split('?')[0]
-  }
-
-  if (!baseUrl) {
-    ElMessage.error('授权地址未配置，请联系管理员')
+const onPasswordLogin = async () => {
+  if (pwdLoading.value) return
+  try {
+    await pwdFormRef.value?.validate()
+  } catch (e) {
     return
   }
-
-  const authorizeUrl = `${baseUrl}?${params.toString()}`
-  console.log('[OAuth] 打开授权窗口:', authorizeUrl)
-  
-  // 使用 window.open 打开授权页面
-  const oauthWindow = window.open(authorizeUrl, 'oauth-login', 'width=600,height=700,scrollbars=yes')
-  
-  if (!oauthWindow) {
-    ElMessage.error('弹窗被浏览器拦截，请允许弹窗后重试')
-    return
+  pwdLoading.value = true
+  try {
+    const res: any = await userStore.loginByPassword({
+      email: pwdForm.value.email.trim(),
+      password: pwdForm.value.password,
+    })
+    if (res.status === 200 && res.data.token) {
+      loginDialogVisible.value = false
+      ElMessage.success('登录成功')
+      userStore.checkAndRefreshUser()
+    }
+  } finally {
+    pwdLoading.value = false
   }
-
-  // 关闭登录对话框
-  loginDialogVisible.value = false
 }
 
-// 监听弹窗登录成功消息
 const handleOAuthMessage = (event: MessageEvent) => {
   if (event.data?.type === 'oauth-login-success') {
     ElMessage.success('登录成功')
@@ -1260,6 +1273,20 @@ init()
 
 .oauth-btn-text {
   font-size: 16px;
+}
+
+.oauth-login-form {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.pwd-submit-btn {
+  width: 100%;
+  height: 48px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 8px;
 }
 
 .oauth-login-agreement {
