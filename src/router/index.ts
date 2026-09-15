@@ -3,26 +3,100 @@ import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { requireLogin } from '@/utils/utils'
 
+// 全局 SEURL meta 工具：设置页面标题与 description（供路由守卫及各详情页复用）
+export function setPageMeta(title: string, description?: string, keywords?: string) {
+  if (typeof document === 'undefined') return
+  document.title = title
+  const setMeta = (name: string, content: string) => {
+    let el = document.querySelector<HTMLMetaElement>(`meta[name="${name}"]`)
+    if (!el) {
+      el = document.createElement('meta')
+      el.name = name
+      document.head.appendChild(el)
+    }
+    el.setAttribute('content', content)
+  }
+  if (description) setMeta('description', description)
+  if (keywords) setMeta('keywords', keywords)
+  // 同步 Open Graph / Twitter 标题与描述
+  const setProp = (property: string, content: string) => {
+    let el = document.querySelector<HTMLMetaElement>(`meta[property="${property}"]`)
+    if (!el) {
+      el = document.createElement('meta')
+      el.setAttribute('property', property)
+      document.head.appendChild(el)
+    }
+    el.setAttribute('content', content)
+  }
+  setProp('og:title', title)
+  setProp('twitter:title', title)
+  if (description) {
+    setProp('og:description', description)
+    const tw = document.querySelector<HTMLMetaElement>('meta[name="twitter:description"]')
+    if (tw) tw.setAttribute('content', description)
+  }
+}
+
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'index',
     component: () => import('@/views/index.vue'),
+    meta: { title: '首页' },
   },
-  { path: '/login', name: 'login', component: () => import('@/views/login.vue') },
-  { path: '/register', name: 'register', component: () => import('@/views/register.vue') },
-  { path: '/findpassword', name: 'findpassword', component: () => import('@/views/findpassword.vue') },
-  { path: '/upload', name: 'upload', component: () => import('@/views/upload.vue') },
-  { path: '/post', name: 'post', component: () => import('@/views/post.vue') },
-  { path: '/search', name: 'search', component: () => import('@/views/search.vue') },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/login.vue'),
+    meta: { title: '登录', noindex: true },
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: () => import('@/views/register.vue'),
+    meta: { title: '注册', noindex: true },
+  },
+  {
+    path: '/findpassword',
+    name: 'findpassword',
+    component: () => import('@/views/findpassword.vue'),
+    meta: { title: '找回密码', noindex: true },
+  },
+  {
+    path: '/upload',
+    name: 'upload',
+    component: () => import('@/views/upload.vue'),
+    meta: { title: '上传文档' },
+  },
+  {
+    path: '/post',
+    name: 'post',
+    component: () => import('@/views/post.vue'),
+    meta: { title: '发布文章' },
+  },
+  {
+    path: '/search',
+    name: 'search',
+    component: () => import('@/views/search.vue'),
+    meta: { title: '搜索', noindex: true },
+  },
   { path: '/category', redirect: '/category/0' },
-  { path: '/category/:id', name: 'category-id', component: () => import('@/views/category/_id.vue') },
-  { path: '/document/:id', name: 'document-id', component: () => import('@/views/document/_id.vue') },
+  {
+    path: '/category/:id',
+    name: 'category-id',
+    component: () => import('@/views/category/_id.vue'),
+    meta: { title: '分类' },
+  },
+  {
+    path: '/document/:id',
+    name: 'document-id',
+    component: () => import('@/views/document/_id.vue'),
+  },
   {
     path: '/article',
     name: 'article',
     component: () => import('@/views/article/index.vue'),
-    meta: { layout: 'article' },
+    meta: { layout: 'article', title: '文库资料' },
   },
   {
     path: '/article/:id',
@@ -33,6 +107,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/me',
     component: () => import('@/views/me.vue'),
+    meta: { title: '个人中心', noindex: true },
     children: [
       { path: '', name: 'me', component: () => import('@/views/me/index.vue') },
       { path: 'article', name: 'me-article', component: () => import('@/views/me/article.vue') },
@@ -46,6 +121,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/user/:id',
     component: () => import('@/views/user/_id.vue'),
+    meta: { title: '用户主页', noindex: true },
     children: [
       { path: '', name: 'user-id', component: () => import('@/views/user/_id/index.vue') },
       { path: 'article', name: 'user-id-article', component: () => import('@/views/user/_id/article.vue') },
@@ -56,7 +132,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/admin',
     component: () => import('@/views/admin/index.vue'),
-    meta: { layout: 'admin' },
+    meta: { layout: 'admin', title: '管理后台', noindex: true },
     children: [
       { path: '', redirect: '/admin/dashboard' },
       { path: 'dashboard', name: 'admin-dashboard', component: () => import('@/views/admin/dashboard.vue') },
@@ -167,13 +243,31 @@ router.beforeEach(async (to, from) => {
   return true
 })
 
-// 设置页面标题
+// 设置页面标题与 description
 router.afterEach((to) => {
   const settingStore = useSettingStore()
-  const sitename = settingStore.settings?.system?.sitename
-  if (typeof document !== 'undefined') {
-    document.title = sitename ? sitename : '图书馆 - 山河大学'
+  const sitename = settingStore.settings?.system?.sitename || '图书馆 - 山河大学'
+
+  // 取最深层路由的 meta（父路由设置，子页未设置时继承父级）
+  const matched = to.matched.filter((r) => r.meta && r.meta.title)
+  const meta = matched.length ? matched[matched.length - 1].meta : {}
+
+  // noindex：个人中心/后台/搜索等不索引页面加 <meta name="robots" content="noindex">
+  const robotsEl = document.querySelector<HTMLMetaElement>('meta[name="robots"]')
+  if (meta.noindex) {
+    if (robotsEl) robotsEl.setAttribute('content', 'noindex, nofollow')
+    else {
+      const el = document.createElement('meta')
+      el.name = 'robots'
+      el.content = 'noindex, nofollow'
+      document.head.appendChild(el)
+    }
+  } else {
+    if (robotsEl) robotsEl.remove()
   }
+
+  const title = meta.title ? `${meta.title} - ${sitename}` : sitename
+  setPageMeta(title, meta.description || sitename)
 })
 
 export default router

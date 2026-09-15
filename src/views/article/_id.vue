@@ -290,6 +290,7 @@ import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
 import { useUserStore } from '@/store/user'
 import { isMobile } from '@/utils/responsive'
+import { setPageMeta } from '@/router'
 import CommentList from '@/components/CommentList.vue'
 
 const route = useRoute()
@@ -393,6 +394,12 @@ async function getArticle() {
   }
   breadcrumbs.value = crumbs
   article.value = articleData
+  // SEURL：文章标题与描述
+  const sitename = settingStore.settings?.system?.sitename || '图书馆 - 山河大学'
+  setPageMeta(
+    `${articleData.title} - ${sitename}`,
+    articleData.description || articleData.summary || '',
+  )
   getRelatedArticles()
 
   nextTick(() => {

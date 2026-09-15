@@ -90,7 +90,7 @@
           </span>
         </span>
         <span>|</span>
-        <a target="_blank" title="站点地图" href="/sitemap.xml"
+        <a target="_blank" title="站点地图" href="/sitemap/sitemap.xml"
           >站点地图</a
         >
         <a

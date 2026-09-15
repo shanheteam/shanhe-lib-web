@@ -626,6 +626,7 @@ import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
 import { assetUrl } from '@/utils/asset'
+import { setPageMeta } from '@/router'
 import FormDownload from '@/components/FormDownload.vue'
 import CommentList from '@/components/CommentList.vue'
 
@@ -924,6 +925,9 @@ async function getDocument(withAllContent = false) {
   pageHeight.value = docPages.value
     ? (docPages.value.offsetWidth / doc.width) * doc.height
     : 0
+  // SEURL：文档标题与描述
+  const sitename = settingStore.settings?.system?.sitename || '图书馆 - 山河大学'
+  setPageMeta(`${doc.title} - ${sitename}`, doc.description || doc.summary || '')
 
   if (doc.status !== 2) {
     // 2 为文档已转换成功，不需要展示提示
