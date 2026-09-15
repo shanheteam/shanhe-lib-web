@@ -377,68 +377,23 @@
         <p style="color: #999">暂无可用的登录方式</p>
       </div>
       <div v-else class="oauth-login-body">
-        <!-- 左侧：账号密码登录 -->
-        <div class="oauth-login-left">
+        <div class="oauth-login-main">
           <h2 class="oauth-login-title">登录后内容更精彩</h2>
-          <p class="oauth-login-subtitle">请使用以下方式登录</p>
-          <el-form
-            ref="pwdFormRef"
-            :model="pwdForm"
-            :rules="pwdRules"
-            label-position="top"
-            class="oauth-login-form"
-          >
-            <el-form-item prop="email">
-              <el-input
-                v-model="pwdForm.email"
-                placeholder="请输入邮箱"
-                size="large"
-                :prefix-icon="Message"
-                @keydown.enter="onPasswordLogin"
-              />
-            </el-form-item>
-            <el-form-item prop="password">
-              <el-input
-                v-model="pwdForm.password"
-                type="password"
-                placeholder="请输入密码"
-                size="large"
-                show-password
-                :prefix-icon="Lock"
-                @keydown.enter="onPasswordLogin"
-              />
-            </el-form-item>
+          <p class="oauth-login-subtitle">请选择以下方式登录</p>
+          <div class="oauth-list">
             <el-button
-              type="primary"
+              v-for="oauth in oauths"
+              :key="oauth.type"
               size="large"
-              class="pwd-submit-btn"
-              :loading="pwdLoading"
-              @click="onPasswordLogin"
+              class="oauth-btn"
+              :class="`oauth-btn-${oauth.type}`"
+              :loading="oauthLoading === oauth.type"
+              @click="handleOAuthLogin(oauth)"
             >
-              登 录
+              <span class="oauth-btn-text">{{ oauth.name }}</span>
             </el-button>
-          </el-form>
-          <div class="oauth-login-agreement">
-            <el-checkbox v-model="agreeTerms" size="small" />
-            <span class="agreement-text">
-              登录即同意
-              <a href="javascript:void(0)" class="agreement-link">用户协议</a>
-              和
-              <a href="javascript:void(0)" class="agreement-link">隐私条款</a>
-            </span>
           </div>
-        </div>
-        <!-- 右侧：扫码登录 -->
-        <div class="oauth-login-right">
-          <h3 class="oauth-qr-title">扫码登录</h3>
-          <div class="oauth-qr-code">
-            <img
-              :src="settings.display.wechat_qrcode || '/static/images/qrcode.png'"
-              alt="扫码登录"
-              class="qr-img"
-            />
-          </div>
-          <p class="oauth-qr-hint">使用手机扫码登录</p>
+          <p class="oauth-login-hint">将打开第三方授权页并在新窗口完成登录</p>
         </div>
       </div>
     </el-dialog>
@@ -500,13 +455,12 @@ import {
   Search,
   Close,
   Loading,
-  Message,
-  Lock,
 } from '@element-plus/icons-vue'
 import { getSignedToday as getSignedTodayApi, signToday as signTodayApi } from '@/api/user'
 import { getAdvertisementByPosition } from '@/api/advertisement'
 import { advertisementPositions } from '@/utils/enum'
 import { categoryToTrees, requireLogin } from '@/utils/utils'
+import { generateRandomString, generateCodeChallenge, savePkceParams } from '@/utils/pkce'
 import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
@@ -551,19 +505,7 @@ const popover1 = ref<any>()
 const loginDialogVisible = ref(false)
 const loginLoading = ref(false)
 const oauths = ref<any[]>([])
-const agreeTerms = ref(true)
-
-// 账号密码登录
-const pwdFormRef = ref()
-const pwdLoading = ref(false)
-const pwdForm = ref({
-  email: '',
-  password: '',
-})
-const pwdRules = {
-  email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
-  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
-}
+const oauthLoading = ref<number>(0)
 
 const searchPlaceholder = computed(() =>
   search.value.type === 1 ? '搜索文章...' : '搜索文档...',
@@ -633,14 +575,10 @@ const showMenuDrawer = () => {
 const showLoginDialog = async () => {
   loginDialogVisible.value = true
   loginLoading.value = true
-  pwdForm.value = { email: '', password: '' }
-  pwdFormRef.value?.clearValidate()
   try {
     const res: any = await getOauths()
-    console.log('[OAuth] 后端返回配置:', res)
     if (res.status === 200 && res.data.oauths) {
       oauths.value = res.data.oauths.filter((o: any) => o.enable)
-      console.log('[OAuth] 启用的 OAuth:', oauths.value)
     }
   } catch (e) {
     console.error('获取OAuth配置失败:', e)
@@ -650,26 +588,40 @@ const showLoginDialog = async () => {
   }
 }
 
-const onPasswordLogin = async () => {
-  if (pwdLoading.value) return
-  try {
-    await pwdFormRef.value?.validate()
-  } catch (e) {
+// 授权码 + PKCE：打开弹窗到 provider 授权页，回调后由 lib 换 token
+const handleOAuthLogin = async (oauth: any) => {
+  if (!oauth.authorize_url_base) {
+    ElMessage.error('该登录方式配置不完整')
     return
   }
-  pwdLoading.value = true
+  if (oauthLoading.value) return
+  oauthLoading.value = oauth.type
   try {
-    const res: any = await userStore.loginByPassword({
-      email: pwdForm.value.email.trim(),
-      password: pwdForm.value.password,
+    const codeVerifier = generateRandomString(64)
+    const codeChallenge = await generateCodeChallenge(codeVerifier)
+    const state = generateRandomString(32)
+    savePkceParams(codeVerifier, state)
+
+    const params = new URLSearchParams({
+      response_type: 'code',
+      client_id: oauth.client_id,
+      redirect_uri: oauth.redirect_url,
+      scope: oauth.scope || 'openid profile email',
+      state: state,
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256',
     })
-    if (res.status === 200 && res.data.token) {
-      loginDialogVisible.value = false
-      ElMessage.success('登录成功')
-      userStore.checkAndRefreshUser()
-    }
-  } finally {
-    pwdLoading.value = false
+
+    const authorizeUrl = `${oauth.authorize_url_base}?${params.toString()}`
+    window.open(authorizeUrl, '_blank', 'width=520,height=640')
+    // 短暂展示加载后还原，成功与否由回调消息通知
+    setTimeout(() => {
+      oauthLoading.value = 0
+    }, 1500)
+  } catch (e) {
+    console.error('启动OAuth登录失败:', e)
+    ElMessage.error('启动登录失败')
+    oauthLoading.value = 0
   }
 }
 
@@ -1188,12 +1140,15 @@ init()
 
 .oauth-login-body {
   display: flex;
-  min-height: 420px;
+  justify-content: center;
+  align-items: center;
+  min-height: 360px;
+  padding: 36px 0;
 }
 
-.oauth-login-left {
-  flex: 1;
-  padding: 40px 36px;
+.oauth-login-main {
+  width: 100%;
+  max-width: 360px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1212,7 +1167,7 @@ init()
   margin: 0 0 32px;
 }
 
-.oauth-login-buttons {
+.oauth-list {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -1267,86 +1222,14 @@ init()
   background: #4285f4;
 }
 
-.oauth-btn-icon {
-  font-size: 20px;
-}
-
 .oauth-btn-text {
   font-size: 16px;
 }
 
-.oauth-login-form {
-  width: 100%;
-  margin-top: 4px;
-}
-
-.pwd-submit-btn {
-  width: 100%;
-  height: 48px;
-  border-radius: 24px;
-  font-size: 16px;
-  font-weight: 500;
-  margin-top: 8px;
-}
-
-.oauth-login-agreement {
-  margin-top: auto;
-  padding-top: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  font-size: 13px;
-  color: #999;
-}
-
-.agreement-link {
-  color: #4e9bff;
-  text-decoration: none;
-}
-
-.agreement-link:hover {
-  text-decoration: underline;
-}
-
-.oauth-login-right {
-  width: 260px;
-  background: #f5f7fa;
-  border-radius: 0 12px 12px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 40px 24px;
-}
-
-.oauth-qr-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin: 0 0 24px;
-}
-
-.oauth-qr-code {
-  width: 160px;
-  height: 160px;
-  background: #fff;
-  border-radius: 8px;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.qr-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.oauth-qr-hint {
+.oauth-login-hint {
+  margin-top: 20px;
   font-size: 12px;
   color: #999;
-  margin-top: 16px;
   text-align: center;
 }
 
@@ -1355,14 +1238,6 @@ init()
     :deep(.el-dialog) {
       width: 95% !important;
     }
-  }
-  .oauth-login-body {
-    flex-direction: column;
-  }
-  .oauth-login-right {
-    width: 100%;
-    border-radius: 0 0 12px 12px;
-    padding: 24px;
   }
 }
 </style>

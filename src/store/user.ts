@@ -9,7 +9,7 @@ import {
   register,
   listUserGroup,
 } from '@/api/user'
-import { loginOauth, getOauths, passwordLogin } from '@/api/oauth'
+import { loginOauth, getOauths } from '@/api/oauth'
 import { permissionsToTree } from '@/utils/permission'
 
 interface UserState {
@@ -114,19 +114,6 @@ export const useUserStore = defineStore('user', {
     },
     async loginOauth(loginInfo: any) {
       const res: any = await loginOauth(loginInfo)
-      if (res.status !== 200) {
-        ElMessage({ type: 'error', message: res.data.message || '登录失败' })
-        return res
-      }
-      if (res.data.token && res.data.user) {
-        this.setUser(res.data.user)
-        this.setToken(res.data.token)
-        await this.getUserPermissions()
-      }
-      return res
-    },
-    async loginByPassword(loginInfo: any) {
-      const res: any = await passwordLogin(loginInfo)
       if (res.status !== 200) {
         ElMessage({ type: 'error', message: res.data.message || '登录失败' })
         return res
