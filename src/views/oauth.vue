@@ -92,14 +92,16 @@ onMounted(async () => {
         // 登录成功
         loading.value = false
         
-        // 检查是否在弹窗中
-        if (window.opener) {
-          // 通知主窗口登录成功
+        // 检查是否在 iframe 中（OAuth 授权弹窗）
+        if (window.parent !== window) {
+          // 在 iframe 中，通知父窗口登录成功
+          window.parent.postMessage({ type: 'oauth-login-success' }, window.location.origin)
+        } else if (window.opener) {
+          // 在 window.open 弹窗中
           window.opener.postMessage({ type: 'oauth-login-success' }, window.location.origin)
-          // 关闭弹窗
           window.close()
         } else {
-          // 非弹窗模式，直接跳转
+          // 普通页面跳转，直接跳转
           const redirect = (route.query.redirect as string) || '/me'
           router.push(redirect)
         }

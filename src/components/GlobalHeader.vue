@@ -364,8 +364,9 @@
     <el-dialog
       v-model="loginDialogVisible"
       title="登录"
-      width="400px"
+      width="580px"
       :close-on-click-modal="true"
+      :close-on-press-escape="true"
     >
       <div v-if="loginLoading" style="text-align: center; padding: 20px 0">
         <el-icon class="is-loading" :size="30"><Loading /></el-icon>
@@ -384,6 +385,26 @@
         >
           {{ oauth.name }} 登录
         </el-button>
+      </div>
+    </el-dialog>
+
+    <!-- OAuth 授权 iframe 弹窗 -->
+    <el-dialog
+      v-model="oauthIframeVisible"
+      title="授权登录"
+      width="560px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :show-close="true"
+      @close="closeOauthIframe"
+    >
+      <div class="oauth-iframe-wrapper">
+        <iframe
+          ref="oauthIframe"
+          :src="oauthIframeUrl"
+          class="oauth-iframe"
+          frameborder="0"
+        ></iframe>
       </div>
     </el-dialog>
 
@@ -495,6 +516,11 @@ const loginDialogVisible = ref(false)
 const loginLoading = ref(false)
 const oauths = ref<any[]>([])
 
+// OAuth iframe 弹窗
+const oauthIframeVisible = ref(false)
+const oauthIframeUrl = ref('')
+const oauthIframe = ref<HTMLIFrameElement | null>(null)
+
 const searchPlaceholder = computed(() =>
   search.value.type === 1 ? '搜索文章...' : '搜索文档...',
 )
@@ -604,14 +630,24 @@ const handleOAuthLogin = async (oauth: any) => {
   }
 
   const authorizeUrl = `${baseUrl}?${params.toString()}`
-  console.log('[OAuth] 弹窗授权:', authorizeUrl)
-  window.open(authorizeUrl, 'shanhe-oauth', 'width=560,height=640,popup=yes')
+  console.log('[OAuth] 尝试 iframe 授权:', authorizeUrl)
+
+  // 先尝试 iframe 弹窗
+  oauthIframeUrl.value = authorizeUrl
+  oauthIframeVisible.value = true
+  loginDialogVisible.value = false
+}
+
+const closeOauthIframe = () => {
+  oauthIframeVisible.value = false
+  oauthIframeUrl.value = ''
 }
 
 // 监听弹窗登录成功消息
 const handleOAuthMessage = (event: MessageEvent) => {
   if (event.data?.type === 'oauth-login-success') {
     loginDialogVisible.value = false
+    closeOauthIframe()
     ElMessage.success('登录成功')
     // 刷新用户信息
     userStore.getUser()
@@ -1105,6 +1141,28 @@ init()
         width: 100%;
       }
     }
+  }
+}
+
+.oauth-iframe-wrapper {
+  width: 100%;
+  height: 600px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+.oauth-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+.oauth-login-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  .oauth-login-btn {
+    width: 100%;
+    height: 44px;
+    font-size: 15px;
   }
 }
 </style>
