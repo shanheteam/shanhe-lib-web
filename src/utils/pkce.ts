@@ -39,19 +39,19 @@ function base64UrlEncode(buffer: ArrayBuffer): string {
 }
 
 /**
- * 保存 PKCE 参数到 sessionStorage
+ * 保存 PKCE 参数到 localStorage（跨窗口共享，支持 window.open 弹窗场景）
  */
 export function savePkceParams(codeVerifier: string, state: string): void {
-  sessionStorage.setItem('oauth_code_verifier', codeVerifier)
-  sessionStorage.setItem('oauth_state', state)
+  localStorage.setItem('oauth_code_verifier', codeVerifier)
+  localStorage.setItem('oauth_state', state)
 }
 
 /**
- * 从 sessionStorage 获取 PKCE 参数
+ * 从 localStorage 获取 PKCE 参数
  */
 export function getPkceParams(): { codeVerifier: string; state: string } | null {
-  const codeVerifier = sessionStorage.getItem('oauth_code_verifier')
-  const state = sessionStorage.getItem('oauth_state')
+  const codeVerifier = localStorage.getItem('oauth_code_verifier')
+  const state = localStorage.getItem('oauth_state')
   if (!codeVerifier || !state) return null
   return { codeVerifier, state }
 }
@@ -60,6 +60,6 @@ export function getPkceParams(): { codeVerifier: string; state: string } | null 
  * 清除 PKCE 参数
  */
 export function clearPkceParams(): void {
-  sessionStorage.removeItem('oauth_code_verifier')
-  sessionStorage.removeItem('oauth_state')
+  localStorage.removeItem('oauth_code_verifier')
+  localStorage.removeItem('oauth_state')
 }
