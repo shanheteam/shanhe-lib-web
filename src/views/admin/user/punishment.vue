@@ -26,7 +26,7 @@
               <el-option
                 v-for="user in users"
                 :key="'userid' + user.id"
-                :label="user.username"
+                :label="user.realname || user.username"
                 :value="user.id"
               >
               </el-option>
@@ -186,7 +186,9 @@ async function fetchList() {
   if (res.status === 200) {
     const list: any[] = res.data.punishment || []
     list.map((item: any) => {
-      item.user_html = genLinkHTML(item.username, `/user/${item.user_id}`)
+      item.user_html = genLinkHTML(
+        item.realname || item.user?.realname || item.username,
+        `/user/${item.user_id}`)
     })
     punishments.value = list
     total.value = res.data.total

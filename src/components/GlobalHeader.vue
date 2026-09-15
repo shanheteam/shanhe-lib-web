@@ -141,7 +141,7 @@
             <el-dropdown :trigger="isMobile ? 'click' : 'hover'" @command="handleDropdown">
               <span class="el-dropdown-link">
                 <UserAvatar class="nav-user-avatar" :user="user" :size="36" />
-                <span class="mobile-username">{{ user.username }}</span>
+                <span class="mobile-username">{{ user.realname || user.username }}</span>
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
@@ -211,7 +211,7 @@
             @click="goToLink('/login')"
           >
             <UserAvatar :size="38" :user="user" class="user-avatar" />
-            <span v-if="user.id > 0">{{ user.username }}</span>
+            <span v-if="user.id > 0">{{ user.realname || user.username }}</span>
             <span v-else>登录注册</span>
           </div>
         </li>

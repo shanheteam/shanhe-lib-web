@@ -24,7 +24,7 @@
               <el-option
                 v-for="user in users"
                 :key="'userid' + user.id"
-                :label="user.username"
+                :label="user.realname || user.username"
                 :value="user.id"
               >
               </el-option>
@@ -112,7 +112,9 @@ async function fetchList() {
   if (res.status === 200) {
     const data: any[] = res.data.user_vip || []
     data.forEach((item) => {
-      item.username_html = genLinkHTML(item.username, `/user/${item.user_id}`)
+      item.username_html = genLinkHTML(
+        item.realname || item.user?.realname || item.username,
+        `/user/${item.user_id}`)
     })
     listData.value = data
     total.value = res.data.total

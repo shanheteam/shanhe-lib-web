@@ -124,7 +124,7 @@ async function fetchList() {
   })
   if (res.status === 200) {
     comments.value = (res.data.comment || []).map((item: any) => {
-      item.username = item.user.username
+      item.username = item.user.realname || item.user.username
       item.document_title_html = genLinkHTML(
         item.document_title,
         item.type === 1

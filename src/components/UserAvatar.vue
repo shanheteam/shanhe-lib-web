@@ -2,7 +2,7 @@
   <div class="com-user-avatar">
     <el-avatar
       :size="size"
-      :alt="user.username"
+      :alt="user.realname || user.username"
       :src="assetUrl(user.avatar)"
       @error="errorAvatar"
     >

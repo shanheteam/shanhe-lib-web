@@ -26,7 +26,7 @@
                 class="avatar"
                 :src="assetUrl(article.user && article.user.avatar)"
               ></el-avatar
-              >{{ article.user && article.user.username }}</router-link
+              >{{ article.user && (article.user.realname || article.user.username) }}</router-link
             >
           </span>
           <span class="text-muted">·</span>

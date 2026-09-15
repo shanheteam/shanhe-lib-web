@@ -153,7 +153,9 @@ async function fetchList() {
     const docs: any[] = res.data.document || []
     docs.forEach((item: any) => {
       item.title_html = genLinkHTML(item.title, `/document/${item.uuid}`)
-      item.username_html = genLinkHTML(item.username, `/user/${item.user_id}`)
+      item.username_html = genLinkHTML(
+        item.realname || item.user?.realname || item.username,
+        `/user/${item.user_id}`)
     })
 
     documents.value = docs

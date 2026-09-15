@@ -9,7 +9,7 @@
               <user-avatar :size="60" :user="user" />
             </div>
             <div class="user-details">
-              <h3 class="username">{{ user.username }}</h3>
+              <h3 class="username">{{ user.realname || user.username }}</h3>
               <small class="signature">
                 {{ user.signature || '暂无个性签名' }}
               </small>

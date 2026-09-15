@@ -268,7 +268,9 @@ async function fetchList() {
     list.map((item: any) => {
       item.title_html = genLinkHTML(item.title, `/article/${item.identifier}`)
 
-      item.user_html = genLinkHTML(item.user.username, `/user/${item.user_id}`)
+      item.user_html = genLinkHTML(
+        item.user.realname || item.user.username,
+        `/user/${item.user_id}`)
       return item
     })
     articles.value = list

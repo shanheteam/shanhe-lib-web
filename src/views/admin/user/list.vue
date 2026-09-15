@@ -158,7 +158,9 @@ async function fetchList() {
   if (res.status === 200) {
     const list: any[] = res.data.user || []
     list.map((item: any) => {
-      item.username_html = genLinkHTML(item.username, `/user/${item.id}`)
+      item.username_html = genLinkHTML(
+        item.realname || item.user?.realname || item.username,
+        `/user/${item.id}`)
       const groupsList = (item.group_id || []).map((id: any) => {
         const group = groups.value.find((g) => g.id === id)
         return group ? group.title : ''

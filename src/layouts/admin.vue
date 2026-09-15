@@ -62,7 +62,7 @@
         <el-dropdown class="user-dropdown" trigger="click" @command="command">
           <el-button>
             <el-icon style="margin-right: 4px"><User /></el-icon>
-            <span>{{ user.username }}</span>
+            <span>{{ user.realname || user.username }}</span>
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>

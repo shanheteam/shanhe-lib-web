@@ -24,7 +24,7 @@
               <el-option
                 v-for="user in users"
                 :key="'userid' + user.id"
-                :label="user.username"
+                :label="user.realname || user.username"
                 :value="user.id"
               >
               </el-option>
@@ -113,7 +113,9 @@ async function fetchList() {
     const list: any[] = res.data.sms || []
     list.forEach((item) => {
       if (item.user_id) {
-        item.user_html = genLinkHTML(item.username, `/user/${item.user_id}`)
+        item.user_html = genLinkHTML(
+          item.realname || item.user?.realname || item.username,
+          `/user/${item.user_id}`)
       } else {
         item.user_html = '-'
       }

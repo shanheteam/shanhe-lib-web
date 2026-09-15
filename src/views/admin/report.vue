@@ -101,7 +101,9 @@ async function fetchList() {
   if (res.status === 200) {
     const list: any[] = res.data.report || []
     list.map((item: any) => {
-      item.username_html = genLinkHTML(item.username, `/user/${item.user_id}`)
+      item.username_html = genLinkHTML(
+        item.realname || item.user?.realname || item.username,
+        `/user/${item.user_id}`)
       item.document_title_html = genLinkHTML(
         item.document_title,
         `/document/${item.document_uuid}`

@@ -79,7 +79,9 @@ async function fetchList() {
     list.forEach((item: any) => {
       item.username_html = '-'
       if (item.user_id > 0) {
-        item.username_html = genLinkHTML(item.username, `/user/${item.user_id}`)
+        item.username_html = genLinkHTML(
+          item.realname || item.user?.realname || item.username,
+          `/user/${item.user_id}`)
       }
 
       item.keywords_html = genLinkHTML(

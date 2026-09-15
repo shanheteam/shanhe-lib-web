@@ -12,7 +12,7 @@
         />
         <!-- 上传成功之后，重新获取用户资料 -->
         <div>
-          <h3>{{ user.username }}</h3>
+          <h3>{{ user.realname || user.username }}</h3>
         </div>
       </el-col>
       <el-col :span="14">
