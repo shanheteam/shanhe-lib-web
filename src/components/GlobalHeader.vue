@@ -363,28 +363,66 @@
     <!-- OAuth 登录对话框 -->
     <el-dialog
       v-model="loginDialogVisible"
-      title="登录"
-      width="580px"
+      :show-close="true"
+      width="720px"
       :close-on-click-modal="true"
       :close-on-press-escape="true"
+      class="oauth-login-dialog"
     >
-      <div v-if="loginLoading" style="text-align: center; padding: 20px 0">
+      <div v-if="loginLoading" class="oauth-login-loading">
         <el-icon class="is-loading" :size="30"><Loading /></el-icon>
         <p style="margin-top: 10px; color: #666">加载中...</p>
       </div>
-      <div v-else-if="oauths.length === 0" style="text-align: center; padding: 20px 0; color: #999">
-        暂无可用的登录方式
+      <div v-else-if="oauths.length === 0" class="oauth-login-empty">
+        <p style="color: #999">暂无可用的登录方式</p>
       </div>
-      <div v-else class="oauth-login-list">
-        <el-button
-          v-for="oauth in oauths"
-          :key="oauth.type"
-          type="primary"
-          class="oauth-login-btn"
-          @click="handleOAuthLogin(oauth)"
-        >
-          {{ oauth.name }} 登录
-        </el-button>
+      <div v-else class="oauth-login-body">
+        <!-- 左侧：第三方登录 -->
+        <div class="oauth-login-left">
+          <h2 class="oauth-login-title">登录后内容更精彩</h2>
+          <p class="oauth-login-subtitle">请使用以下方式登录</p>
+          <div class="oauth-login-buttons">
+            <button
+              v-for="oauth in oauths"
+              :key="oauth.type"
+              class="oauth-btn"
+              :class="'oauth-btn-' + oauth.type"
+              @click="handleOAuthLogin(oauth)"
+            >
+              <span class="oauth-btn-icon">
+                <i v-if="oauth.type === 6" class="fa fa-user-circle-o"></i>
+                <i v-else-if="oauth.type === 1" class="fa fa-qq"></i>
+                <i v-else-if="oauth.type === 2" class="fa fa-wechat"></i>
+                <i v-else-if="oauth.type === 4" class="fa fa-github"></i>
+                <i v-else-if="oauth.type === 3" class="fa fa-gitlab"></i>
+                <i v-else-if="oauth.type === 7" class="fa fa-google"></i>
+                <i v-else class="fa fa-sign-in"></i>
+              </span>
+              <span class="oauth-btn-text">{{ oauth.name }}登录</span>
+            </button>
+          </div>
+          <div class="oauth-login-agreement">
+            <el-checkbox v-model="agreeTerms" size="small" />
+            <span class="agreement-text">
+              登录即同意
+              <a href="javascript:void(0)" class="agreement-link">用户协议</a>
+              和
+              <a href="javascript:void(0)" class="agreement-link">隐私条款</a>
+            </span>
+          </div>
+        </div>
+        <!-- 右侧：扫码登录 -->
+        <div class="oauth-login-right">
+          <h3 class="oauth-qr-title">扫码登录</h3>
+          <div class="oauth-qr-code">
+            <img
+              :src="settings.display.wechat_qrcode || '/static/images/qrcode.png'"
+              alt="扫码登录"
+              class="qr-img"
+            />
+          </div>
+          <p class="oauth-qr-hint">使用手机扫码登录</p>
+        </div>
       </div>
     </el-dialog>
 
@@ -495,6 +533,7 @@ const popover1 = ref<any>()
 const loginDialogVisible = ref(false)
 const loginLoading = ref(false)
 const oauths = ref<any[]>([])
+const agreeTerms = ref(true)
 
 const searchPlaceholder = computed(() =>
   search.value.type === 1 ? '搜索文章...' : '搜索文档...',
@@ -1119,14 +1158,184 @@ init()
   }
 }
 
-.oauth-login-list {
+.oauth-login-dialog {
+  :deep(.el-dialog__body) {
+    padding: 0;
+  }
+  :deep(.el-dialog__header) {
+    display: none;
+  }
+}
+
+.oauth-login-loading,
+.oauth-login-empty {
+  text-align: center;
+  padding: 60px 0;
+}
+
+.oauth-login-body {
+  display: flex;
+  min-height: 420px;
+}
+
+.oauth-login-left {
+  flex: 1;
+  padding: 40px 36px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  .oauth-login-btn {
+  align-items: center;
+}
+
+.oauth-login-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 8px;
+}
+
+.oauth-login-subtitle {
+  font-size: 13px;
+  color: #999;
+  margin: 0 0 32px;
+}
+
+.oauth-login-buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.oauth-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  color: #fff;
+}
+
+.oauth-btn:hover {
+  opacity: 0.9;
+}
+
+.oauth-btn:active {
+  transform: scale(0.98);
+}
+
+.oauth-btn-6 {
+  background: #4e9bff;
+}
+
+.oauth-btn-1 {
+  background: #12b7f5;
+}
+
+.oauth-btn-2 {
+  background: #07c160;
+}
+
+.oauth-btn-4 {
+  background: #333;
+}
+
+.oauth-btn-3 {
+  background: #fc6d26;
+}
+
+.oauth-btn-7 {
+  background: #4285f4;
+}
+
+.oauth-btn-icon {
+  font-size: 20px;
+}
+
+.oauth-btn-text {
+  font-size: 16px;
+}
+
+.oauth-login-agreement {
+  margin-top: auto;
+  padding-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #999;
+}
+
+.agreement-link {
+  color: #4e9bff;
+  text-decoration: none;
+}
+
+.agreement-link:hover {
+  text-decoration: underline;
+}
+
+.oauth-login-right {
+  width: 260px;
+  background: #f5f7fa;
+  border-radius: 0 12px 12px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 24px;
+}
+
+.oauth-qr-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 24px;
+}
+
+.oauth-qr-code {
+  width: 160px;
+  height: 160px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.oauth-qr-hint {
+  font-size: 12px;
+  color: #999;
+  margin-top: 16px;
+  text-align: center;
+}
+
+@media screen and (max-width: $mobile-width) {
+  .oauth-login-dialog {
+    :deep(.el-dialog) {
+      width: 95% !important;
+    }
+  }
+  .oauth-login-body {
+    flex-direction: column;
+  }
+  .oauth-login-right {
     width: 100%;
-    height: 44px;
-    font-size: 15px;
+    border-radius: 0 0 12px 12px;
+    padding: 24px;
   }
 }
 </style>
