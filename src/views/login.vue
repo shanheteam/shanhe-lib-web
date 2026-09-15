@@ -23,11 +23,28 @@
         <div v-if="settings.security.is_close" class="close-tips">
           <div v-html="settings.security.close_statement"></div>
         </div>
-        <form-login
-          v-if="!(user.id > 0 && settings.security.is_close)"
-          :redirect="redirect"
-        />
-        <div>
+        <div v-if="!(user.id > 0 && settings.security.is_close)" class="oauth-login-container">
+          <div v-if="loading" style="text-align: center; padding: 40px 0">
+            <el-icon class="is-loading" :size="30"><Loading /></el-icon>
+            <p style="margin-top: 10px; color: #666">加载中...</p>
+          </div>
+          <div v-else-if="oauths.length === 0" style="text-align: center; padding: 40px 0; color: #999">
+            暂无可用的登录方式
+          </div>
+          <div v-else class="oauth-list">
+            <p style="text-align: center; color: #666; margin-bottom: 20px">请选择登录方式</p>
+            <el-button
+              v-for="oauth in oauths"
+              :key="oauth.type"
+              type="primary"
+              class="oauth-btn"
+              @click="handleOAuthLogin(oauth)"
+            >
+              {{ oauth.name }} 登录
+            </el-button>
+          </div>
+        </div>
+        <div style="margin-top: 20px; text-align: center">
           <router-link
             to="/findpassword"
             title="找回密码"
@@ -47,12 +64,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { Loading } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { assetUrl } from '@/utils/asset'
 
+const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
 const settingStore = useSettingStore()
@@ -60,6 +79,42 @@ const settingStore = useSettingStore()
 const user = computed(() => userStore.user)
 const settings = computed(() => settingStore.settings)
 const redirect = computed(() => (route.query.redirect as string) || '/me')
+
+const oauths = ref<any[]>([])
+const loading = ref(true)
+
+onMounted(async () => {
+  try {
+    const res: any = await userStore.getOauths()
+    if (res.status === 200 && res.data.oauths) {
+      oauths.value = res.data.oauths.filter((o: any) => o.enable)
+    }
+  } catch (e) {
+    console.error('获取OAuth配置失败:', e)
+  } finally {
+    loading.value = false
+  }
+})
+
+const handleOAuthLogin = (oauth: any) => {
+  // 构建授权URL
+  const authorizeUrl = oauth.authorize_url
+  if (authorizeUrl) {
+    window.location.href = authorizeUrl
+  } else {
+    // 如果没有预构建的URL，手动构建
+    const params = new URLSearchParams({
+      client_id: oauth.client_id,
+      redirect_uri: oauth.redirect_url,
+      response_type: 'code',
+      scope: oauth.scope || 'user',
+    })
+    const baseUrl = oauth.authorize_url || oauth.dev_url
+    if (baseUrl) {
+      window.location.href = `${baseUrl}?${params.toString()}`
+    }
+  }
+}
 </script>
 
 <style lang="scss">
@@ -88,6 +143,19 @@ const redirect = computed(() => (route.query.redirect as string) || '/me')
         line-height: 180%;
         font-size: 15px;
       }
+    }
+  }
+  .oauth-login-container {
+    padding: 20px 0;
+  }
+  .oauth-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    .oauth-btn {
+      width: 100%;
+      height: 45px;
+      font-size: 16px;
     }
   }
 }

@@ -63,6 +63,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '找回密码', noindex: true },
   },
   {
+    path: '/oauth/callback',
+    name: 'oauth-callback',
+    component: () => import('@/views/oauth.vue'),
+    meta: { title: 'OAuth登录', noindex: true },
+  },
+  {
     path: '/upload',
     name: 'upload',
     component: () => import('@/views/upload.vue'),
