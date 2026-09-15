@@ -369,17 +369,10 @@
       :close-on-press-escape="true"
       class="oauth-login-dialog"
     >
-      <div v-if="loginLoading" class="oauth-login-loading">
-        <el-icon class="is-loading" :size="30"><Loading /></el-icon>
-        <p style="margin-top: 10px; color: #666">加载中...</p>
-      </div>
-      <div v-else-if="oauths.length === 0" class="oauth-login-empty">
-        <p style="color: #999">暂无可用的登录方式</p>
-      </div>
-      <div v-else class="oauth-login-body">
-        <div class="oauth-login-main">
-          <h2 class="oauth-login-title">登录后内容更精彩</h2>
-          <p class="oauth-login-subtitle">请选择以下方式登录</p>
+      <div class="oauth-login-body">
+        <form-login :redirect="loginRedirect"></form-login>
+        <div v-if="oauths.length > 0" class="oauth-login-main">
+          <el-divider>其他登录方式</el-divider>
           <div class="oauth-list">
             <el-button
               v-for="oauth in oauths"
@@ -393,7 +386,6 @@
               <span class="oauth-btn-text">{{ oauth.name }}</span>
             </el-button>
           </div>
-          <p class="oauth-login-hint">将打开第三方授权页并在新窗口完成登录</p>
         </div>
       </div>
     </el-dialog>
@@ -454,7 +446,6 @@ import {
   Tickets,
   Search,
   Close,
-  Loading,
 } from '@element-plus/icons-vue'
 import { getSignedToday as getSignedTodayApi, signToday as signTodayApi } from '@/api/user'
 import { getAdvertisementByPosition } from '@/api/advertisement'
@@ -503,9 +494,9 @@ const popover1 = ref<any>()
 
 // OAuth 登录弹窗
 const loginDialogVisible = ref(false)
-const loginLoading = ref(false)
 const oauths = ref<any[]>([])
 const oauthLoading = ref<number>(0)
+const loginRedirect = computed(() => route.fullPath || '/')
 
 const searchPlaceholder = computed(() =>
   search.value.type === 1 ? '搜索文章...' : '搜索文档...',
@@ -572,21 +563,25 @@ const showMenuDrawer = () => {
   menuDrawerVisible.value = true
 }
 
-const showLoginDialog = async () => {
+const showLoginDialog = () => {
   loginDialogVisible.value = true
-  loginLoading.value = true
-  try {
-    const res: any = await getOauths()
-    if (res.status === 200 && res.data.oauths) {
-      oauths.value = res.data.oauths.filter((o: any) => o.enable)
-    }
-  } catch (e) {
-    console.error('获取OAuth配置失败:', e)
-    ElMessage.error('获取登录配置失败')
-  } finally {
-    loginLoading.value = false
-  }
+  // 并行加载 OAuth 列表；无 OAuth 时不影响邮箱登录
+  getOauths()
+    .then((res: any) => {
+      if (res.status === 200 && res.data.oauths) {
+        oauths.value = res.data.oauths.filter((o: any) => o.enable)
+      }
+    })
+    .catch(() => {})
 }
+
+// 登录成功后自动关闭弹窗
+watch(
+  () => Number(userStore.user.id) || 0,
+  (id) => {
+    if (id > 0) loginDialogVisible.value = false
+  },
+)
 
 // 授权码 + PKCE：打开弹窗到 provider 授权页，回调后由 lib 换 token
 const handleOAuthLogin = async (oauth: any) => {

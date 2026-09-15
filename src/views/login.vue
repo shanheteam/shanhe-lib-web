@@ -23,25 +23,21 @@
         <div v-if="settings.security.is_close" class="close-tips">
           <div v-html="settings.security.close_statement"></div>
         </div>
-        <div v-if="!(user.id > 0 && settings.security.is_close)" class="oauth-login-container">
-          <div v-if="loading" style="text-align: center; padding: 40px 0">
-            <el-icon class="is-loading" :size="30"><Loading /></el-icon>
-            <p style="margin-top: 10px; color: #666">加载中...</p>
-          </div>
-          <div v-else-if="oauths.length === 0" style="text-align: center; padding: 40px 0; color: #999">
-            暂无可用的登录方式
-          </div>
-          <div v-else class="oauth-list">
-            <p style="text-align: center; color: #666; margin-bottom: 20px">请选择登录方式</p>
-            <el-button
-              v-for="oauth in oauths"
-              :key="oauth.type"
-              type="primary"
-              class="oauth-btn"
-              @click="handleOAuthLogin(oauth)"
-            >
-              {{ oauth.name }} 登录
-            </el-button>
+        <div v-if="!(user.id > 0 && settings.security.is_close)">
+          <form-login :redirect="redirect"></form-login>
+          <div v-if="oauths.length > 0" class="oauth-login-container">
+            <el-divider>其他登录方式</el-divider>
+            <div class="oauth-list">
+              <el-button
+                v-for="oauth in oauths"
+                :key="oauth.type"
+                type="primary"
+                class="oauth-btn"
+                @click="handleOAuthLogin(oauth)"
+              >
+                {{ oauth.name }} 登录
+              </el-button>
+            </div>
           </div>
         </div>
         <div style="margin-top: 20px; text-align: center">
@@ -66,7 +62,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { Loading } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { assetUrl } from '@/utils/asset'
@@ -82,7 +77,6 @@ const settings = computed(() => settingStore.settings)
 const redirect = computed(() => (route.query.redirect as string) || '/me')
 
 const oauths = ref<any[]>([])
-const loading = ref(true)
 
 onMounted(async () => {
   try {
@@ -92,8 +86,6 @@ onMounted(async () => {
     }
   } catch (e) {
     console.error('获取OAuth配置失败:', e)
-  } finally {
-    loading.value = false
   }
 })
 
