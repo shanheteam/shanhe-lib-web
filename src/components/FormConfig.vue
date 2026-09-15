@@ -191,7 +191,7 @@ const success = (res: any, index: any) => {
   configs.value[index] = { ...configs.value[index], value: res.path || res?.data?.path }
 }
 
-defineExpose({ onSubmit })
+defineExpose({ onSubmit, configs })
 </script>
 <style lang="scss">
 .com-form-config {
