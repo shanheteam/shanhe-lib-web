@@ -41,7 +41,7 @@
         </el-descriptions>
       </el-col>
     </el-row>
-    <el-tabs v-model="activeTab" @tab-click="handleClick">
+    <el-tabs v-model="activeTab">
       <el-tab-pane label="个人资料" name="profile">
         <el-form label-width="80px">
           <el-form-item label="用户名">
@@ -99,10 +99,6 @@ const activeTab = ref('profile')
 
 const getUser = () => {
   userStore.getUser()
-}
-
-const handleClick = (tab: any) => {
-  console.log(tab)
 }
 </script>
 

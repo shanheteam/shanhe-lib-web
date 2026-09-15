@@ -1,7 +1,7 @@
 <template>
   <!-- 更新当前用户自身资料 -->
   <div class="com-form-profile">
-    <el-form ref="profile" label-width="80px" :model="profile">
+    <el-form ref="profileForm" label-width="80px" :model="profile">
       <el-form-item label="用户名">
         <el-input
           v-model="profile.username"

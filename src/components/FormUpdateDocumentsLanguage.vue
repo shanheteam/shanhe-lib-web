@@ -1,6 +1,6 @@
 <template>
   <div class="com-form-update-documents-language">
-    <el-form ref="form" label-position="top" label-width="80px" :model="form">
+    <el-form ref="formEl" label-position="top" label-width="80px" :model="form">
       <el-form-item
         label="文档语言"
         prop="language"
