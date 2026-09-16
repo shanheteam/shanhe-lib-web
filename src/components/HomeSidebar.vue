@@ -66,9 +66,7 @@
             <router-link class="guest-action-item" to="/login">
               <el-button type="primary" class="login-btn">登录</el-button>
             </router-link>
-            <router-link class="guest-action-item" to="/register">
-              <el-button class="register-btn">注册</el-button>
-            </router-link>
+            <el-button class="register-btn" @click="showRegDialog = true">注册</el-button>
           </div>
         </template>
       </el-card>
@@ -127,6 +125,16 @@
         </div>
       </el-card>
     </aside>
+
+    <!-- 注册提示弹窗 -->
+    <el-dialog v-model="showRegDialog" title="注册账号" width="420" :close-on-click-modal="true">
+      <div style="text-align: center; padding: 10px 0">
+        <p style="margin-bottom: 16px; color: #606266">
+          山河大学图书馆不支持注册，请前往山河大学学籍系统注册。
+        </p>
+        <el-button type="primary" @click="goRegister">前往注册</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -173,6 +181,12 @@ const siteName = computed(
 
 const todaySign = ref<{ id: number }>({ id: 0 })
 const signing = ref(false)
+const showRegDialog = ref(false)
+
+const goRegister = () => {
+  showRegDialog.value = false
+  window.open('https://user.shanhe.co/?libreg', '_blank')
+}
 
 async function loadTodaySign() {
   if (!user.value.id) return

@@ -47,15 +47,27 @@
             class="el-link el-link--default"
             >找回密码</router-link
           >
-          <router-link
-            :to="{ name: 'register', query: { redirect } }"
-            title="注册账户"
-            class="el-link el-link--default float-right"
-            >注册账户</router-link
+          <el-link
+            type="default"
+            class="float-right"
+            @click="showRegDialog = true"
+            >注册账户</el-link
           >
         </div>
       </el-card>
     </div>
+
+    <!-- 注册提示弹窗 -->
+    <el-dialog v-model="showRegDialog" title="注册账号" width="420" :close-on-click-modal="true">
+      <div style="text-align: center; padding: 10px 0">
+        <p style="margin-bottom: 16px; color: #606266">
+          山河大学图书馆不支持注册，请前往山河大学学籍系统注册。
+        </p>
+        <el-button type="primary" @click="goRegister">
+          前往注册
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -77,6 +89,12 @@ const settings = computed(() => settingStore.settings)
 const redirect = computed(() => (route.query.redirect as string) || '/me')
 
 const oauths = ref<any[]>([])
+const showRegDialog = ref(false)
+
+const goRegister = () => {
+  showRegDialog.value = false
+  window.open('https://user.shanhe.co/?libreg', '_blank')
+}
 
 onMounted(async () => {
   try {
