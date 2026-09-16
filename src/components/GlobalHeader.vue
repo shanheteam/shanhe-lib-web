@@ -623,7 +623,8 @@ const handleOAuthLogin = async (oauth: any) => {
 const handleOAuthMessage = (event: MessageEvent) => {
   if (event.data?.type === 'oauth-login-success') {
     ElMessage.success('登录成功')
-    // 刷新用户信息
+    // 先从 localStorage 恢复 token 到内存 store，再刷新用户信息
+    userStore.checkAndRefreshUser()
     userStore.getUser()
   }
 }

@@ -83,38 +83,70 @@ onMounted(async () => {
       code_verifier: pkceParams.codeVerifier,
     })
     clearPkceParams()
-    if (res.status === 200) {
-      if (res.data.oauth) {
-        // 需要绑定账号
-        error.value = '需要绑定账号'
-        loading.value = false
-      } else {
-        // 登录成功
-        loading.value = false
-        
-        // 检查是否在 iframe 中（OAuth 授权弹窗）
-        if (window.parent !== window) {
-          // 在 iframe 中，通知父窗口登录成功
-          window.parent.postMessage({ type: 'oauth-login-success' }, window.location.origin)
-        } else if (window.opener) {
-          // 在 window.open 弹窗中
-          window.opener.postMessage({ type: 'oauth-login-success' }, window.location.origin)
-          window.close()
-        } else {
-          // 普通页面跳转，直接跳转
-          const redirect = (route.query.redirect as string) || '/me'
-          router.push(redirect)
-        }
-      }
+    
+    // 检查是否登录成功（有 token 返回）
+    // res 是 axios response: { status: 200, data: { token, user } }
+    const hasToken = res?.data?.token || res?.token
+    const httpOk = res?.status === 200 || res?.status === 201
+    
+    if (hasToken && httpOk) {
+      // 登录成功，通知父窗口并关闭弹窗
+      notifyParentAndClose()
     } else {
-      error.value = res.data?.message || '登录失败'
+      // 没有 token，可能是需要绑定账号或其他情况
+      if (res?.data?.oauth) {
+        error.value = '需要绑定账号'
+      } else {
+        error.value = res?.data?.message || res?.message || '登录失败'
+      }
       loading.value = false
     }
   } catch (e: any) {
-    error.value = e.message || '登录异常'
+    console.error('[OAuth] login error:', e)
+    error.value = e?.message || e?.data?.message || '登录异常'
     loading.value = false
   }
 })
+
+// 通知父窗口登录成功并关闭弹窗
+const notifyParentAndClose = () => {
+  // 尝试多种方式通知父窗口
+  const sendSuccessMessage = () => {
+    const message = { type: 'oauth-login-success' }
+    
+    // 如果在 iframe 中
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage(message, window.location.origin)
+      } catch (e) {
+        console.error('[OAuth] postMessage to parent failed:', e)
+      }
+    }
+    
+    // 如果是 window.open 打开的弹窗
+    if (window.opener && !window.opener.closed) {
+      try {
+        window.opener.postMessage(message, window.location.origin)
+      } catch (e) {
+        console.error('[OAuth] postMessage to opener failed:', e)
+      }
+    }
+  }
+  
+  sendSuccessMessage()
+  
+  // 延迟关闭，确保消息发送完成
+  setTimeout(() => {
+    try {
+      window.close()
+    } catch (e) {
+      console.error('[OAuth] window.close failed:', e)
+      // 如果无法关闭，显示提示让用户手动关闭
+      error.value = '登录成功，请手动关闭此窗口'
+      loading.value = false
+    }
+  }, 300)
+}
 </script>
 
 <style lang="scss">
