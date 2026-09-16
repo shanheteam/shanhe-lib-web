@@ -121,7 +121,7 @@ export const useUserStore = defineStore('user', {
       if (res.data.token && res.data.user) {
         this.setUser(res.data.user)
         this.setToken(res.data.token)
-        await this.getUserPermissions()
+        await Promise.all([this.getUserPermissions(), this.getUserGroups()])
       }
       return res
     },
