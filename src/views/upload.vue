@@ -377,23 +377,22 @@
                 </template>
               </el-table>
             </div>
-
-            <!-- 警告信息 -->
-            <el-alert
-              v-if="fileMessages.length > 0"
-              title="⚠️ 告警提示"
-              type="warning"
-              class="tips-alert"
-              :closable="false"
-            >
-              <div
-                v-for="(message, index) in fileMessages"
-                :key="'msg-' + index"
-              >
-                {{ message }}
-              </div>
-            </el-alert>
           </div>
+          <!-- 警告信息（独立于文件列表渲染，文件全部被忽略时也能看到提示） -->
+          <el-alert
+            v-if="fileMessages.length > 0"
+            title="⚠️ 告警提示"
+            type="warning"
+            class="tips-alert"
+            :closable="false"
+          >
+            <div
+              v-for="(message, index) in fileMessages"
+              :key="'msg-' + index"
+            >
+              {{ message }}
+            </div>
+          </el-alert>
           <!-- 上传按钮 -->
           <div class="upload-actions">
             <el-button
@@ -620,8 +619,11 @@ onMounted(async () => {
   }
 
   try {
-    allowExt.value =
-      settings.value.security.document_allowed_ext || allowExt.value
+    const configuredExt = settings.value.security.document_allowed_ext
+    // settings 接口对未配置项返回 []，空数组是 truthy，直接赋值会把默认格式清空导致所有文件被拒绝
+    if (Array.isArray(configuredExt) && configuredExt.length > 0) {
+      allowExt.value = configuredExt
+    }
   } catch (error) {
     // 使用默认值
   }
