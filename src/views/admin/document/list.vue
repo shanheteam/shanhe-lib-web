@@ -624,7 +624,10 @@ function initSearchForm() {
 async function download2review(row: any) {
   const res: any = await downloadDocumentToBeReviewed({ id: row.id })
   if (res.status === 200) {
-    location.href = res.data.url
+    // 后端返回相对路径 /download/<jwt>，需拼上后端域名，否则会被当前前端域名解析导致 404
+    const base = import.meta.env.VITE_API_BASE_URL || ''
+    const url = res.data.url.startsWith('/') ? base + res.data.url : res.data.url
+    location.href = url
   } else {
     ElMessage.error(res.data.message)
   }

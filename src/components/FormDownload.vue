@@ -135,7 +135,10 @@ async function execDownload() {
   downloading.value = false
 
   if (res.status === 200) {
-    window.location.href = res.data.url
+    // 后端返回相对路径 /download/<jwt>，需拼上后端域名，否则会被当前前端域名解析导致 404
+    const base = import.meta.env.VITE_API_BASE_URL || ''
+    const url = res.data.url.startsWith('/') ? base + res.data.url : res.data.url
+    window.location.href = url
     emit('success')
   } else {
     ElMessage.error(res.data.message || '下载失败')
