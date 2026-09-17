@@ -784,7 +784,9 @@ const uploadDocument = async (file: any) => {
       // timeout: 1000 * 6,
     })
     if (res.status === 200) {
-      file.attachment_id = res.data.data.id || 0
+      // 服务端返回 {id}，兼容旧的 {data:{id}} 包装结构
+      const uploadData = res.data || {}
+      file.attachment_id = uploadData.data?.id || uploadData.id || 0
       createDocument(file)
       totalSuccess.value++
     } else {
