@@ -4,7 +4,7 @@
       <div
         v-if="item.position == 'list_nav_bottom'"
         :key="item.position + item.id"
-        v-html="item.content"
+        v-safe-html="item.content"
       ></div>
     </template>
 
@@ -61,7 +61,7 @@
       <div
         v-if="item.position == 'list_document_top'"
         :key="item.position + item.id"
-        v-html="item.content"
+        v-safe-html="item.content"
       ></div>
     </template>
 
@@ -264,7 +264,7 @@
       <div
         v-if="item.position == 'list_document_bottom'"
         :key="item.position + item.id"
-        v-html="item.content"
+        v-safe-html="item.content"
       ></div>
     </template>
   </div>

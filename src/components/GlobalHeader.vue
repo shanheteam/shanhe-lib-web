@@ -5,7 +5,7 @@
         <div
           v-if="item.position == 'global_top'"
           :key="item.position + item.id"
-          v-html="item.content"
+          v-safe-html="item.content"
         ></div>
       </div>
     </template>

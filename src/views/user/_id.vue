@@ -4,7 +4,7 @@
       <div
         v-if="item.position == 'user_top'"
         :key="item.position + item.id"
-        v-html="item.content"
+        v-safe-html="item.content"
       ></div>
     </template>
     <div class="user-layout">
@@ -52,7 +52,7 @@
                 v-if="item.position == 'user_document_top'"
                 :key="item.position + item.id"
                 class="user-inline-ad"
-                v-html="item.content"
+                v-safe-html="item.content"
               ></div>
             </template>
             <router-view />

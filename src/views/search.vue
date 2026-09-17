@@ -112,7 +112,7 @@
           :key="item.position + item.id"
           :span="24"
         >
-          <div v-html="item.content"></div>
+          <div v-safe-html="item.content"></div>
         </el-col>
       </template>
       <!-- 左侧过滤条件 -->
@@ -368,7 +368,7 @@
           <div
             v-if="item.position == 'search_right'"
             :key="item.position + item.id"
-            v-html="item.content"
+            v-safe-html="item.content"
           ></div>
         </template>
       </el-col>
@@ -377,7 +377,7 @@
       <div
         v-if="item.position == 'search_bottom'"
         :key="item.position + item.id"
-        v-html="item.content"
+        v-safe-html="item.content"
       ></div>
     </template>
   </div>

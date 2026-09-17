@@ -21,7 +21,7 @@
           </div>
         </template>
         <div v-if="settings.security.is_close" class="close-tips">
-          <div v-html="settings.security.close_statement"></div>
+          <div v-safe-html="settings.security.close_statement"></div>
         </div>
         <div v-if="!(user.id > 0 && settings.security.is_close)">
           <form-login :redirect="redirect"></form-login>

@@ -33,7 +33,7 @@
               }}</span>
               {{ settings.system.credit_name || '魔豆' }}的文档
             </div>
-            <div v-else v-html="settings.download.code_tip"></div>
+            <div v-else v-safe-html="settings.download.code_tip"></div>
           </template>
           <div v-if="download.payment_type === creditDownload">
             <div>用户可免费下载自己上传的文档</div>

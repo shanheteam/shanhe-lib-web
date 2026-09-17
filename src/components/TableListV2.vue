@@ -154,7 +154,7 @@
           </span>
           <!-- 字符串。更多，则需要继续扩展 -->
           <span v-else-if="item.type === 'html'">
-            <span v-html="row[item.prop]"></span>
+            <span v-safe-html="row[item.prop]"></span>
           </span>
           <template v-else>
             <el-input

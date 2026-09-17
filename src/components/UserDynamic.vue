@@ -18,7 +18,7 @@
       <el-table-column prop="title" label="内容">
         <template #default="scope">
           <!-- eslint-disable-next-line vue/no-v-html -->
-          <span v-html="scope.row.content"></span>
+          <span v-safe-html="scope.row.content"></span>
         </template>
       </el-table-column>
     </el-table>

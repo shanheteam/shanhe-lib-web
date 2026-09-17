@@ -9,7 +9,7 @@
     >
       <template #title>告警提示</template>
       <div>
-        <div v-html="mysqlGroupBy.error"></div>
+        <div v-safe-html="mysqlGroupBy.error"></div>
       </div>
       <div style="margin-top: 10px">
         <div>当然，您也可以通过下述方式进行设置。</div>

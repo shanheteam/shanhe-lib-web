@@ -70,7 +70,7 @@
       <div v-if="settings.display.copyright_statement">
         <div
           class="el-link el-link--default copyright-statement"
-          v-html="settings.display.copyright_statement"
+          v-safe-html="settings.display.copyright_statement"
         ></div>
       </div>
       <div class="footer-copyright">
@@ -116,7 +116,7 @@
       <div
         v-if="item.position == 'global_bottom'"
         :key="item.position + item.id"
-        v-html="item.content"
+        v-safe-html="item.content"
       ></div>
     </template>
     <FixedRightBar />

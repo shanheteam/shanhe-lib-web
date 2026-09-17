@@ -21,10 +21,10 @@
               :alt="`${getIcon(doc.ext)}文档`"
             />
             <el-icon v-else><Tickets /></el-icon>
-            <span v-html="doc.title"></span>
+            <span v-safe-html="doc.title"></span>
           </router-link>
         </h3>
-        <div class="doc-desc" v-html="doc.description"></div>
+        <div class="doc-desc" v-safe-html="doc.description"></div>
         <div class="doc-info">
           <el-icon><Clock /></el-icon> {{ formatRelativeTime(doc.created_at) }}
         </div>

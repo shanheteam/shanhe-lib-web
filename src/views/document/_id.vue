@@ -185,7 +185,7 @@
             <div
               v-if="item.position == 'document_top'"
               :key="item.position + item.id"
-              v-html="item.content"
+              v-safe-html="item.content"
             ></div>
           </template>
 
@@ -309,7 +309,7 @@
                 <div
                   v-if="randomAdvertisement()"
                   class="doc-page"
-                  v-html="randomAdvertisement().content"
+                  v-safe-html="randomAdvertisement().content"
                 ></div>
               </div>
             </div>
@@ -329,7 +329,7 @@
                 <div
                   v-if="randomAdvertisement()"
                   class="doc-page"
-                  v-html="randomAdvertisement().content"
+                  v-safe-html="randomAdvertisement().content"
                 ></div>
               </div>
             </div>
@@ -416,7 +416,7 @@
           <div
             v-if="item.position == 'document_bottom'"
             :key="item.position + item.id"
-            v-html="item.content"
+            v-safe-html="item.content"
           ></div>
         </template>
 

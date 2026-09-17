@@ -195,7 +195,7 @@
             <div
               ref="viewer"
               data-slate-editor
-              v-html="article.content"
+              v-safe-html="article.content"
             ></div>
             <div v-if="!article.id" style="min-height: 100vh"></div>
           </article>

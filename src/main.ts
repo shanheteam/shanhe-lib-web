@@ -8,6 +8,7 @@ import router from './router'
 import pinia from './store'
 import mixins from './mixins/mixins'
 import tableDrag from './directives/table-drag'
+import safeHtml from './directives/safe-html'
 import { useSettingStore } from './store/setting'
 
 // 全局样式（与原版 nuxt.config.css 对应）
@@ -31,6 +32,9 @@ app.mixin(mixins)
 
 // 全局指令 table-drag（对应原 plugins/table-drag.js）
 app.directive('table-drag', tableDrag)
+
+// 全局指令 v-safe-html：替代 v-html，渲染前经 DOMPurify 过滤，防存储型 XSS
+app.directive('safe-html', safeHtml)
 
 // 首屏需要站点配置：提前发起请求，与路由懒加载并行，避免在路由守卫里才开始请求。
 // 配置已持久化到 localStorage 时不再请求；此处与路由守卫的并发调用会复用同一个请求。

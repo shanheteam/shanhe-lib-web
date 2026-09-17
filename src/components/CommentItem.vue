@@ -27,7 +27,7 @@
         :class="'comment-status-' + (comment.status || 0)"
       >
         <!-- eslint-disable-next-line vue/no-v-html -->
-        <span v-html="comment.reply_user" />
+        <span v-safe-html="comment.reply_user" />
         {{ comment.content }}
       </div>
       <div class="comment-action">
