@@ -94,6 +94,7 @@ import {
   getComment,
   checkComment,
 } from '@/api/comment'
+import { createLatestGuard } from '@/utils/latest'
 import { parseQueryIntArray, genLinkHTML } from '@/utils/utils'
 import { categoryTypeOptions } from '@/utils/enum'
 
@@ -116,12 +117,17 @@ const tableListFields = ref<any[]>([])
 const selectedRow = ref<any[]>([])
 const comment = ref<any>({ id: 0 })
 
+// 翻页/切筛选快速切换时丢弃过期响应
+const commentGuard = createLatestGuard()
+
 async function fetchList() {
+  const token = commentGuard.start()
   loading.value = true
   const res: any = await listComment({
     ...search.value,
     with_document_title: true,
   })
+  if (!commentGuard.isLatest(token)) return
   if (res.status === 200) {
     comments.value = (res.data.comment || []).map((item: any) => {
       item.realname = item.user?.realname || '匿名'

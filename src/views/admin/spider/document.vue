@@ -171,6 +171,7 @@ import {
   deleteSpiderDocument,
   batchUpdateSpiderDocument,
 } from '@/api/spiderdocument'
+import { createLatestGuard } from '@/utils/latest'
 import { genLinkHTML, parseQueryIntArray } from '@/utils/utils'
 import { spiderDocumentStatusOptions } from '@/utils/enum'
 import { useSettingStore } from '@/store/setting'
@@ -203,13 +204,18 @@ function stripRow(item: any) {
   return newItem
 }
 
+// 翻页/切筛选快速切换时丢弃过期响应
+const spiderDocumentGuard = createLatestGuard()
+
 async function fetchData() {
+  const token = spiderDocumentGuard.start()
   loading.value = true
   batchUpdating.value = false
   const res: any = await listSpiderDocument({
     ...search.value,
     order: 'status asc, id desc',
   })
+  if (!spiderDocumentGuard.isLatest(token)) return
   if (res.status === 200) {
     const list: any[] = res.data.spider_document || []
     list.forEach((item) => {

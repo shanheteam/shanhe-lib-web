@@ -391,6 +391,7 @@ import { searchDocument } from '@/api/document'
 import { searchArticle } from '@/api/article'
 import { search } from '@/api/search'
 import { getIcon, genTimeDuration } from '@/utils/utils'
+import { createLatestGuard } from '@/utils/latest'
 import { categoryTypeOptions, advertisementPositions } from '@/utils/enum'
 import { getAdvertisementByPosition } from '@/api/advertisement'
 import { useUserStore } from '@/store/user'
@@ -580,9 +581,14 @@ function execSearch() {
   }
 }
 
+// 搜索词/类型/分页快速切换时丢弃过期响应，避免旧结果覆盖新结果
+const searchGuard = createLatestGuard()
+
 async function execSearchDocument(queryData: any) {
+  const token = searchGuard.start()
   loading.value = true
   const res: any = await searchDocument(queryData)
+  if (!searchGuard.isLatest(token)) return
   loading.value = false
   if (res.status === 200) {
     total.value = res.data.total
@@ -610,7 +616,9 @@ async function execSearchDocument(queryData: any) {
 }
 
 async function execSearchArticle(queryData: any) {
+  const token = searchGuard.start()
   const res: any = await searchArticle(queryData)
+  if (!searchGuard.isLatest(token)) return
   if (res.status === 200) {
     total.value = res.data.total
     spend.value = res.data.spend
@@ -634,8 +642,10 @@ async function execSearchArticle(queryData: any) {
 }
 
 async function execSearchAggregation(queryData: any) {
+  const token = searchGuard.start()
   loading.value = true
   const res: any = await search(queryData)
+  if (!searchGuard.isLatest(token)) return
   loading.value = false
   if (res.status === 200) {
     total.value = res.data.total

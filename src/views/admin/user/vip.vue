@@ -71,6 +71,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { listUserVip } from '@/api/uservip'
 import { listUser } from '@/api/user'
 import { vipTypeOptions } from '@/utils/enum'
+import { createLatestGuard } from '@/utils/latest'
 import { parseQueryIntArray, genLinkHTML } from '@/utils/utils'
 
 defineOptions({ name: 'AdminUserVip' })
@@ -106,9 +107,14 @@ async function searchUser(wd: string, userId: any[] = []) {
   }
 }
 
+// 翻页/切筛选快速切换时丢弃过期响应
+const userVipGuard = createLatestGuard()
+
 async function fetchList() {
+  const token = userVipGuard.start()
   loading.value = true
   const res: any = await listUserVip(search.value)
+  if (!userVipGuard.isLatest(token)) return
   if (res.status === 200) {
     const data: any[] = res.data.user_vip || []
     data.forEach((item) => {

@@ -275,6 +275,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { listDocument } from '@/api/document'
 import { getIcon } from '@/utils/utils'
+import { createLatestGuard } from '@/utils/latest'
 import { advertisementPositions } from '@/utils/enum'
 import { getAdvertisementByPosition } from '@/api/advertisement'
 import { useSettingStore } from '@/store/setting'
@@ -452,7 +453,11 @@ function pageChange(page: number) {
   })
 }
 
+// 切换分类/排序/分页快速切换时丢弃过期响应
+const documentGuard = createLatestGuard()
+
 async function loadData() {
+  const token = documentGuard.start()
   loading.value = true
   empty.value = false
 
@@ -513,6 +518,7 @@ async function loadData() {
     fee_type: route.query.fee_type,
     language: route.query.language,
   })
+  if (!documentGuard.isLatest(token)) return
 
   if (res.status === 200) {
     total.value = res.data.total

@@ -197,6 +197,7 @@ import {
   updateSpiderArticleList,
 } from '@/api/spiderarticle'
 import { spiderArticleListStatusOptions } from '@/utils/enum'
+import { createLatestGuard } from '@/utils/latest'
 import { genLinkHTML, parseQueryIntArray } from '@/utils/utils'
 
 defineOptions({ name: 'AdminSpiderArticleList' })
@@ -228,12 +229,17 @@ const getDefaultForm = () => ({
 })
 const form = ref<any>(getDefaultForm())
 
+// 翻页/切筛选快速切换时丢弃过期响应
+const spiderArticleListGuard = createLatestGuard()
+
 async function fetchData() {
+  const token = spiderArticleListGuard.start()
   loading.value = true
   const res: any = await listSpiderArticleList({
     ...search.value,
     order: 'status asc,id desc',
   })
+  if (!spiderArticleListGuard.isLatest(token)) return
   loading.value = false
   if (res.status === 200) {
     const items: any[] = res.data.spider_article_list || []

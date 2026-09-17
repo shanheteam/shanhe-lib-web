@@ -282,6 +282,7 @@ import {
   setDocumentRecommend,
 } from '@/api/document'
 import { listLanguage } from '@/api/language'
+import { createLatestGuard } from '@/utils/latest'
 import {
   categoryToTrees,
   parseQueryIntArray,
@@ -350,7 +351,11 @@ async function fetchCategories() {
   }
 }
 
+// 翻页/切筛选快速切换时丢弃过期响应
+const documentGuard = createLatestGuard()
+
 async function fetchList() {
+  const token = documentGuard.start()
   loading.value = true
   const searchParams = { ...search.value }
   if (
@@ -361,6 +366,7 @@ async function fetchList() {
       searchParams.category_id[searchParams.category_id.length - 1]
   }
   const res: any = await listDocument(searchParams)
+  if (!documentGuard.isLatest(token)) return
   if (res.status === 200) {
     const docs: any[] = res.data.document || []
     docs.forEach((item: any) => {

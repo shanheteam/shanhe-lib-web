@@ -46,6 +46,7 @@ import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getDynamics } from '@/api/user'
 import { formatRelativeTime, formatDatetime } from '@/utils/utils'
+import { createLatestGuard } from '@/utils/latest'
 
 defineOptions({ name: 'UserDynamic' })
 defineProps({
@@ -74,10 +75,14 @@ const pageChange = (page: number) => {
   })
 }
 
+// 翻页快速切换时丢弃过期响应（原来用 loading 互斥，会直接丢掉最新一次请求）
+const dynamicGuard = createLatestGuard()
+
 const getDynamicsList = async () => {
-  if (loading.value) return
+  const token = dynamicGuard.start()
   loading.value = true
   const res: any = await getDynamics({ ...query.value })
+  if (!dynamicGuard.isLatest(token)) return
   if (res.status === 200) {
     dynamics.value = res.data.dynamic || []
     total.value = res.data.total || 0

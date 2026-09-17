@@ -83,6 +83,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/store/user'
 import { deleteFavorite, listFavorite } from '@/api/favorite'
+import { createLatestGuard } from '@/utils/latest'
 import {
   formatDatetime,
   formatRelativeTime,
@@ -112,12 +113,16 @@ const query = ref({
   type: route.query.type as any,
 })
 
+const favoriteGuard = createLatestGuard()
+
 const getFavorites = async () => {
+  const token = favoriteGuard.start()
   loading.value = true
   const res: any = await listFavorite({
     page: query.value.page,
     size: query.value.size,
   })
+  if (!favoriteGuard.isLatest(token)) return
   if (res.status === 200) {
     let items = res.data.favorite || []
     items = items.map((item: any) => {

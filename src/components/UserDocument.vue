@@ -259,6 +259,7 @@ import {
   searchDocument,
 } from '@/api/document'
 import { formatBytes, formatRelativeTime, getIcon } from '@/utils/utils'
+import { createLatestGuard } from '@/utils/latest'
 import { datetimePickerOptions, documentStatusOptions } from '@/utils/enum'
 import { useUserStore } from '@/store/user'
 import { useCategoryStore } from '@/store/category'
@@ -377,8 +378,12 @@ const onSearch = () => {
   })
 }
 
+// 翻页/筛选快速切换时丢弃过期响应（原来用 loading 互斥，会直接丢掉最新一次请求）
+const documentGuard = createLatestGuard()
+
 async function getDocuments() {
-  if (props.userId === 0 || loading.value) return
+  if (props.userId === 0) return
+  const token = documentGuard.start()
   loading.value = true
   let res: any
   if (query.value.wd) {
@@ -393,6 +398,7 @@ async function getDocuments() {
     })
   }
 
+  if (!documentGuard.isLatest(token)) return
   if (res.status === 200) {
     const list = res.data.document || []
     list.map((item: any) => {

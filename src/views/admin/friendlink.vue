@@ -77,6 +77,7 @@ import {
   deleteFriendlink,
   getFriendlink,
 } from '@/api/friendlink'
+import { createLatestGuard } from '@/utils/latest'
 import { genLinkHTML, parseQueryIntArray } from '@/utils/utils'
 
 const route = useRoute()
@@ -98,9 +99,14 @@ const selectedRow = ref<any[]>([])
 const friendlink = ref<any>({ id: 0 })
 const friendlinkForm = ref<any>()
 
+// 翻页/切筛选快速切换时丢弃过期响应
+const friendlinkGuard = createLatestGuard()
+
 async function fetchList() {
+  const token = friendlinkGuard.start()
   loading.value = true
   const res: any = await listFriendlink(search.value)
+  if (!friendlinkGuard.isLatest(token)) return
   if (res.status === 200) {
     const list: any[] = res.data.friendlink || []
     list.map((item: any) => {

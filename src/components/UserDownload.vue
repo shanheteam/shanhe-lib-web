@@ -67,6 +67,7 @@
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getUserDownloads } from '@/api/user'
+import { createLatestGuard } from '@/utils/latest'
 import {
   formatDatetime,
   formatRelativeTime,
@@ -102,12 +103,16 @@ watch(
   { immediate: true },
 )
 
+const downloadGuard = createLatestGuard()
+
 async function getDownloads() {
+  const token = downloadGuard.start()
   loading.value = true
   const res: any = await getUserDownloads({
     page: query.value.page,
     size: query.value.size,
   })
+  if (!downloadGuard.isLatest(token)) return
   if (res.status === 200) {
     let list = res.data.download || []
     list = list.map((item: any) => {

@@ -70,6 +70,7 @@ import { ElMessage } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { listSms } from '@/api/sms'
 import { listUser } from '@/api/user'
+import { createLatestGuard } from '@/utils/latest'
 import { genLinkHTML, parseQueryIntArray } from '@/utils/utils'
 import { smsTypeOptions, smsStatusOptions, smsProviderOptions } from '@/utils/enum'
 
@@ -106,9 +107,14 @@ async function searchUser(wd: string, userId: any[] = []) {
   }
 }
 
+// 翻页/切筛选快速切换时丢弃过期响应
+const smsGuard = createLatestGuard()
+
 async function fetchList() {
+  const token = smsGuard.start()
   loading.value = true
   const res: any = await listSms(search.value)
+  if (!smsGuard.isLatest(token)) return
   if (res.status === 200) {
     const list: any[] = res.data.sms || []
     list.forEach((item) => {

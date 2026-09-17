@@ -91,6 +91,7 @@ import {
   getSpiderUrl,
   batchSetSpiderUrlStatus,
 } from '@/api/spiderurl'
+import { createLatestGuard } from '@/utils/latest'
 import { genLinkHTML, parseQueryIntArray } from '@/utils/utils'
 import { spiderUrlStatusOptions } from '@/utils/enum'
 
@@ -110,9 +111,14 @@ const selectedRow = ref<any[]>([])
 const spiderUrl = ref<any>({ id: 0 })
 const spiderUrlForm = ref<any>()
 
+// 翻页/切筛选快速切换时丢弃过期响应
+const spiderUrlGuard = createLatestGuard()
+
 async function fetchList() {
+  const token = spiderUrlGuard.start()
   loading.value = true
   const res: any = await listSpiderUrl(search.value)
+  if (!spiderUrlGuard.isLatest(token)) return
   if (res.status === 200) {
     const list: any[] = res.data.spider_url || []
     list.forEach((item: any) => {

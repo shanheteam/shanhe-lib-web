@@ -283,6 +283,7 @@ import {
 } from '@/api/spiderarticle'
 import { crawlArticle } from '@/api/article'
 import TinymceEditor from '@/components/TinymceEditor.vue'
+import { createLatestGuard } from '@/utils/latest'
 import { categoryToTrees, genLinkHTML, parseQueryIntArray } from '@/utils/utils'
 import { spiderArticleDetailStatusOptions } from '@/utils/enum'
 
@@ -398,12 +399,17 @@ async function onCrawlArticle() {
   }
 }
 
+// 翻页/切筛选快速切换时丢弃过期响应
+const spiderArticleDetailGuard = createLatestGuard()
+
 async function fetchData() {
+  const token = spiderArticleDetailGuard.start()
   loading.value = true
   const res: any = await listSpiderArticleDetail({
     ...search.value,
     order: 'status asc,id desc',
   })
+  if (!spiderArticleDetailGuard.isLatest(token)) return
   loading.value = false
   if (res.status === 200) {
     const items: any[] = res.data.spider_article_detail || []

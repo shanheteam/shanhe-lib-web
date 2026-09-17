@@ -204,6 +204,7 @@ import {
 } from '@element-plus/icons-vue'
 import { listArticle, searchArticle, deleteArticle } from '@/api/article'
 import { formatDatetime, formatRelativeTime } from '@/utils/utils'
+import { createLatestGuard } from '@/utils/latest'
 import { datetimePickerOptions, articleStatusOptions } from '@/utils/enum'
 import { useUserStore } from '@/store/user'
 
@@ -297,8 +298,12 @@ const onSearch = () => {
   })
 }
 
+// 翻页/筛选快速切换时丢弃过期响应（原来用 loading 互斥，会直接丢掉最新一次请求）
+const articleGuard = createLatestGuard()
+
 async function getArticles() {
-  if (props.userId === 0 || loading.value) return
+  if (props.userId === 0) return
+  const token = articleGuard.start()
   loading.value = true
   let res: any
   if (query.value.wd) {
@@ -313,6 +318,7 @@ async function getArticles() {
     })
   }
 
+  if (!articleGuard.isLatest(token)) return
   if (res.status === 200) {
     articles.value = res.data.article || []
     total.value = res.data.total || 0

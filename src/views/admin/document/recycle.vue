@@ -95,6 +95,7 @@ import {
   listRecycleDocument,
   recoverRecycleDocument,
 } from '@/api/document'
+import { createLatestGuard } from '@/utils/latest'
 import { categoryToTrees, parseQueryIntArray, genLinkHTML } from '@/utils/utils'
 import { documentStatusOptions } from '@/utils/enum'
 
@@ -137,7 +138,11 @@ async function fetchCategories() {
   }
 }
 
+// 翻页/切筛选快速切换时丢弃过期响应
+const documentRecycleGuard = createLatestGuard()
+
 async function fetchList() {
+  const token = documentRecycleGuard.start()
   loading.value = true
   const searchParams = { ...search.value }
   if (
@@ -148,6 +153,7 @@ async function fetchList() {
       searchParams.category_id[searchParams.category_id.length - 1]
   }
   const res: any = await listRecycleDocument(searchParams)
+  if (!documentRecycleGuard.isLatest(token)) return
   loading.value = false
   if (res.status === 200) {
     const docs: any[] = res.data.document || []

@@ -53,6 +53,7 @@ import { ref, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { deleteSearchRecord, listSearchRecord } from '@/api/searchrecord'
+import { createLatestGuard } from '@/utils/latest'
 import { genLinkHTML } from '@/utils/utils'
 
 const route = useRoute()
@@ -69,10 +70,15 @@ const searchFormFields = ref<any[]>([])
 const tableListFields = ref<any[]>([])
 const selectedRow = ref<any[]>([])
 
+// 翻页/切筛选快速切换时丢弃过期响应
+const searchRecordGuard = createLatestGuard()
+
 async function fetchList() {
+  const token = searchRecordGuard.start()
   loading.value = true
   const searchParams = { ...search.value }
   const res: any = await listSearchRecord(searchParams)
+  if (!searchRecordGuard.isLatest(token)) return
   loading.value = false
   if (res.status === 200) {
     const list: any[] = res.data.search_record || []

@@ -62,6 +62,7 @@ import { ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { listPermission, getPermission } from '@/api/permission'
+import { createLatestGuard } from '@/utils/latest'
 import { methodOptions } from '@/utils/enum'
 
 const route = useRoute()
@@ -81,9 +82,14 @@ const tableListFields = ref<any[]>([])
 const selectedRow = ref<any[]>([])
 const permission = ref<any>({})
 
+// 翻页/切筛选快速切换时丢弃过期响应
+const permissionGuard = createLatestGuard()
+
 async function fetchList() {
+  const token = permissionGuard.start()
   loading.value = true
   const res: any = await listPermission(search.value)
+  if (!permissionGuard.isLatest(token)) return
   if (res.status === 200) {
     listData.value = res.data.permission
     total.value = res.data.total

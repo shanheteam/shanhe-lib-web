@@ -66,6 +66,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/store/user'
 import { deleteFavorite, listFavorite } from '@/api/favorite'
 import { formatDatetime, formatRelativeTime } from '@/utils/utils'
+import { createLatestGuard } from '@/utils/latest'
 
 defineOptions({ name: 'FavoriteArticle' })
 defineProps({
@@ -88,13 +89,17 @@ const query = ref({
   size: 20,
 })
 
+const favoriteGuard = createLatestGuard()
+
 const getFavorites = async () => {
+  const token = favoriteGuard.start()
   loading.value = true
   const res: any = await listFavorite({
     page: query.value.page,
     size: query.value.size,
     type: 1,
   })
+  if (!favoriteGuard.isLatest(token)) return
   if (res.status === 200) {
     favorites.value = res.data.favorite || []
     total.value = res.data.total || 0

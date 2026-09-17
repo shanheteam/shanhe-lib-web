@@ -74,6 +74,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { listBanner, deleteBanner, getBanner } from '@/api/banner'
 import { bannerTypeOptions } from '@/utils/enum'
+import { createLatestGuard } from '@/utils/latest'
 import { parseQueryIntArray } from '@/utils/utils'
 
 const route = useRoute()
@@ -94,9 +95,14 @@ const selectedRow = ref<any[]>([])
 const banner = ref<any>({})
 const formBanner = ref<any>()
 
+// 翻页/切筛选快速切换时丢弃过期响应
+const bannerGuard = createLatestGuard()
+
 async function fetchList() {
+  const token = bannerGuard.start()
   loading.value = true
   const res: any = await listBanner(search.value)
+  if (!bannerGuard.isLatest(token)) return
   if (res.status === 200) {
     listData.value = res.data.banner
     total.value = res.data.total

@@ -152,6 +152,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { listArticle } from '@/api/article'
+import { createLatestGuard } from '@/utils/latest'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
 
@@ -248,7 +249,11 @@ function filterCategoryChildren(category: any) {
   return []
 }
 
+// 翻页/切 tab 快速切换时丢弃"先发后到"的过期响应，避免旧数据覆盖新数据
+const articleGuard = createLatestGuard()
+
 async function getArticles() {
+  const token = articleGuard.start()
   const res: any = await listArticle({
     size,
     page: query.value.page,
@@ -256,6 +261,7 @@ async function getArticles() {
     order: route.query.tab === 'popular' ? 'view_count desc' : '',
     status: 1, // 审核通过的文章
   })
+  if (!articleGuard.isLatest(token)) return
   if (res.status !== 200) {
     ElMessage.error(res.data.message || '获取文章列表失败')
     return
@@ -264,7 +270,10 @@ async function getArticles() {
   total.value = res.data.total || 0
 }
 
+const recommendGuard = createLatestGuard()
+
 async function getRecommendArticles() {
+  const token = recommendGuard.start()
   loading.value = true
   const res: any = await listArticle({
     page: recommend.value.page,
@@ -272,6 +281,7 @@ async function getRecommendArticles() {
     is_recommend: true,
     status: 1, // 审核通过的文章
   })
+  if (!recommendGuard.isLatest(token)) return
   loading.value = false
   if (res.status !== 200) {
     ElMessage.error(res.data.message || '获取推荐文章失败')
