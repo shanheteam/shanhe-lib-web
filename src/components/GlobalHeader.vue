@@ -762,7 +762,8 @@ const init = async () => {
   syncSearchType()
   await Promise.all([
     categoryStore.getCategories(),
-    settingStore.getSettings(),
+    // 配置接口刚失败过时不再重复请求（否则会再次等待一次超时）
+    settingStore.needFetchSettings() ? settingStore.getSettings() : Promise.resolve(),
     settingStore.listNavigation(),
     getAdvertisements('global'),
   ])

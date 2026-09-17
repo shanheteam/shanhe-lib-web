@@ -39,7 +39,7 @@ app.directive('safe-html', safeHtml)
 // 首屏需要站点配置：提前发起请求，与路由懒加载并行，避免在路由守卫里才开始请求。
 // 配置已持久化到 localStorage 时不再请求；此处与路由守卫的并发调用会复用同一个请求。
 const settingStore = useSettingStore()
-if (!Object.keys(settingStore.settings.system || {}).length) {
+if (settingStore.needFetchSettings()) {
   settingStore.getSettings()
 }
 

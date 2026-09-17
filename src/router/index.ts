@@ -213,8 +213,8 @@ router.beforeEach(async (to, from) => {
     }
   }
 
-  // 加载站点配置
-  if (!Object.keys(settingStore.settings.system || {}).length) {
+  // 加载站点配置（已有配置或刚失败过则跳过，避免配置接口异常时每次跳转都被超时请求阻塞）
+  if (settingStore.needFetchSettings()) {
     await settingStore.getSettings()
   }
 

@@ -7,6 +7,10 @@ import { categoryToTrees } from '@/utils/utils'
 // 若不去重会重复发起同一请求。
 let settingsRequest: Promise<any> | null = null
 
+// 配置拉取失败后的冷却时间：避免路由守卫在配置接口异常时，每次跳转都等待一次超时请求
+const SETTINGS_RETRY_COOLDOWN_MS = 30 * 1000
+let settingsFailedAt = 0
+
 export const useSettingStore = defineStore('setting', {
   state: () => ({
     settings: {
@@ -36,6 +40,7 @@ export const useSettingStore = defineStore('setting', {
       }
       const res: any = await settingsRequest
       if (res.status === 200) {
+        settingsFailedAt = 0
         this.setSettings({
           system: {},
           footer: {},
@@ -44,8 +49,15 @@ export const useSettingStore = defineStore('setting', {
           language: [],
           ...res.data,
         })
+      } else {
+        settingsFailedAt = Date.now()
       }
       return res
+    },
+    /** 是否还需要拉取站点配置：已有配置、或正处于失败冷却期内则跳过，避免反复阻塞路由 */
+    needFetchSettings(): boolean {
+      if (Object.keys(this.settings?.system || {}).length > 0) return false
+      return Date.now() - settingsFailedAt >= SETTINGS_RETRY_COOLDOWN_MS
     },
     async listNavigation() {
       const res: any = await listNavigation({ page: 1, size: 10000 })
