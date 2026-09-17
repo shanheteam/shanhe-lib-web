@@ -35,7 +35,8 @@
                 class="oauth-btn"
                 @click="handleOAuthLogin(oauth)"
               >
-                {{ oauth.name }} 登录
+                <!-- 自定义 OAuth（type=6）为本站学籍登录，文案单独处理 -->
+                {{ oauth.type === 6 ? '使用' + oauth.name + '登录' : oauth.name + ' 登录' }}
               </el-button>
             </div>
           </div>
