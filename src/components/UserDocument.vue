@@ -184,7 +184,7 @@
                 icon="Delete"
                 class="is-danger"
                 size="small"
-                @click="deleteDocument(scope.row)"
+                @click="deleteDocumentRow(scope.row)"
               >
                 删除
               </el-button>
