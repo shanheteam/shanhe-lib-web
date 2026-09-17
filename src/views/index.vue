@@ -441,9 +441,10 @@ async function getLatestContent() {
 }
 
 async function loadNotices() {
+  // 公告栏是纵向轮播的标题列表，取少量即可，避免首屏拉取上百条文章
   const res: any = await listArticle({
     page: 1,
-    size: 100,
+    size: 10,
     is_notice: [1],
   })
   if (res.status === 200) {

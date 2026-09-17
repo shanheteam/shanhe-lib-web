@@ -1,17 +1,14 @@
 import { createApp } from 'vue'
-import ElementPlus from 'element-plus'
+// Element Plus 样式仍全量引入：组件本身已改为按需引入（见 vite.config.ts 的 Components 插件），
+// 全量样式可以保证 app.scss 对组件样式的覆盖顺序与改造前一致。
 import 'element-plus/dist/index.css'
-import VxeUI from 'vxe-pc-ui'
-import 'vxe-pc-ui/lib/style.css'
-import VxeUITable from 'vxe-table'
-import 'vxe-table/lib/style.css'
-import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import App from './App.vue'
 import router from './router'
 import pinia from './store'
 import mixins from './mixins/mixins'
 import tableDrag from './directives/table-drag'
+import { useSettingStore } from './store/setting'
 
 // 全局样式（与原版 nuxt.config.css 对应）
 import './assets/font-awesome-4.7.0/css/font-awesome.min.css'
@@ -22,11 +19,9 @@ const app = createApp(App)
 
 app.use(pinia)
 app.use(router)
-app.use(ElementPlus, { locale: zhCn })
-app.use(VxeUI)
-app.use(VxeUITable)
 
-// 注册 Element Plus 图标（全局）
+// 注册 Element Plus 图标（全局）。模板与后台菜单中存在 <component :is="menu.icon" /> 这类
+// 动态名称用法，无法静态分析，因此保留全局注册。
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
@@ -37,34 +32,11 @@ app.mixin(mixins)
 // 全局指令 table-drag（对应原 plugins/table-drag.js）
 app.directive('table-drag', tableDrag)
 
-// 自动注册 src/components 下的所有组件（对应 Nuxt components: true 自动导入）
-const componentModules = import.meta.glob('./components/**/*.vue', { eager: true })
-const toPascal = (name: string) =>
-  name
-    .split(/[-_]/)
-    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-    .join('')
-// 驼峰转短横线：CommentList -> comment-list
-const toKebab = (name: string) =>
-  name
-    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-    .toLowerCase()
-for (const path in componentModules) {
-  const mod = componentModules[path] as any
-  const comp = mod.default
-  if (!comp) continue
-  const rel = path.replace('./components/', '').replace(/\.vue$/, '')
-  const parts = rel.split('/')
-  const dirPascal = parts.map(toPascal).join('')
-  const kebab = parts.join('-')
-  const barePascal = toPascal(parts[parts.length - 1])
-  const kebabName = toKebab(barePascal)
-  app.component(dirPascal, comp)
-  if (kebab !== dirPascal) app.component(kebab, comp)
-  if (barePascal !== dirPascal) app.component(barePascal, comp)
-  if (kebabName !== dirPascal && kebabName !== kebab && kebabName !== barePascal)
-    app.component(kebabName, comp)
-  if (comp.name && comp.name !== dirPascal) app.component(comp.name, comp)
+// 首屏需要站点配置：提前发起请求，与路由懒加载并行，避免在路由守卫里才开始请求。
+// 配置已持久化到 localStorage 时不再请求；此处与路由守卫的并发调用会复用同一个请求。
+const settingStore = useSettingStore()
+if (!Object.keys(settingStore.settings.system || {}).length) {
+  settingStore.getSettings()
 }
 
 app.mount('#app')

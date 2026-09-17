@@ -1,22 +1,28 @@
 <template>
-  <component :is="layoutComponent">
-    <router-view />
-  </component>
+  <el-config-provider :locale="zhCn">
+    <component :is="layoutComponent">
+      <router-view />
+    </component>
+  </el-config-provider>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted } from 'vue'
+import { defineComponent, computed, watch, defineAsyncComponent } from 'vue'
 import { useRoute } from 'vue-router'
-import { getSettings } from '@/api/config'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
+import { useSettingStore } from '@/store/setting'
 import DefaultLayout from '@/layouts/default.vue'
-import AdminLayout from '@/layouts/admin.vue'
-import ArticleLayout from '@/layouts/article.vue'
-import ErrorLayout from '@/layouts/error.vue'
+
+// 后台/文章/错误布局与首屏无关，改为异步加载，避免后台的菜单、表单组件进入首屏包
+const AdminLayout = defineAsyncComponent(() => import('@/layouts/admin.vue'))
+const ArticleLayout = defineAsyncComponent(() => import('@/layouts/article.vue'))
+const ErrorLayout = defineAsyncComponent(() => import('@/layouts/error.vue'))
 
 export default defineComponent({
   name: 'App',
   setup() {
     const route = useRoute()
+    const settingStore = useSettingStore()
     const layoutComponent = computed(() => {
       const layout = (route.meta.layout as string) || 'default'
       switch (layout) {
@@ -31,25 +37,25 @@ export default defineComponent({
       }
     })
 
-    // 动态应用后台上传的站点 favicon
-    onMounted(async () => {
-      try {
-        const res: any = await getSettings()
-        const favicon = String(res?.data?.system?.favicon ?? '').trim()
-        if (!favicon) return
+    // 动态应用后台上传的站点 favicon。复用 store 中已有的站点配置，
+    // 不再单独请求一次 /settings（原实现在挂载时重复请求）。
+    watch(
+      () => settingStore.settings.system?.favicon,
+      (favicon) => {
+        const href = String(favicon ?? '').trim()
+        if (!href) return
         let link = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
         if (!link) {
           link = document.createElement('link')
           link.rel = 'icon'
           document.head.appendChild(link)
         }
-        link.href = favicon
-      } catch {
-        // 静默失败，保留 index.html 默认图标
-      }
-    })
+        link.href = href
+      },
+      { immediate: true }
+    )
 
-    return { layoutComponent }
+    return { layoutComponent, zhCn }
   },
 })
 </script>

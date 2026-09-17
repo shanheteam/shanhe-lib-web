@@ -1,7 +1,11 @@
 import { defineStore } from 'pinia'
-import { getSettings } from '@/api/config'
+import { getSettings as fetchSettings } from '@/api/config'
 import { listNavigation } from '@/api/navigation'
 import { categoryToTrees } from '@/utils/utils'
+
+// 站点配置的并发请求去重：main.ts 预取与路由守卫会几乎同时调用，
+// 若不去重会重复发起同一请求。
+let settingsRequest: Promise<any> | null = null
 
 export const useSettingStore = defineStore('setting', {
   state: () => ({
@@ -25,7 +29,12 @@ export const useSettingStore = defineStore('setting', {
       this.navigations = navigations
     },
     async getSettings() {
-      const res: any = await getSettings()
+      if (!settingsRequest) {
+        settingsRequest = fetchSettings().finally(() => {
+          settingsRequest = null
+        })
+      }
+      const res: any = await settingsRequest
       if (res.status === 200) {
         this.setSettings({
           system: {},
