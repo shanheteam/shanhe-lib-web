@@ -11,3 +11,6 @@ export const getEnvs = () => service({ url: '/api/v1/envs', method: 'get' })
 export const getDevice = () => service({ url: '/api/v1/device', method: 'get' })
 export const getWechatPayCert = (params?: any) => service({ url: '/api/v1/wechatpay/cert', method: 'get', params })
 export const setSQLMode = (data: any) => service({ url: '/api/v1/sqlmode', method: 'put', data })
+// 检测邮箱：用表单里的最新值校验 SMTP 连接，填写测试邮箱时会真实发送一封测试邮件
+export const testEmailConfig = (data: any) =>
+  service({ url: '/api/v1/config/email-test', method: 'post', data })
