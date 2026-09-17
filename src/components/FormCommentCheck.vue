@@ -17,9 +17,9 @@
       </el-form-item>
       <el-form-item label="审核状态">
         <el-radio-group v-model="icomment.status">
-          <el-radio :label="0">待审核</el-radio>
-          <el-radio :label="1">审核通过</el-radio>
-          <el-radio :label="2">审核拒绝</el-radio>
+          <el-radio :value="0">待审核</el-radio>
+          <el-radio :value="1">审核通过</el-radio>
+          <el-radio :value="2">审核拒绝</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item>

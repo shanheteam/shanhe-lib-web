@@ -12,9 +12,9 @@
       <el-form-item label="推荐状态" prop="recommend_at">
         <div v-if="document.recommend_at">
           <el-radio-group v-model="document.type">
-            <el-radio-button :label="0">取消推荐</el-radio-button>
-            <el-radio-button :label="1">推荐</el-radio-button>
-            <el-radio-button :label="2">重新推荐</el-radio-button>
+            <el-radio-button :value="0">取消推荐</el-radio-button>
+            <el-radio-button :value="1">推荐</el-radio-button>
+            <el-radio-button :value="2">重新推荐</el-radio-button>
           </el-radio-group>
           <el-alert
             class="mgt-20px"

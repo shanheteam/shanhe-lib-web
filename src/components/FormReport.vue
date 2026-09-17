@@ -17,7 +17,7 @@
               v-for="item in reportOptions"
               :key="'rs' + item.value"
             >
-              <el-radio :label="item.value">{{ item.label }}</el-radio>
+              <el-radio :value="item.value">{{ item.label }}</el-radio>
             </el-col>
           </el-row>
         </el-radio-group>
