@@ -1,7 +1,7 @@
 <template>
   <div class="com-form-update-document">
     <el-form
-      ref="document"
+      ref="documentEl"
       label-position="top"
       label-width="80px"
       :model="document"

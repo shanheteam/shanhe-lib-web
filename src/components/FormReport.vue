@@ -1,7 +1,7 @@
 <template>
   <div class="com-form-report">
     <el-form
-      ref="report"
+      ref="reportForm"
       label-position="top"
       label-width="80px"
       :model="report"
