@@ -431,12 +431,14 @@ function buildFilterLink(field: string, value: string) {
   }
 }
 
-function sortClick(tab: any) {
+function sortClick() {
+  // el-tabs 的 tab-click 参数是 TabsPaneContext（无顶层 name），且 v-model
+  // 已把 query.sort 更新为当前选中项，直接用它即可
   router.push({
     path: route.path,
     query: {
       ...route.query,
-      sort: tab.name,
+      sort: query.value.sort,
       page: 1,
     },
   })
@@ -711,7 +713,7 @@ onBeforeUnmount(() => {})
   .category-description {
     border: 1px dashed #d8e4f2;
     background: #f9fbfe;
-    margin: 0;
+    margin: 20px 0 0;
     padding: 14px 16px;
     border-radius: 10px;
     font-size: 14px;
