@@ -19,7 +19,7 @@ const SANITIZE_OPTIONS = {
 }
 
 /** 过滤 HTML 字符串，返回可安全渲染的内容 */
-export function sanitizeHtml(html: unknown): string {
+function sanitizeHtml(html: unknown): string {
   if (html === null || html === undefined) return ''
   return DOMPurify.sanitize(String(html), SANITIZE_OPTIONS) as unknown as string
 }

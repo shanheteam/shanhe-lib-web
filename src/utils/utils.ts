@@ -22,7 +22,7 @@ function dateFormat(d: Date, fmt: string): string {
   return fmt
 }
 
-export function formatTimeToStr(times: any, pattern?: string): string {
+function formatTimeToStr(times: any, pattern?: string): string {
   let d = dateFormat(new Date(times), 'yyyy-MM-dd hh:mm:ss')
   if (pattern) d = dateFormat(new Date(times), pattern)
   return d
@@ -34,14 +34,6 @@ export function formatDatetime(time: any): string {
 }
 export function formatDate(time: any): string {
   if (typeof time === 'string' && time !== '') return formatTimeToStr(time, 'yyyy-MM-dd')
-  return '-'
-}
-export function formatOnlyMonthDate(time: any): string {
-  if (typeof time === 'string' && time !== '') return formatTimeToStr(time, 'MM-dd')
-  return '-'
-}
-export function formatYear(time: any): string {
-  if (typeof time === 'string' && time !== '') return formatTimeToStr(time, 'yyyy')
   return '-'
 }
 
@@ -215,15 +207,4 @@ export function genPrevPage(hash: string, pageNO: number, ext?: string, enableGZ
   if (!ext) ext = '.svg'
   if (ext === '.svg' && enableGZIP) ext = '.gzip.svg'
   return `/view/page/${hash}/${pageNO}${ext}`
-}
-
-export function extractScripts(scriptContent: string): string[] {
-  const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi
-  const scripts: string[] = []
-  let match
-  while ((match = scriptRegex.exec(scriptContent)) !== null) {
-    scripts.push(match[1])
-  }
-  if (scripts.length === 0 && scriptContent.trim() !== '') scripts.push(scriptContent)
-  return scripts
 }

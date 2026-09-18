@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios'
+import axios, { type AxiosInstance } from 'axios'
 import qs from 'qs'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user'
@@ -101,11 +101,3 @@ service.interceptors.response.use(
 )
 
 export default service
-
-export type ApiResponse<T = any> = {
-  status: number
-  data: T
-}
-
-export const request = <T = any>(config: AxiosRequestConfig): Promise<ApiResponse<T>> =>
-  service.request(config)

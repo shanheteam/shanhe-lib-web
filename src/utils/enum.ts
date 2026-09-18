@@ -5,14 +5,6 @@ export interface OptionItem {
   type?: string
 }
 
-export const userStatusOptions: OptionItem[] = [
-  { label: '正常', value: 0 },
-  { label: '禁用', value: 1 },
-  { label: '审核中', value: 2 },
-  { label: '拒绝', value: 3 },
-  { label: '忽略', value: 4 },
-]
-
 export const attachmentTypeOptions: OptionItem[] = [
   { label: '未知', value: 0 },
   { label: '头像', value: 1 },
@@ -72,14 +64,10 @@ export const punishmentTypeOptions: OptionItem[] = [
   { label: '禁止发布文章', value: 6, type: 'warning' },
 ]
 
-export const categoryTypeDocument = 0
-export const categoryTypeArticle = 1
-export const categoryTypeAll = -1
-
 export const categoryTypeOptions: OptionItem[] = [
-  { label: '综合', value: categoryTypeAll, type: 'info' },
-  { label: '文档', value: categoryTypeDocument, type: 'primary' },
-  { label: '文章', value: categoryTypeArticle, type: 'success' },
+  { label: '综合', value: -1, type: 'info' },
+  { label: '文档', value: 0, type: 'primary' },
+  { label: '文章', value: 1, type: 'success' },
 ]
 
 export const articleStatusOptions: OptionItem[] = [
@@ -108,18 +96,7 @@ export const otherExtEnum = [
   '.azw3',
   '.azw4',
 ]
-export const pdfExtEnum = ['.pdf']
 export const textExtEnum = ['.txt']
-
-// 文档扩展名分组
-export const documentExtEnum = [
-  ...wordExtEnum,
-  ...excelExtEnum,
-  ...pptExtEnum,
-  ...otherExtEnum,
-  ...pdfExtEnum,
-  ...textExtEnum,
-]
 
 // 广告位置
 export const advertisementPositions: any[] = [
@@ -278,10 +255,9 @@ export const orderStatusOptions: OptionItem[] = [
 ]
 
 // 订单类型
-export const orderTypeBuyDocument = 1
-export const orderTypeBuyVIP = 2
-export const orderTypeRecharge = 3
-export const orderTypeWithdraw = 4
+const orderTypeBuyDocument = 1
+const orderTypeBuyVIP = 2
+const orderTypeRecharge = 3
 
 export const orderTypeOptions: OptionItem[] = [
   { label: '购买文档', value: orderTypeBuyDocument },
@@ -374,14 +350,3 @@ export const smsProviderOptions: OptionItem[] = [
   { label: '华为云', value: 'smsHuawei', type: 'primary' },
   { label: '浩信', value: 'smsHaomas', type: 'primary' },
 ]
-
-// 根据枚举值取标签
-export function getLabel(options: OptionItem[], value: any): string {
-  const item = options.find((o) => o.value === value)
-  return item ? item.label : String(value ?? '-')
-}
-
-export function getType(options: OptionItem[], value: any): string {
-  const item = options.find((o) => o.value === value)
-  return item && item.type ? item.type : 'info'
-}
