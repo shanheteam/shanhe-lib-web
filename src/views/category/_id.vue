@@ -462,7 +462,6 @@ async function loadData() {
   empty.value = false
 
   let order = 'id desc'
-  let status: number[] = []
 
   switch (query.value.sort) {
     case 'latest':
@@ -486,14 +485,10 @@ async function loadData() {
     case 'download':
       order = 'download_count desc'
       break
-    default:
-      status = [2]
-      break
   }
 
   const res: any = await listDocument({
     order,
-    status,
     page: query.value.page,
     size,
     category_id: categoryId.value || undefined,
