@@ -9,7 +9,6 @@ const mixins = {
     return {
       advertisementPositions,
       advertisements: [] as any[],
-      footerTop: 0,
     }
   },
   computed: {
@@ -25,13 +24,10 @@ const mixins = {
   },
   mounted(this: MixinThis) {
     this.handleScreenResize()
-    this.setFooterTop()
     window.addEventListener('resize', this.handleScreenResize)
-    window.addEventListener('scroll', this.setFooterTop)
   },
   beforeUnmount(this: MixinThis) {
     window.removeEventListener('resize', this.handleScreenResize)
-    window.removeEventListener('scroll', this.setFooterTop)
   },
   methods: {
     handleScreenResize() {
@@ -49,13 +45,6 @@ const mixins = {
       const res: any = await getAdvertisementByPosition({ position: positions })
       if (res.status === 200) {
         this.advertisements = res.data.advertisement || []
-      }
-    },
-    setFooterTop(this: MixinThis) {
-      try {
-        this.footerTop = document.querySelector('footer')?.getBoundingClientRect().top
-      } catch (error) {
-        // ignore
       }
     },
   },

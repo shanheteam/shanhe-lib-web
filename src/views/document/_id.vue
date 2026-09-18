@@ -18,7 +18,7 @@
                   alt="推荐"
                 />
                 <el-popover
-                  v-show="document.id > 0"
+                  v-if="document.id > 0"
                   class="hidden-xs-only"
                   placement="bottom"
                   width="200"
@@ -338,7 +338,7 @@
             <div>下载文档到本地，方便使用</div>
             <el-button
               type="primary"
-              :size="isMobile ? 'medium' : ''"
+              :size="isMobile ? 'default' : ''"
               @click="showDownload"
               ><el-icon><Download /></el-icon>下载文档({{
                 formatBytes(document.size)
@@ -377,7 +377,7 @@
             <div class="btn-actions">
               <el-button
                 type="primary"
-                :size="isMobile ? 'medium' : ''"
+                :size="isMobile ? 'default' : ''"
                 plain
                 @click="showReport"
                 ><el-icon><Warning /></el-icon>举报</el-button
@@ -444,11 +444,11 @@
             ></el-rate>
           </div>
           <FormComment
-            :document-id="document.id"
+            :document-id="Number(document.id)"
             class="mgt-20px"
             @success="commentSuccess"
           />
-          <CommentList ref="commentList" :document-id="document.id" />
+          <CommentList ref="commentList" :document-id="Number(document.id)" />
         </el-card>
       </el-col>
       <el-col :span="24 - scaleSpan" class="hidden-xs-only document-author">

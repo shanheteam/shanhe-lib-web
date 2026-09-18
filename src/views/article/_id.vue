@@ -226,7 +226,7 @@
               <el-button
                 v-else
                 type="primary"
-                :size="isMobile ? 'medium' : 'large'"
+                :size="isMobile ? 'default' : 'large'"
                 @click="createFavorite"
                 ><el-icon><Star /></el-icon>收藏文章</el-button
               >

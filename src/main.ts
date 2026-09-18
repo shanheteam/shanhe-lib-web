@@ -2,6 +2,10 @@ import { createApp } from 'vue'
 // Element Plus 样式仍全量引入：组件本身已改为按需引入（见 vite.config.ts 的 Components 插件），
 // 全量样式可以保证 app.scss 对组件样式的覆盖顺序与改造前一致。
 import 'element-plus/dist/index.css'
+// Element Plus 响应式显示工具类（hidden-xs-only / hidden-sm-and-up 等）。
+// 这些类在模板中被大量使用，但 dist/index.css 并不包含它们，必须单独引入，
+// 否则响应式隐藏全部失效（例如文章详情页桌面端会同时显示两行文章元信息）。
+import 'element-plus/theme-chalk/display.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import App from './App.vue'
 import router from './router'
