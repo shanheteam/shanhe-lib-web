@@ -188,7 +188,7 @@
             </el-col>
           </el-row>
           <el-form-item label="文章内容">
-            <TinymceEditor
+            <RichEditor
               v-model="detailForm.content"
               :height="560"
               placeholder="请输入文章 HTML 内容"
@@ -282,7 +282,7 @@ import {
   updateSpiderArticleDetail,
 } from '@/api/spiderarticle'
 import { crawlArticle } from '@/api/article'
-import TinymceEditor from '@/components/TinymceEditor.vue'
+import RichEditor from '@/components/RichEditor.vue'
 import { createLatestGuard } from '@/utils/latest'
 import { categoryToTrees, genLinkHTML, parseQueryIntArray } from '@/utils/utils'
 import { spiderArticleDetailStatusOptions } from '@/utils/enum'

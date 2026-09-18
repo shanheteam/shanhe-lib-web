@@ -32,11 +32,11 @@
           <!-- 内容编辑器 -->
           <div class="wp-editor-section">
             <el-form-item class="wp-editor-item">
-              <Editor
+              <RichEditor
                 v-if="canIPublish"
                 v-model="article.content"
-                :init="init"
-                license-key="gpl"
+                :height="1213"
+                placeholder="请输入内容"
               />
               <div v-else class="wp-no-permission-editor">
                 <div class="wp-no-permission-hint">
@@ -228,14 +228,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import type { PropType } from 'vue'
 import { ElMessage } from 'element-plus'
-// @ts-ignore
-import tinymce from 'tinymce/tinymce'
-import Editor from '@tinymce/tinymce-vue'
-import MarkdownIt from 'markdown-it'
-import { useUserStore } from '@/store/user'
 import { createArticle, updateArticle } from '@/api/article'
 import { articleStatusOptions } from '@/utils/enum'
 
@@ -270,93 +265,8 @@ const props = defineProps({
 })
 const emit = defineEmits(['success'])
 
-const userStore = useUserStore()
 const formArticle = ref<any>()
 const loading = ref(false)
-
-const markdownParser = new MarkdownIt({
-  html: false,
-  linkify: true,
-  typographer: true,
-})
-
-const images_upload_handler = (blobInfo: any, progress: any) => {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
-    xhr.withCredentials = false
-    xhr.open('POST', `${import.meta.env.VITE_API_BASE_URL || ''}/api/v1/upload/article?type=image`)
-    xhr.setRequestHeader('Authorization', 'Bearer ' + userStore.token)
-    xhr.upload.onprogress = (e) => {
-      progress((e.loaded / e.total) * 100)
-    }
-    xhr.onload = () => {
-      if (xhr.status === 403) {
-        reject(new Error('HTTP Error: ' + xhr.status))
-        return
-      }
-      if (xhr.status < 200 || xhr.status >= 300) {
-        reject(new Error('HTTP Error: ' + xhr.status))
-        return
-      }
-      const res = JSON.parse(xhr.responseText)
-      resolve(res.data.url)
-    }
-    xhr.onerror = () => {
-      reject(
-        new Error(
-          'Image upload failed due to a XHR Transport error. Code: ' +
-            xhr.status,
-        ),
-      )
-    }
-    const formData = new FormData()
-    formData.append('file', blobInfo.blob(), blobInfo.filename())
-    xhr.send(formData)
-  })
-}
-
-const containsHtml = (content: string) => {
-  const htmlTagPattern = /<\/?[a-z][\s\S]*?>/i
-  return htmlTagPattern.test(content)
-}
-const shouldTreatAsMarkdown = (content: string) => {
-  const text = content.trim()
-  if (!text) return false
-  if (containsHtml(text)) return false
-  const markdownIndicators =
-    /(^|\n)(#{1,6}\s.+|[-*+]\s.+|\d+\.\s.+|>\s.+|`{3}|\[[^\]]+\]\([^)]+\)|\*{1,2}[^*]+\*{1,2})/
-  return markdownIndicators.test(text)
-}
-const handleEditorPaste = (event: any, editor: any) => {
-  const clipboardData = event.clipboardData
-  if (!clipboardData) return
-  const plaintext = clipboardData.getData('text/plain')
-  if (!plaintext) return
-  if (!shouldTreatAsMarkdown(plaintext)) return
-  event.preventDefault()
-  const converted = markdownParser.render(plaintext)
-  editor.insertContent(converted)
-}
-
-const init = {
-  base_url: '/static/tinymce',
-  language_url: '/static/tinymce/langs/zh-Hans.js',
-  language: 'zh-Hans',
-  skin_url: '/static/tinymce/skins/ui/oxide',
-  height: 1213,
-  branding: true,
-  placeholder: '请输入内容',
-  menubar: true,
-  toolbar:
-    'undo redo | styleselect blocks | kityformula-editor codesample code table link bold italic | bullist numlist alignleft aligncenter alignright alignjustify indent outdent | image media | searchreplace preview fullscreen help',
-  plugins:
-    'kityformula-editor image media wordcount codesample code link charmap emoticons table searchreplace visualblocks fullscreen table help wordcount lists preview',
-  relative_urls: false,
-  images_upload_handler,
-  setup(editor: any) {
-    editor.on('Paste', (event: any) => handleEditorPaste(event, editor))
-  },
-}
 
 const article = ref<Record<string, any>>({
   title: '',
@@ -379,10 +289,6 @@ watch(
   },
   { immediate: true },
 )
-
-onMounted(() => {
-  tinymce.init({})
-})
 
 const onSubmit = () => {
   formArticle.value.validate(async (valid: boolean) => {
@@ -416,12 +322,6 @@ const onSubmit = () => {
 
 defineExpose({ onSubmit })
 </script>
-
-<style>
-.tox-promotion {
-  display: none !important;
-}
-</style>
 
 <style lang="scss" scoped>
 // Element UI 风格的管理界面
@@ -560,14 +460,9 @@ defineExpose({ onSubmit })
       line-height: normal;
     }
 
-    :deep(.tox-tinymce) {
+    :deep(.rich-editor) {
       border: none;
       border-radius: 0;
-    }
-
-    :deep(.tox-toolbar-overlord) {
-      background: #fafafa;
-      border-bottom: 1px solid #e4e7ed;
     }
   }
 
@@ -744,11 +639,6 @@ defineExpose({ onSubmit })
       }
     }
   }
-}
-
-// 隐藏TinyMCE推广信息
-:deep(.tox-promotion) {
-  display: none !important;
 }
 
 // 响应式设计

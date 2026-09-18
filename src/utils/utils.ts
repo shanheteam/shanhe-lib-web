@@ -84,6 +84,9 @@ export function categoryToTrees(categories: any[], withDisabled = true): any[] {
   try {
     const cates = JSON.parse(JSON.stringify(categories || []))
     cates.forEach((item: any) => {
+      // 分类 id 是 bigint，接口序列化后为字符串；而文档/文章的 category_id 为数字。
+      // el-cascader 内部用 lodash isEqual 严格比较，类型不一致会导致已有分类无法回显。
+      item.id = Number(item.id)
       if (withDisabled) item.disabled = !item.enable
       map[item.id] = item
     })

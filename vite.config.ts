@@ -13,7 +13,7 @@ import { fileURLToPath, URL } from 'node:url'
 const VENDOR_RULES: Array<[string[], string]> = [
   [['vxe-table', 'vxe-pc-ui', '@vxe-ui'], 'vendor-vxe'],
   [['echarts', 'zrender', 'vue-echarts'], 'vendor-echarts'],
-  [['tinymce', '@tinymce'], 'vendor-tinymce'],
+  [['@wangeditor-next'], 'vendor-wangeditor'],
   [
     ['vue', 'vue-router', 'vue-demi', 'pinia', 'pinia-plugin-persistedstate', '@vue'],
     'vendor-vue',
@@ -23,7 +23,7 @@ const VENDOR_RULES: Array<[string[], string]> = [
 function manualChunks(id: string): string | undefined {
   // CJS 互操作辅助模块（@rollup/plugin-commonjs 注入的 commonjsHelpers.js）被首屏与
   // 懒加载 chunk 共同引用，其 id 不含 node_modules 路径。若不显式指定归属，Rollup 会把它
-  // 并入 vendor-tinymce，导致首屏静态引用整个 tinymce chunk（约 500KB）。
+  // 并入 vendor-wangeditor，导致首屏静态引用整个富文本编辑器 chunk。
   if (id.includes('commonjsHelpers')) return 'vendor-cjs'
   if (!id.includes('node_modules')) return undefined
   for (const [pkgs, chunk] of VENDOR_RULES) {

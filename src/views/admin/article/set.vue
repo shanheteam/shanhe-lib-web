@@ -88,11 +88,6 @@ onMounted(async () => {
 })
 </script>
 
-<style>
-.tox-promotion {
-  display: none !important;
-}
-</style>
 <style lang="scss" scoped>
 .header-title {
   height: 40px;
