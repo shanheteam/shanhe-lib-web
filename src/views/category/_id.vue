@@ -431,14 +431,16 @@ function buildFilterLink(field: string, value: string) {
   }
 }
 
-function sortClick() {
-  // el-tabs 的 tab-click 参数是 TabsPaneContext（无顶层 name），且 v-model
-  // 已把 query.sort 更新为当前选中项，直接用它即可
+function sortClick(tab: any) {
+  // el-tabs 的 tab-click 在 v-model 更新前触发，读 query.value.sort 会拿到旧值，
+  // 导致第一次点击无效；改用 tab 参数上的 props.name（当前点击的 pane 名）
+  const sort = tab?.props?.name ?? tab?.paneName?.value ?? ''
+  if (!sort) return
   router.push({
     path: route.path,
     query: {
       ...route.query,
-      sort: query.value.sort,
+      sort,
       page: 1,
     },
   })
