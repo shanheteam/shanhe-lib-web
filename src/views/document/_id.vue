@@ -1,7 +1,7 @@
 <template>
   <div class="page page-document">
     <el-row :gutter="20">
-      <el-col :span="scaleSpan" class="doc-left">
+      <el-col :span="scaleSpan" :xs="24" class="doc-left">
         <el-card ref="docMain" shadow="never" class="doc-main">
           <template #header>
             <div class="clearfix">
