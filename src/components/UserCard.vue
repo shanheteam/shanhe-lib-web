@@ -12,20 +12,28 @@
       <el-row class="help-block">
         <el-col :span="8">
           <div>文档</div>
-          <div class="el-link el-link--primary">{{ user.doc_count || 0 }}</div>
+          <router-link
+            class="el-link el-link--primary"
+            :to="'/user/' + user.id"
+            >{{ user.doc_count || 0 }}</router-link
+          >
         </el-col>
         <el-col :span="8">
           <div>文章</div>
-          <div class="el-link el-link--primary">
-            {{ user.article_count || 0 }}
-          </div>
+          <router-link
+            class="el-link el-link--primary"
+            :to="'/user/' + user.id + '/article'"
+            >{{ user.article_count || 0 }}</router-link
+          >
         </el-col>
         <el-col :span="8"
           ><div>{{ settings.system.credit_name || '魔豆' }}</div>
-          <div class="el-link el-link--primary">
-            {{ user.credit_count || 0 }}
-          </div>
-        </el-col>
+          <router-link
+            class="el-link el-link--primary"
+            :to="'/user/' + user.id"
+            >{{ user.credit_count || 0 }}</router-link
+          ></el-col
+        >
       </el-row>
     </div>
     <div v-if="!hideSignature" class="user-card-signature">
@@ -117,7 +125,6 @@ const getLatestDocuments = async () => {
     props.user.id === 0 ||
     loading.value ||
     isMobileWidth() ||
-    !props.user.doc_count ||
     props.hideLatest
   )
     return
@@ -138,7 +145,6 @@ const getLatestArticles = async () => {
     props.user.id === 0 ||
     loading.value ||
     isMobileWidth() ||
-    !props.user.article_count ||
     props.hideLatest
   )
     return
