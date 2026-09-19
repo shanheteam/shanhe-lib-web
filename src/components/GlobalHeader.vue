@@ -1236,9 +1236,9 @@ init()
 
 @media screen and (max-width: $mobile-width) {
   .oauth-login-dialog {
-    :deep(.el-dialog) {
-      width: 95% !important;
-    }
+    // Element Plus 会把 el-dialog 的 class 透传到 .el-dialog 面板自身（而非其祖先/后代），
+    // 此处必须直接作用于面板元素，后代选择器 :deep(.el-dialog) 永远匹配不到
+    width: 95% !important;
   }
 }
 </style>
