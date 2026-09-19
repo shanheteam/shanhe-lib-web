@@ -105,4 +105,3 @@ const onSubmit = async () => {
   loading.value = false
 }
 </script>
-<style lang="scss"></style>

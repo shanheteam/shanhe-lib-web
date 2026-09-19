@@ -73,12 +73,3 @@ const setProfile = () => {
   })
 }
 </script>
-<style lang="scss">
-.com-form-profile {
-  .btn-setprofile {
-    .el-form-item__content {
-      margin-left: 0 !important;
-    }
-  }
-}
-</style>

@@ -101,14 +101,3 @@ const onError = (err: any) => {
   }
 }
 </script>
-<style lang="scss">
-.com-upload-image {
-  line-height: 1 !important;
-  .el-image {
-    img {
-      width: 100%;
-      height: auto;
-    }
-  }
-}
-</style>

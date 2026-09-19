@@ -82,23 +82,3 @@ const setDocumentsCategory = () => {
   })
 }
 </script>
-<style lang="scss">
-.com-form-update-documents-category {
-  .document-list {
-    ul,
-    li {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    ul {
-      max-height: 300px;
-      overflow: auto;
-    }
-    li {
-      line-height: 30px;
-      color: var(--app-text-muted-light);
-    }
-  }
-}
-</style>

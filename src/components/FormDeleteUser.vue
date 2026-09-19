@@ -97,4 +97,3 @@ const onSubmit = async () => {
   }
 }
 </script>
-<style lang="scss" scoped></style>

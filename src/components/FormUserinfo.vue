@@ -98,33 +98,3 @@ const getUser = () => {
   userStore.getUser()
 }
 </script>
-
-<style lang="scss">
-.com-form-userinfo {
-  .el-descriptions-item__label {
-    span {
-      margin-left: 5px;
-    }
-  }
-  .el-descriptions__body .el-descriptions__table {
-    color: var(--app-text-faint);
-  }
-  .edit-avatar {
-    position: relative;
-    &::after {
-      font-family: element-icons !important;
-      content: '\e78c';
-      position: absolute;
-      top: 7px;
-      margin-left: 10px;
-    }
-  }
-}
-@media screen and (max-width: $mobile-width) {
-  .com-form-userinfo {
-    .el-descriptions-item__container {
-      display: block;
-    }
-  }
-}
-</style>

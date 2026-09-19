@@ -60,13 +60,8 @@ export default defineConfig(({ mode }) => {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData: `@import "@/assets/css/var.scss";`,
-        },
-      },
-    },
+    // 样式已全部抽取至 public/css（见 scripts/build-css.mjs），.vue 内不再有 <style>/scss，
+    // 故不再需要 additionalData 注入 var.scss。
     server: {
       port: 3000,
       host: '0.0.0.0',

@@ -117,16 +117,3 @@ const reset = () => {
 
 defineExpose({ reset })
 </script>
-<style lang="scss">
-.com-form-report {
-  .el-select {
-    width: 100%;
-  }
-  .report-reason {
-    width: 100%;
-    .el-radio {
-      margin-bottom: 10px;
-    }
-  }
-}
-</style>

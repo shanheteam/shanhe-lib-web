@@ -105,35 +105,3 @@ const getPopoverDocument = async (id: number) => {
   documentMap.value[id] = res.data
 }
 </script>
-<style lang="scss" scoped>
-.com-document-simple-list {
-  ul,
-  li {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  li {
-    a {
-      display: block;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      line-height: 40px;
-      height: 40px;
-      border-bottom: 1px dashed var(--app-border-color-light);
-      img {
-        height: 18px;
-        position: relative;
-        top: 3px;
-        margin-right: 5px;
-      }
-    }
-    &:last-of-type {
-      a {
-        border-bottom: none;
-      }
-    }
-  }
-}
-</style>

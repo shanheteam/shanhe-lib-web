@@ -76,4 +76,3 @@ const onSubmit = async () => {
   }
 }
 </script>
-<style lang="scss"></style>

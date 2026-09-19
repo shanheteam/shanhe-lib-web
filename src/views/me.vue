@@ -144,33 +144,3 @@ const tabClick = (tab: any) => {
   router.push(name)
 }
 </script>
-
-<style lang="scss">
-.page-me {
-  .el-menu {
-    border-right: 0;
-  }
-  .fa-shield {
-    margin-right: 5px;
-    width: 24px;
-    text-align: center;
-    font-size: 18px;
-    vertical-align: middle;
-  }
-  .nuxt-child {
-    min-height: calc(100vh - 190px);
-  }
-}
-
-@media screen and (max-width: $mobile-width) {
-  .page-me {
-    .part-left {
-      width: 100%;
-    }
-    .part-right {
-      margin-top: -20px;
-      width: 100%;
-    }
-  }
-}
-</style>

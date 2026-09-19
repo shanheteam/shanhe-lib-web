@@ -89,9 +89,3 @@ onMounted(() => {
   loadConfig()
 })
 </script>
-
-<style lang="scss" scoped>
-.oauth-tips {
-  margin-bottom: 10px;
-}
-</style>

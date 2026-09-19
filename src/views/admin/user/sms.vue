@@ -201,4 +201,3 @@ if ((search.value.user_id || []).length > 0) {
   searchUser('', search.value.user_id)
 }
 </script>
-<style></style>

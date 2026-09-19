@@ -468,32 +468,3 @@ onBeforeUnmount(() => {
   clearTimeout(timeouter)
 })
 </script>
-
-<style lang="scss">
-.page-admin-dashboard {
-  .el-descriptions-item__label.is-bordered-label {
-    width: 150px;
-  }
-  .chart {
-    height: 234px;
-  }
-  .gauges {
-    min-height: 294px;
-    font-size: 14px;
-    ul,
-    li {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    small {
-      color: var(--app-text-muted-lighter);
-    }
-    li {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
-}
-</style>

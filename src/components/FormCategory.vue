@@ -257,12 +257,3 @@ const successUploadIcon = (res: any) => {
 
 defineExpose({ onSubmit, clearValidate, resetFields, reset, successUpload, successUploadIcon })
 </script>
-<style lang="scss">
-.com-form-category {
-  .form-item-cover {
-    .el-form-item__content {
-      line-height: 1;
-    }
-  }
-}
-</style>

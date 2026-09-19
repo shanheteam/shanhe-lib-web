@@ -141,20 +141,3 @@ watch(
   { immediate: true },
 )
 </script>
-
-<style lang="scss">
-.com-favorite-article {
-  .doc-title {
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 180%;
-    img {
-      height: 18px;
-      position: relative;
-      top: 3px;
-    }
-  }
-}
-</style>

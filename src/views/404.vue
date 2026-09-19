@@ -11,14 +11,3 @@
     </div>
   </div>
 </template>
-
-<style>
-.page-notfound {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  text-align: center;
-  padding: 200px 0;
-}
-</style>

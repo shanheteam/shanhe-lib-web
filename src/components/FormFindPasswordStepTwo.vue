@@ -156,8 +156,3 @@ const loadCaptcha = async () => {
   }
 }
 </script>
-<style scoped>
-.btn-audio-refresh {
-  vertical-align: -webkit-baseline-middle;
-}
-</style>

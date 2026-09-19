@@ -1,11 +1,8 @@
 import { createApp } from 'vue'
-// Element Plus 样式仍全量引入：组件本身已改为按需引入（见 vite.config.ts 的 Components 插件），
-// 全量样式可以保证 app.scss 对组件样式的覆盖顺序与改造前一致。
-import 'element-plus/dist/index.css'
-// Element Plus 响应式显示工具类（hidden-xs-only / hidden-sm-and-up 等）。
-// 这些类在模板中被大量使用，但 dist/index.css 并不包含它们，必须单独引入，
-// 否则响应式隐藏全部失效（例如文章详情页桌面端会同时显示两行文章元信息）。
-import 'element-plus/theme-chalk/display.css'
+// 样式已全部抽取至 public/css（index.html 以 <link> 引入）：
+//   /assets/font-awesome-4.7.0/css/font-awesome.min.css → vendor.css（含 EP/vxe/wangeditor/markdown）
+//   /css/app.css（骨架 + 设计令牌 + 全局样式） → /css/components.css（组件样式）
+// 此处不再 import 任何样式文件。
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import App from './App.vue'
 import router from './router'
@@ -14,13 +11,6 @@ import mixins from './mixins/mixins'
 import tableDrag from './directives/table-drag'
 import safeHtml from './directives/safe-html'
 import { useSettingStore } from './store/setting'
-
-// 全局样式（与原版 nuxt.config.css 对应）
-import './assets/font-awesome-4.7.0/css/font-awesome.min.css'
-// 设计令牌：定义 :root 变量，须在 element-plus/dist/index.css 之后、app.scss 之前引入。
-import './assets/css/tokens.scss'
-import './assets/css/app.scss'
-import './assets/css/markdown.css'
 
 const app = createApp(App)
 

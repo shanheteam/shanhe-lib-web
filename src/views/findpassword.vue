@@ -27,24 +27,3 @@ onMounted(() => {
   }
 })
 </script>
-
-<style lang="scss">
-.page-findpassword {
-  .el-card {
-    width: 520px;
-    margin: 100px auto;
-  }
-  .el-card__body {
-    padding-bottom: 0;
-    margin-bottom: -20px;
-  }
-}
-@media screen and (max-width: 768px) {
-  .page-findpassword {
-    .el-card {
-      margin: 10px auto;
-      width: 100%;
-    }
-  }
-}
-</style>

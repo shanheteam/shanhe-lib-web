@@ -131,10 +131,3 @@ const reset = () => {
 
 defineExpose({ reset })
 </script>
-<style lang="scss">
-.com-form-user {
-  .el-select {
-    width: 100%;
-  }
-}
-</style>

@@ -145,38 +145,3 @@ async function execDownload() {
   }
 }
 </script>
-
-<style lang="scss">
-.com-form-download {
-  h3 {
-    font-size: 15px;
-    margin: 10px 0 20px;
-  }
-  .tips {
-    margin-bottom: 20px;
-    border: 1px dashed var(--app-color-warning-strong);
-    padding: 15px 20px;
-    border-radius: 4px;
-    line-height: 24px;
-    .el-link {
-      cursor: auto;
-      position: relative;
-      top: -2px;
-    }
-  }
-  .code-tip {
-    margin-bottom: 0;
-  }
-  .download {
-    .el-form-item__content {
-      margin-left: 0 !important;
-    }
-  }
-  .el-radio {
-    margin-right: 10px;
-  }
-  .btn-download {
-    width: 100%;
-  }
-}
-</style>

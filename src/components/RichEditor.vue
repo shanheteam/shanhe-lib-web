@@ -21,7 +21,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, shallowRef } from 'vue'
 import { ElMessage } from 'element-plus'
-import '@wangeditor-next/editor/dist/css/style.css'
 import {
   type IDomEditor,
   type IEditorConfig,
@@ -191,20 +190,3 @@ onBeforeUnmount(() => {
   editorRef.value = undefined
 })
 </script>
-
-<style lang="scss" scoped>
-.rich-editor {
-  border: 1px solid var(--el-border-color);
-  border-radius: 4px;
-  overflow: hidden;
-
-  :deep(.w-e-toolbar) {
-    border-bottom: 1px solid var(--el-border-color-light);
-    background-color: var(--app-bg-lighter);
-  }
-
-  :deep(.w-e-text-container) {
-    background-color: var(--el-color-white);
-  }
-}
-</style>

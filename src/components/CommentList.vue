@@ -103,15 +103,3 @@ const commentSuccess = () => {
 
 getComments()
 </script>
-<style lang="scss" scoped>
-.com-comment-list {
-  & > .el-row {
-    margin-top: 20px;
-    border-bottom: 1px solid var(--app-border-color-light);
-    padding-bottom: 10px;
-  }
-  & > .el-row:first-of-type {
-    margin-top: 0;
-  }
-}
-</style>

@@ -87,11 +87,3 @@ onMounted(async () => {
   await Promise.all([fetchCategories(), fetchArticle()])
 })
 </script>
-
-<style lang="scss" scoped>
-.header-title {
-  height: 40px;
-  line-height: 40px;
-  font-size: 20px;
-}
-</style>

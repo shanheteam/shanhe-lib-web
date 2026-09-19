@@ -138,31 +138,3 @@ const notifyParentAndClose = () => {
   }, 300)
 }
 </script>
-
-<style lang="scss">
-.page-oauth {
-  width: 100%;
-  margin-top: -20px;
-  margin-bottom: -20px;
-  & > div {
-    width: $default-width;
-    margin: 0 auto;
-  }
-  .el-card {
-    width: 520px;
-    max-width: 100%;
-    margin: 100px auto;
-  }
-}
-@media screen and (max-width: $mobile-width) {
-  .page-oauth {
-    & > div {
-      width: 100%;
-    }
-    .el-card {
-      width: 100%;
-      margin: 20px auto;
-    }
-  }
-}
-</style>

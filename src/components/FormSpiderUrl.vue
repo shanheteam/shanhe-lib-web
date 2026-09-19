@@ -223,22 +223,3 @@ function reset() {
 
 defineExpose({ reset, clearValidate })
 </script>
-
-<style lang="scss">
-.com-form-spiderurl .el-textarea__inner {
-  white-space: nowrap;
-}
-.generator-container {
-  padding: 20px;
-  border: 1px dashed var(--app-color-warning-strong);
-  border-radius: 5px;
-}
-.generator-tip {
-  line-height: 1;
-  padding: 5px 10px;
-  margin-top: 10px;
-  background: var(--app-bg-warning);
-  border: 1px solid var(--app-border-color-warning);
-  border-radius: 5px;
-}
-</style>

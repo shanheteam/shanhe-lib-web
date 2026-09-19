@@ -23,21 +23,3 @@ defineProps({
   },
 })
 </script>
-<style lang="scss" scoped>
-ul,
-li {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-li {
-  border-bottom: 1px solid var(--app-bg-light);
-  padding-bottom: 15px;
-  margin-bottom: 10px;
-  &:last-of-type {
-    border-bottom: 0;
-    padding-bottom: 0;
-    margin-bottom: 0;
-  }
-}
-</style>

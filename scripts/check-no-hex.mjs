@@ -1,64 +1,30 @@
-// 防回潮检查：hex 色值只允许出现在 tokens.scss（设计令牌）中。
-// 扫描 src 下所有 .vue / .scss 文件：
-//   - .scss：仅 tokens.scss 允许含 hex，其余全文件检查
-//   - .vue：只检查 CSS 语境区域（<style> 块、style 属性、颜色类属性、SVG fill），
-//            JS 数据/canvas 色值（如 echarts 配置）不受限
+// 防回潮检查（样式集中到 public/css 后的不变式）：
+// 1. src/**/*.vue 中禁止出现 <style> 块 —— 样式必须写在 public/css 下（components.css 等），
+//    防止组件样式回流到 .vue 内。
+// 2. public/assets/css/*.scss 中，除 tokens.scss（设计令牌）外不允许出现裸 hex；
+//    public/css/*.css 为构建产物（scripts/build-css.mjs 生成），源头受控，不在此检查。
 // 用法：node scripts/check-no-hex.mjs
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, extname, resolve } from 'node:path'
 
-const ROOT = resolve(import.meta.dirname, '../src')
+const CLIENT = resolve(import.meta.dirname, '..')
+const SRC = join(CLIENT, 'src')
+const CSS_SRC = join(CLIENT, 'public', 'assets', 'css')
 const TOKENS_FILE = 'tokens.scss'
 
 const HEX_BARE = /#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})(?![\w-])/g
+const STYLE_TAG = /<style\b/i
 
-function walk(d) {
+function walk(d, skipDirs = []) {
   const out = []
   for (const f of readdirSync(d)) {
     const p = join(d, f)
-    if (f === 'node_modules' || f === 'dist' || f === 'font-awesome-4.7.0') continue
+    if (skipDirs.includes(f)) continue
     const s = statSync(p)
-    if (s.isDirectory()) out.push(...walk(p))
-    else if (extname(p) === '.vue' || extname(p) === '.scss') out.push(p)
+    if (s.isDirectory()) out.push(...walk(p, skipDirs))
+    else out.push(p)
   }
   return out
-}
-
-// 提取 .vue 中 CSS 语境区域（与迁移 codemod 保持一致的边界逻辑）
-function findRegions(src) {
-  const regions = []
-  const push = (start, end) => regions.push([start, end])
-  let m
-  const reStyle = /<style\b[^>]*>([\s\S]*?)<\/style>/gi
-  while ((m = reStyle.exec(src))) {
-    const start = m.index + m[0].indexOf('>') + 1
-    push(start, start + m[1].length)
-  }
-  const reAttr = /(?:^|[\s:])style\s*=\s*("[^"]*"|'[^']*')/g
-  while ((m = reAttr.exec(src))) {
-    const eq = m.index + m[0].indexOf('=')
-    push(eq + 2, eq + 1 + m[1].length)
-  }
-  const reColorAttr = /(?:active-color|inactive-color|text-color|color|fill)\s*=\s*("[^"]*"|'[^']*')/g
-  while ((m = reColorAttr.exec(src))) {
-    const eq = m.index + m[0].indexOf('=')
-    push(eq + 2, eq + 1 + m[1].length)
-  }
-  const reBind = /v-bind:style\s*=\s*("[^"]*"|'[^']*')/g
-  while ((m = reBind.exec(src))) {
-    const eq = m.index + m[0].indexOf('=')
-    push(eq + 2, eq + 1 + m[1].length)
-  }
-  regions.sort((a, b) => a[0] - b[0])
-  const merged = []
-  for (const [s, e] of regions) {
-    if (merged.length && s <= merged[merged.length - 1][1]) {
-      merged[merged.length - 1][1] = Math.max(merged[merged.length - 1][1], e)
-    } else {
-      merged.push([s, e])
-    }
-  }
-  return merged
 }
 
 function lineNo(src, index) {
@@ -66,27 +32,32 @@ function lineNo(src, index) {
 }
 
 const violations = []
-for (const file of walk(ROOT)) {
-  const rel = file.replace(ROOT + '/', '')
-  if (rel.endsWith(TOKENS_FILE)) continue // 设计令牌：唯一允许含 hex 的文件
+
+// 规则 1：.vue 禁止内联样式块
+for (const file of walk(SRC, ['node_modules', 'dist'])) {
+  if (extname(file) !== '.vue') continue
   const src = readFileSync(file, 'utf8')
-  const targets = []
-  if (extname(file) === '.scss') {
-    targets.push([0, src.length]) // 整文件
-  } else {
-    for (const [s, e] of findRegions(src)) targets.push([s, e])
+  const m = STYLE_TAG.exec(src)
+  if (m) {
+    const rel = file.replace(SRC + '/', '')
+    violations.push(`${rel}:${lineNo(src, m.index)}  禁止在 .vue 中写 <style>，样式须放入 public/css`)
   }
-  for (const [s, e] of targets) {
-    const seg = src.slice(s, e)
-    for (const m of seg.matchAll(HEX_BARE)) {
-      violations.push(`${rel}:${lineNo(src, s + m.index)}  ${m[0]}`)
-    }
+}
+
+// 规则 2：公共 scss 源除 tokens.scss 外禁止裸 hex（font-awesome 为 vendor，跳过）
+for (const file of walk(CSS_SRC)) {
+  if (extname(file) !== '.scss') continue
+  const rel = file.replace(CSS_SRC + '/', '')
+  if (rel === TOKENS_FILE) continue
+  const src = readFileSync(file, 'utf8')
+  for (const m of src.matchAll(HEX_BARE)) {
+    violations.push(`${rel}:${lineNo(src, m.index)}  ${m[0]}`)
   }
 }
 
 if (violations.length) {
-  console.error('[check-no-hex] 发现硬编码 hex 色值（只允许出现在 tokens.scss）：')
+  console.error('[check-no-hex] 检查未通过：')
   for (const v of violations) console.error(`  ${v}`)
   process.exit(1)
 }
-console.log('[check-no-hex] 通过：src 下 CSS 语境无硬编码 hex（tokens.scss 为唯一配色来源）')
+console.log('[check-no-hex] 通过：.vue 无内联样式；hex 仅允许出现在 tokens.scss（样式集中于 public/css）')

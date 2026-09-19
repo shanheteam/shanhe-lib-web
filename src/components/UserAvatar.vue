@@ -28,17 +28,3 @@ defineProps({
 })
 const errorAvatar = () => true
 </script>
-<style lang="scss">
-.com-user-avatar {
-  display: inline-block;
-  position: relative;
-  .el-avatar {
-    border: 2px solid var(--app-border-avatar);
-    box-sizing: border-box;
-    background-color: var(--el-color-white);
-    img {
-      margin: 0 auto;
-    }
-  }
-}
-</style>

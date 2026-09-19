@@ -375,10 +375,3 @@ watch(
   { immediate: true }
 )
 </script>
-<style lang="scss">
-.page-admin-article {
-  .el-drawer__body {
-    padding: 0 20px;
-  }
-}
-</style>

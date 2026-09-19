@@ -731,9 +731,3 @@ watch(
   { immediate: true }
 )
 </script>
-<style lang="scss" scoped>
-.tooltip-box {
-  max-width: 300px;
-  word-break: break-all;
-}
-</style>

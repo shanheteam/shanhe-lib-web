@@ -186,38 +186,3 @@ const loadCaptcha = async () => {
   }
 }
 </script>
-<style lang="scss">
-.com-form-comment {
-  .comment-content {
-    width: 100%;
-    .el-form-item__content {
-      display: block;
-    }
-  }
-  .comment-btns {
-    width: 100%;
-    img {
-      height: 40px;
-    }
-    .el-form-item__content {
-      display: block;
-    }
-    .captcha {
-      float: left;
-    }
-  }
-}
-@media screen and (max-width: $mobile-width) {
-  .com-form-comment {
-    .comment-content {
-      margin-bottom: 10px;
-    }
-    .captcha {
-      width: 100%;
-    }
-    .el-form-item-captcha {
-      display: block;
-    }
-  }
-}
-</style>

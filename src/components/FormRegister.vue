@@ -279,15 +279,3 @@ const sendEmailCode = async () => {
   }
 }
 </script>
-<style lang="scss">
-.com-form-register {
-  .btn-audio-refresh {
-    vertical-align: -webkit-baseline-middle;
-  }
-  .register {
-    .el-form-item__content {
-      margin-left: 0 !important;
-    }
-  }
-}
-</style>

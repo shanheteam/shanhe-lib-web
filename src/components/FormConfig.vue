@@ -193,11 +193,3 @@ const success = (res: any, index: any) => {
 
 defineExpose({ onSubmit, configs })
 </script>
-<style lang="scss">
-.com-form-config {
-  .el-form-item__label {
-    padding-bottom: 0;
-    line-height: 28px;
-  }
-}
-</style>

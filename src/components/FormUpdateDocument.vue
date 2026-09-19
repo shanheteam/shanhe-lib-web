@@ -236,10 +236,3 @@ const setDocument = () => {
 
 defineExpose({ reset })
 </script>
-<style lang="scss">
-.com-form-update-document {
-  .el-select {
-    width: 100%;
-  }
-}
-</style>

@@ -42,36 +42,3 @@ const settingStore = useSettingStore()
 const settings = computed(() => settingStore.settings)
 const redirect = computed(() => (route.query.redirect as string) || '/me')
 </script>
-
-<style lang="scss">
-.page-register {
-  width: 100%;
-  margin-top: -20px;
-  margin-bottom: -20px;
-  background-size: cover !important;
-  & > div {
-    width: $default-width;
-    margin: 0 auto;
-  }
-  .el-card {
-    width: 520px;
-    max-width: 100%;
-    margin: 100px auto;
-    margin-right: 0;
-  }
-}
-
-@media screen and (max-width: $mobile-width) {
-  .page-register {
-    background: none !important;
-    & > div {
-      width: 100%;
-      margin: 0;
-    }
-    .el-card {
-      width: 100%;
-      margin: 20px 0;
-    }
-  }
-}
-</style>

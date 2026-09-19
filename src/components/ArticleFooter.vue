@@ -94,34 +94,3 @@ const settingStore = useSettingStore()
 const settings = computed(() => settingStore.settings)
 const currentYear = new Date().getFullYear()
 </script>
-<style lang="scss">
-.com-article-footer {
-  font-size: 14px;
-
-  & > div {
-    margin-bottom: 6px;
-  }
-  .el-link {
-    font-weight: normal;
-    display: inline-block;
-    line-height: 160%;
-    font-size: 14px;
-    margin-right: 10px;
-  }
-  .powered-by {
-    color: var(--app-text-faint);
-    font-size: 12px;
-    .el-link {
-      margin-right: 0;
-      position: relative;
-      top: -1px;
-      font-size: 12px;
-    }
-  }
-  .copyright-year {
-    position: relative;
-    top: 1px;
-    color: var(--el-text-color-regular);
-  }
-}
-</style>

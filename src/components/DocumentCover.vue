@@ -68,16 +68,3 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', resetImageHeight)
 })
 </script>
-<style lang="scss">
-.com-document-cover {
-  border: 2px solid var(--app-border-color-light);
-  border-radius: 5px;
-  img {
-    width: 100% !important;
-    transition: transform 0.3s ease 0s;
-    &:hover {
-      transform: scale(1.2);
-    }
-  }
-}
-</style>
