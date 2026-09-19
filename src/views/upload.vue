@@ -797,7 +797,7 @@ const uploadDocumentOne = async (file: any): Promise<boolean> => {
         ext: file.ext,
         size: file.size,
       })
-      ossUploadEnabled = probe.data?.data?.enabled === true
+      ossUploadEnabled = probe.data?.enabled === true
     } catch (error) {
       ossUploadEnabled = false
     }
@@ -827,7 +827,7 @@ const uploadDocumentOne = async (file: any): Promise<boolean> => {
       ext: file.ext,
       size: file.size,
     })
-    policy = policyRes.data?.data || {}
+    policy = policyRes.data || {}
     if (policy.enabled === false) {
       ossUploadEnabled = false
       return false
@@ -857,7 +857,7 @@ const uploadDocumentOne = async (file: any): Promise<boolean> => {
       ext: file.ext,
       size: file.size,
     })
-    const uploadData = res.data?.data || {}
+    const uploadData = res.data || {}
     file.attachment_id = uploadData.id || 0
     file.statusText = ''
     file.percentage = 100
@@ -899,7 +899,7 @@ const postFileToOss = async (
         file.statusText = '重新获取上传凭证...'
         getOssPolicy({ hash, ext: file.ext, size: file.size })
           .then((res: any) => {
-            const data = res.data?.data || {}
+            const data = res.data || {}
             if (data.enabled === false) {
               ossUploadEnabled = false
               resolve(false)
