@@ -14,7 +14,14 @@
               alt="推荐"
               class="min-recommend"
           /></router-link>
+          <span class="time text-muted">
+            <el-icon><Clock /></el-icon>
+            {{ formatRelativeTime(article.created_at) }}
+          </span>
         </h3>
+        <div class="desc">
+          {{ article.description }}
+        </div>
         <div class="info">
           <span v-if="article.user_id" class="author">
             <router-link
@@ -29,16 +36,6 @@
               >{{ article.user && (article.user.realname || '未命名用户') }}</router-link
             >
           </span>
-          <span class="text-muted">·</span>
-          <span
-            ><el-icon><Clock /></el-icon
-            >{{ formatRelativeTime(article.created_at) }}</span
-          >
-        </div>
-        <div class="desc">
-          {{ article.description }}
-        </div>
-        <div class="info">
           <span
             ><el-icon><View /></el-icon>
             {{ article.view_count || 0 }} 阅读</span

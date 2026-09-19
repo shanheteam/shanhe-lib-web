@@ -45,6 +45,10 @@
 }
 .com-article-list h3 {
   margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 .com-article-list h3 a {
   color: var(--el-color-black);
@@ -54,10 +58,24 @@
   line-height: 30px;
   margin-bottom: 10px;
   display: inline-block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .com-article-list h3 .min-recommend {
   height: 24px;
   vertical-align: text-bottom;
+}
+.com-article-list h3 .time {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: normal;
+  color: var(--app-text-muted-lighter);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 .com-article-list .desc {
   color: var(--app-text-muted);
