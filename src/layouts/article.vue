@@ -4,7 +4,7 @@
     <el-main>
       <router-view />
     </el-main>
-    <el-footer v-if="$route.path != '/article'" height="auto">
+    <el-footer height="auto">
       <global-footer />
     </el-footer>
   </el-container>
