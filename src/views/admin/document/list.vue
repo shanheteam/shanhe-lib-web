@@ -28,7 +28,7 @@
           <el-form-item>
             <el-dropdown
               :disabled="selectedRow.length === 0"
-              @command="checkDocument"
+              @command="approveDocument"
             >
               <el-button
                 type="warning"
