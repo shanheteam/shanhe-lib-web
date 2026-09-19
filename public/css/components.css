@@ -111,39 +111,39 @@
 }
 
 /* ===== src/components/ArticleListSkeleton.vue ===== */
-ul,
-li {
+.com-article-list ul,
+.com-article-list li {
   padding: 0;
   margin: 0;
   list-style: none;
 }
 
-li {
+.com-article-list li {
   border-bottom: 1px solid var(--app-bg-light);
   padding-bottom: 15px;
   margin-bottom: 10px;
 }
-li:last-of-type {
+.com-article-list li:last-of-type {
   border-bottom: 0;
   padding-bottom: 0;
   margin-bottom: 0;
 }
 
 /* ===== src/components/ArticleNavbar.vue ===== */
-ul,
-li {
+.com-article-navbar ul,
+.com-article-navbar li {
   padding: 0;
   margin: 0;
   list-style: none;
 }
 
-ul {
+.com-article-navbar ul {
   justify-content: space-between;
 }
-ul li {
+.com-article-navbar ul li {
   margin-bottom: 5px;
 }
-ul li .icon {
+.com-article-navbar ul li .icon {
   width: 20px;
   height: 20px;
   margin-right: 5px;
@@ -152,7 +152,7 @@ ul li .icon {
   margin-top: -2px;
 }
 
-.el-link--default {
+.com-article-navbar .el-link--default {
   color: var(--app-text-heading);
   display: block;
   line-height: 40px;
@@ -160,10 +160,10 @@ ul li .icon {
   padding: 0 10px;
   border-radius: 6px;
 }
-.el-link--default:hover {
+.com-article-navbar .el-link--default:hover {
   background-color: var(--app-bg-navbar);
 }
-.el-link--default.active {
+.com-article-navbar .el-link--default.active {
   background-color: var(--el-color-white);
   color: var(--el-color-primary);
 }
@@ -2054,24 +2054,24 @@ ul li .icon {
 }
 
 /* ===== src/components/SearchResultAggregation.vue ===== */
-ul,
-li {
+.com-search-result-aggregation ul,
+.com-search-result-aggregation li {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-li {
+.com-search-result-aggregation li {
   padding-top: 20px;
 }
-li:first-of-type {
+.com-search-result-aggregation li:first-of-type {
   padding-top: 0;
 }
 
-h3 {
+.com-search-result-aggregation h3 {
   margin-bottom: 10px;
 }
-h3 .el-link {
+.com-search-result-aggregation h3 .el-link {
   font-size: 18px;
   font-weight: normal;
   overflow: hidden;
@@ -2082,16 +2082,16 @@ h3 .el-link {
   max-width: 100%;
   gap: 4px;
 }
-h3 .el-link img {
+.com-search-result-aggregation h3 .el-link img {
   height: 18px;
   position: relative;
   top: 2px;
 }
-h3 .el-link .el-icon {
+.com-search-result-aggregation h3 .el-link .el-icon {
   font-size: 18px;
 }
 
-.doc-desc {
+.com-search-result-aggregation .doc-desc {
   font-size: 14px;
   color: var(--app-text-muted-deep);
   line-height: 180%;
@@ -2105,14 +2105,14 @@ h3 .el-link .el-icon {
   text-overflow: ellipsis;
 }
 
-.doc-info {
+.com-search-result-aggregation .doc-info {
   color: var(--app-text-faint-light);
   font-size: 13px;
   display: flex;
   align-items: center;
   gap: 4px;
 }
-.doc-info .el-icon {
+.com-search-result-aggregation .doc-info .el-icon {
   font-size: 13px;
 }
 
@@ -2135,10 +2135,10 @@ h3 .el-link .el-icon {
   color: var(--app-text-muted-lighter);
 }
 
-h3 {
+.com-search-result-article h3 {
   margin-bottom: 10px;
 }
-h3 .el-link {
+.com-search-result-article h3 .el-link {
   font-size: 18px;
   font-weight: normal;
   overflow: hidden;
@@ -2147,13 +2147,13 @@ h3 .el-link {
   display: inline-block;
   max-width: 100%;
 }
-h3 .el-link img {
+.com-search-result-article h3 .el-link img {
   height: 18px;
   position: relative;
   top: 2px;
 }
 
-.article-desc {
+.com-search-result-article .article-desc {
   font-size: 14px;
   color: var(--app-text-muted-deep);
   line-height: 180%;
@@ -2167,7 +2167,7 @@ h3 .el-link img {
   text-overflow: ellipsis;
 }
 
-.article-info {
+.com-search-result-article .article-info {
   color: var(--app-text-faint-light);
   font-size: 13px;
 }
@@ -2191,10 +2191,10 @@ h3 .el-link img {
   color: var(--app-text-muted-lighter);
 }
 
-h3 {
+.com-search-result-document h3 {
   margin-bottom: 10px;
 }
-h3 .el-link {
+.com-search-result-document h3 .el-link {
   font-size: 18px;
   font-weight: normal;
   overflow: hidden;
@@ -2203,13 +2203,13 @@ h3 .el-link {
   display: inline-block;
   max-width: 100%;
 }
-h3 .el-link img {
+.com-search-result-document h3 .el-link img {
   height: 18px;
   position: relative;
   top: 2px;
 }
 
-.doc-desc {
+.com-search-result-document .doc-desc {
   font-size: 14px;
   color: var(--app-text-muted-deep);
   line-height: 180%;
@@ -2223,7 +2223,7 @@ h3 .el-link img {
   text-overflow: ellipsis;
 }
 
-.doc-info {
+.com-search-result-document .doc-info {
   color: var(--app-text-faint-light);
   font-size: 13px;
 }
@@ -5888,26 +5888,26 @@ h3 .el-link img {
     font-size: 12px;
   }
 }
-.filter-options {
+.page-search .filter-options {
   max-height: 320px;
   overflow: auto;
 }
 
-.header {
+.page-search .header {
   display: flex;
   justify-content: space-between;
 }
 
 /* 左右侧栏吸顶固定：使用 sticky 保持列在文档流内，避免 JS fixed 造成的翻页错位 */
-.search-left,
-.search-right {
+.page-search .search-left,
+.page-search .search-right {
   position: sticky;
   top: 105px;
   align-self: flex-start;
   height: fit-content;
 }
 
-.search-box {
+.page-search .search-box {
   position: sticky;
   top: 35px;
   z-index: 100;
