@@ -314,16 +314,6 @@
               v-if="(categoryDocuments[category.id] || []).length > 0"
               class="category-latest"
             >
-              <div class="category-latest-header">
-                <strong class="category-latest-label">最新文档</strong>
-                <router-link
-                  class="category-more"
-                  :to="`/category/${category.id}`"
-                  target="_blank"
-                >
-                  查看更多
-                </router-link>
-              </div>
               <router-link
                 v-for="doc in categoryDocuments[category.id]"
                 :key="'category-doc-' + doc.id"

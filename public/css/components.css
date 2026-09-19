@@ -5039,25 +5039,15 @@
 
 .category-latest {
   margin-top: 14px;
-  padding-top: 14px;
+  padding-top: 12px;
   border-top: 1px solid var(--app-border-color-soft-2);
-}
-.category-latest-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-.category-latest-label {
-  color: var(--app-text-heading-strong);
-  font-size: 13px;
 }
 .category-latest-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 8px 4px;
+  padding: 7px 4px;
   color: var(--app-text-body-2);
   font-size: 13px;
 }
