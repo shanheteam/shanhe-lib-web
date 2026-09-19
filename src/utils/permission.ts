@@ -158,11 +158,6 @@ const customPermissionMap: Record<string, any> = {
     children: [],
     pages: ['/admin/user', '/admin/user/vip'],
   },
-  upload: {
-    id: 0,
-    label: '上传管理',
-    children: [],
-  },
 }
 
 // 权限树
