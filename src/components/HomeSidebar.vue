@@ -96,6 +96,30 @@
       </el-card>
     </aside>
 
+    <!-- 热门文档 -->
+    <aside v-if="hotDocuments.length" class="sidebar-card latest-updates">
+      <el-card shadow="never">
+        <template #header>
+          <h3 class="card-title">
+            <el-icon><TrendCharts /></el-icon>
+            热门文档
+          </h3>
+        </template>
+        <div class="updates-list">
+          <router-link
+            v-for="doc in hotDocuments.slice(0, 8)"
+            :key="'hot-' + doc.id"
+            :to="`/document/${doc.uuid}`"
+            target="_blank"
+            class="update-item"
+          >
+            <span class="update-title">{{ doc.title }}</span>
+            <span class="update-time">{{ formatRelativeTime(doc.created_at) }}</span>
+          </router-link>
+        </div>
+      </el-card>
+    </aside>
+
     <!-- 快捷入口 -->
     <aside class="sidebar-card quick-links">
       <el-card shadow="never">
@@ -147,6 +171,7 @@ import {
   User,
   Clock,
   Link,
+  TrendCharts,
   Upload,
   EditPen,
   Files,
@@ -162,9 +187,11 @@ defineOptions({ name: 'HomeSidebar' })
 const props = withDefaults(
   defineProps<{
     latestDocuments?: any[]
+    hotDocuments?: any[]
   }>(),
   {
     latestDocuments: () => [],
+    hotDocuments: () => [],
   }
 )
 

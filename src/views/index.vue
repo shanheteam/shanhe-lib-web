@@ -313,7 +313,10 @@
       </section>
         </el-col>
         <el-col :span="8" :xs="24" class="home-right">
-          <home-sidebar :latest-documents="latestDocuments" />
+          <home-sidebar
+            :latest-documents="latestDocuments"
+            :hot-documents="hotDocuments"
+          />
         </el-col>
       </el-row>
     </div>
@@ -339,6 +342,7 @@ const categoryTrees = computed(() => categoryStore.categoryTrees)
 const banners = ref<any[]>([])
 const recommends = ref<any[]>([])
 const latestDocuments = ref<any[]>([])
+const hotDocuments = ref<any[]>([])
 const loadingRecommend = ref(true)
 const loadingLatest = ref(true)
 const search = ref<{ wd: string }>({ wd: '' })
@@ -431,10 +435,21 @@ async function getLatestDocuments() {
   }
 }
 
+async function getHotDocuments() {
+  const res: any = await listDocument({
+    field: ['id', 'title', 'uuid', 'created_at'],
+    order: 'view_count desc',
+    limit: 8,
+  })
+  if (res.status === 200) {
+    hotDocuments.value = res.data.document || []
+  }
+}
+
 async function getLatestContent() {
   loadingLatest.value = true
   try {
-    await Promise.all([getLatestDocuments(), getArticles()])
+    await Promise.all([getLatestDocuments(), getHotDocuments(), getArticles()])
   } finally {
     loadingLatest.value = false
   }
