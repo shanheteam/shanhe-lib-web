@@ -310,6 +310,31 @@
                 <small>{{ child.doc_count || 0 }}篇</small>
               </router-link>
             </div>
+            <div
+              v-if="(categoryDocuments[category.id] || []).length > 0"
+              class="category-latest"
+            >
+              <div class="category-latest-header">
+                <strong class="category-latest-label">最新文档</strong>
+                <router-link
+                  class="category-more"
+                  :to="`/category/${category.id}`"
+                  target="_blank"
+                >
+                  查看更多
+                </router-link>
+              </div>
+              <router-link
+                v-for="doc in categoryDocuments[category.id]"
+                :key="'category-doc-' + doc.id"
+                :to="`/document/${doc.uuid}`"
+                target="_blank"
+                class="category-latest-item hover-link"
+              >
+                <span class="category-latest-text">{{ doc.title }}</span>
+                <small>{{ formatDate(doc.created_at) }}</small>
+              </router-link>
+            </div>
           </div>
         </div>
       </section>
@@ -327,7 +352,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { listBanner } from '@/api/banner'
 import { listDocument } from '@/api/document'
 import { listArticle } from '@/api/article'
@@ -355,6 +380,7 @@ const carouselIndexes = ref<number[]>([0])
 const articles = ref<any[]>([])
 const notices = ref<any[]>([])
 const recommendBatch = ref(0)
+const categoryDocuments = ref<Record<number, any[]>>({})
 
 const articleName = computed(() => {
   const nav = navigations.value.find((nav: any) => nav.href === '/article')
@@ -384,6 +410,31 @@ const featuredCategories = computed(() => {
       }),
     }))
 })
+
+// 每个分类下的最新文档（含子分类），按分类 id 缓存，避免重复请求
+async function getCategoryDocuments(category: any) {
+  if (categoryDocuments.value[category.id]) return
+  const categoryIds = [
+    category.id,
+    ...(category.children || []).map((child: any) => child.id),
+  ]
+  const res: any = await listDocument({
+    category_id: categoryIds,
+    order: 'id desc',
+    limit: 5,
+  })
+  if (res.status === 200) {
+    categoryDocuments.value[category.id] = res.data.document || []
+  }
+}
+
+watch(
+  featuredCategories,
+  (list) => {
+    list.forEach((cat: any) => getCategoryDocuments(cat))
+  },
+  { immediate: true },
+)
 
 async function loadBanner() {
   const res: any = await listBanner({
