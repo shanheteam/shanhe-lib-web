@@ -115,7 +115,7 @@
                         <span>默认来源名称</span>
                         <ToolTip
                           content="如果您不想为每个文档单独设置来源，可以在此处设置默认来源名称"
-                        />
+                        /> 
                       </template>
                       <el-input
                         v-model="document.source"
