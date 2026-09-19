@@ -8,19 +8,19 @@
         </h3>
       </template>
       <div class="links-grid">
-        <router-link to="/upload" target="_blank" class="link-item">
+        <router-link to="/upload" class="link-item">
           <el-icon><Upload /></el-icon>
           <span>上传文档</span>
         </router-link>
-        <router-link to="/post" target="_blank" class="link-item">
+        <router-link to="/post" class="link-item">
           <el-icon><EditPen /></el-icon>
           <span>发布文章</span>
         </router-link>
-        <router-link to="/category" target="_blank" class="link-item">
+        <router-link to="/category" class="link-item">
           <el-icon><Files /></el-icon>
           <span>浏览文档</span>
         </router-link>
-        <router-link to="/article" target="_blank" class="link-item">
+        <router-link to="/article" class="link-item">
           <el-icon><Reading /></el-icon>
           <span>阅读文章</span>
         </router-link>
