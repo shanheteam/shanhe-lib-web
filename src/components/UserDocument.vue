@@ -302,6 +302,10 @@ const query = ref<Record<string, any>>({
   created_at: [],
 })
 
+// 翻页/筛选快速切换时丢弃过期响应（原来用 loading 互斥，会直接丢掉最新一次请求）
+// 注意：必须声明在下方 immediate watch 之前，否则 setup 同步触发回调时会因 TDZ 报错
+const documentGuard = createLatestGuard()
+
 const canManageDocuments = computed(() => props.userId === user.value.id)
 const showPrivateData = computed(
   () => props.userId === user.value.id || permissions.value.length > 0,
@@ -377,9 +381,6 @@ const onSearch = () => {
     query: buildQuery(),
   })
 }
-
-// 翻页/筛选快速切换时丢弃过期响应（原来用 loading 互斥，会直接丢掉最新一次请求）
-const documentGuard = createLatestGuard()
 
 async function getDocuments() {
   if (props.userId === 0) return

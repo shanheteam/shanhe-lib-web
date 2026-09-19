@@ -94,6 +94,9 @@ const query = ref<Record<string, any>>({
   size: 20,
 })
 
+// 注意：必须声明在下方 immediate watch 之前，否则 setup 同步触发回调时会因 TDZ 报错
+const downloadGuard = createLatestGuard()
+
 watch(
   () => route.query.page,
   (val) => {
@@ -102,8 +105,6 @@ watch(
   },
   { immediate: true },
 )
-
-const downloadGuard = createLatestGuard()
 
 async function getDownloads() {
   const token = downloadGuard.start()
