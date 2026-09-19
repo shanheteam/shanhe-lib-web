@@ -316,6 +316,8 @@
           <home-sidebar
             :latest-documents="latestDocuments"
             :hot-documents="hotDocuments"
+            :download-documents="downloadDocuments"
+            :comment-documents="commentDocuments"
           />
         </el-col>
       </el-row>
@@ -343,6 +345,8 @@ const banners = ref<any[]>([])
 const recommends = ref<any[]>([])
 const latestDocuments = ref<any[]>([])
 const hotDocuments = ref<any[]>([])
+const downloadDocuments = ref<any[]>([])
+const commentDocuments = ref<any[]>([])
 const loadingRecommend = ref(true)
 const loadingLatest = ref(true)
 const search = ref<{ wd: string }>({ wd: '' })
@@ -446,10 +450,38 @@ async function getHotDocuments() {
   }
 }
 
+async function getDownloadDocuments() {
+  const res: any = await listDocument({
+    field: ['id', 'title', 'uuid', 'created_at'],
+    order: 'download_count desc',
+    limit: 8,
+  })
+  if (res.status === 200) {
+    downloadDocuments.value = res.data.document || []
+  }
+}
+
+async function getCommentDocuments() {
+  const res: any = await listDocument({
+    field: ['id', 'title', 'uuid', 'created_at'],
+    order: 'comment_count desc',
+    limit: 8,
+  })
+  if (res.status === 200) {
+    commentDocuments.value = res.data.document || []
+  }
+}
+
 async function getLatestContent() {
   loadingLatest.value = true
   try {
-    await Promise.all([getLatestDocuments(), getHotDocuments(), getArticles()])
+    await Promise.all([
+      getLatestDocuments(),
+      getHotDocuments(),
+      getDownloadDocuments(),
+      getCommentDocuments(),
+      getArticles(),
+    ])
   } finally {
     loadingLatest.value = false
   }

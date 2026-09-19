@@ -120,6 +120,54 @@
       </el-card>
     </aside>
 
+    <!-- 下载最多 -->
+    <aside v-if="downloadDocuments.length" class="sidebar-card latest-updates">
+      <el-card shadow="never">
+        <template #header>
+          <h3 class="card-title">
+            <el-icon><Download /></el-icon>
+            下载最多
+          </h3>
+        </template>
+        <div class="updates-list">
+          <router-link
+            v-for="doc in downloadDocuments.slice(0, 8)"
+            :key="'download-' + doc.id"
+            :to="`/document/${doc.uuid}`"
+            target="_blank"
+            class="update-item"
+          >
+            <span class="update-title">{{ doc.title }}</span>
+            <span class="update-time">{{ formatRelativeTime(doc.created_at) }}</span>
+          </router-link>
+        </div>
+      </el-card>
+    </aside>
+
+    <!-- 评论最多 -->
+    <aside v-if="commentDocuments.length" class="sidebar-card latest-updates">
+      <el-card shadow="never">
+        <template #header>
+          <h3 class="card-title">
+            <el-icon><ChatDotRound /></el-icon>
+            评论最多
+          </h3>
+        </template>
+        <div class="updates-list">
+          <router-link
+            v-for="doc in commentDocuments.slice(0, 8)"
+            :key="'comment-' + doc.id"
+            :to="`/document/${doc.uuid}`"
+            target="_blank"
+            class="update-item"
+          >
+            <span class="update-title">{{ doc.title }}</span>
+            <span class="update-time">{{ formatRelativeTime(doc.created_at) }}</span>
+          </router-link>
+        </div>
+      </el-card>
+    </aside>
+
     <!-- 快捷入口 -->
     <aside class="sidebar-card quick-links">
       <el-card shadow="never">
@@ -172,6 +220,8 @@ import {
   Clock,
   Link,
   TrendCharts,
+  Download,
+  ChatDotRound,
   Upload,
   EditPen,
   Files,
@@ -188,10 +238,14 @@ const props = withDefaults(
   defineProps<{
     latestDocuments?: any[]
     hotDocuments?: any[]
+    downloadDocuments?: any[]
+    commentDocuments?: any[]
   }>(),
   {
     latestDocuments: () => [],
     hotDocuments: () => [],
+    downloadDocuments: () => [],
+    commentDocuments: () => [],
   }
 )
 
