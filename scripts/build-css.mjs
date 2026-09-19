@@ -1,9 +1,12 @@
 // 样式编译/抽取/合并脚本：
-// 1. 抽取 src/**/*.vue 中的 <style> 块，经 sass 编译（注入 var.scss）合并为 public/css/components.css，
-//    并从 .vue 中删除 <style> 块（幂等：无 style 则跳过，已生成的 components.css 保留不覆盖）。
-// 2. 编译公共样式（骨架样式 + tokens.scss + app.scss）为 public/css/app.css（每次重建）。
-// 3. 合并依赖 css（EP/vxe/wangeditor/markdown）为 public/css/vendor.css（每次重建）。
-import { readFileSync, writeFileSync, readdirSync, statSync, mkdirSync, copyFileSync } from 'node:fs'
+// 1. 抽取 src/**/*.vue 中的 <style> 块，经 sass 编译（注入 var.scss）合并为 public/css/components.{hash}.css，
+//    并从 .vue 中删除 <style> 块（幂等：无 style 则跳过，保留现有产物与 index.html 引用不变）。
+// 2. 编译公共样式（骨架样式 + tokens.scss + app.scss）为 public/css/app.{hash}.css（每次重建，内容不变则 hash 不变）。
+// 3. 合并依赖 css（EP/vxe/wangeditor/markdown）为 public/css/vendor.{hash}.css（每次重建，内容不变则 hash 不变）。
+// 输出文件名带内容 hash：配合 edgeone.json 对 /css/* 的一年强缓存，二次访问零重复下载，
+// 同时内容变更时文件名变化、浏览器自动拉新，无缓存更新延迟。
+import { readFileSync, writeFileSync, readdirSync, statSync, mkdirSync, copyFileSync, unlinkSync } from 'node:fs'
+import { createHash } from 'node:crypto'
 import { join, extname, resolve } from 'node:path'
 import { compileString } from 'sass'
 
@@ -55,6 +58,36 @@ function cook(style) {
 
 mkdirSync(OUT_CSS, { recursive: true })
 
+// 生成的 css 文件名映射：name → /css/name.{hash}.css（末尾据此更新 index.html 的 <link>）
+const cssLinks = {}
+
+/** 写入 {name}.{hash8}.css，清理同名前缀的旧 hash 文件，返回 /css/ 相对 URL。 */
+function emitCss(name, css) {
+  const hash = createHash('md5').update(css).digest('hex').slice(0, 8)
+  const file = `${name}.${hash}.css`
+  writeFileSync(join(OUT_CSS, file), css)
+  // 清理同名前缀的旧 hash 文件（保留不带 hash 的基础名，便于回滚/对照）
+  for (const f of readdirSync(OUT_CSS)) {
+    if (f !== file && new RegExp(`^${name}\\.[0-9a-f]{8}\\.css$`).test(f)) {
+      unlinkSync(join(OUT_CSS, f))
+    }
+  }
+  const url = `/css/${file}`
+  cssLinks[name] = url
+  return url
+}
+
+/** 把 index.html 中 /css/{vendor|app|components}.css 的引用更新为最新 hash 文件。 */
+function updateIndexHtml() {
+  const indexPath = join(CLIENT, 'index.html')
+  const html = readFileSync(indexPath, 'utf8')
+  const updated = html.replace(
+    /\/css\/(vendor|app|components)(\.[0-9a-f]{8})?\.css/g,
+    (_, name) => cssLinks[name] ?? `/css/${name}.css`,
+  )
+  if (updated !== html) writeFileSync(indexPath, updated)
+}
+
 // ===== 1. 抽取组件样式 → components.css =====
 const vueFiles = walk(SRC)
   .filter((p) => extname(p) === '.vue')
@@ -74,10 +107,10 @@ for (const file of vueFiles) {
   extracted++
 }
 if (componentCss) {
-  writeFileSync(join(OUT_CSS, 'components.css'), componentCss.trimStart())
+  emitCss('components', componentCss.trimStart())
   console.log(`[build-css] components.css：抽取 ${extracted} 个 .vue 的 <style>，已生成并删除组件内样式块`)
 } else {
-  console.log('[build-css] components.css：无待抽取的 <style>（保留现有产物）')
+  console.log('[build-css] components.css：无待抽取的 <style>（保留现有产物与 index.html 引用）')
 }
 
 // ===== 2. 公共样式 → app.css（骨架 + tokens + app.scss） =====
@@ -88,7 +121,7 @@ let appOut = ''
 if (skeleton) appOut += `/* ===== skeleton.css（首屏骨架） ===== */\n${skeleton}\n`
 appOut += `/* ===== tokens.scss（设计令牌） ===== */\n${tokensCss}\n`
 appOut += `/* ===== app.scss（全局样式） ===== */\n${appCss}\n`
-writeFileSync(join(OUT_CSS, 'app.css'), appOut)
+emitCss('app', appOut)
 console.log('[build-css] app.css：骨架样式 + tokens.scss + app.scss 已生成')
 
 // ===== 3. 依赖样式 → vendor.css =====
@@ -113,5 +146,8 @@ for (const vf of vendorFiles) {
   const css = readFileSync(p, 'utf8')
   vendorOut += `\n/* ===== ${vf} ===== */\n${css}\n`
 }
-writeFileSync(join(OUT_CSS, 'vendor.css'), vendorOut.trimStart())
+emitCss('vendor', vendorOut.trimStart())
 console.log('[build-css] vendor.css：6 个依赖/外部样式已合并')
+
+// ===== 4. 同步 index.html 的 <link> 到最新 hash 文件 =====
+updateIndexHtml()
