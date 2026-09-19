@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lib.shanhe.co/sitemap/sitemap.xml
+# sitemap 已迁移至 OSS（后台"更新站点地图"自动上传，详见 config.controller updateSitemap）
+Sitemap: https://att-lib.shanhe.co/sitemap/sitemap.xml

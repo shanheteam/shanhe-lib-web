@@ -445,6 +445,10 @@ const durationOptions = [
   { label: '最近一年', value: 'year' },
 ]
 
+// 搜索词/类型/分页快速切换时丢弃过期响应，避免旧结果覆盖新结果。
+// 注意：必须在下方 immediate watch 之前初始化，否则 setup 同步阶段触发回调时仍处于 TDZ。
+const searchGuard = createLatestGuard()
+
 const docs = ref<any[]>([])
 const aggDocs = ref<any[]>([])
 const articles = ref<any[]>([])
@@ -580,9 +584,6 @@ function execSearch() {
     execSearchDocument(queryData)
   }
 }
-
-// 搜索词/类型/分页快速切换时丢弃过期响应，避免旧结果覆盖新结果
-const searchGuard = createLatestGuard()
 
 async function execSearchDocument(queryData: any) {
   const token = searchGuard.start()
