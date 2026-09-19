@@ -70,6 +70,8 @@ export const useSettingStore = defineStore('setting', {
       return res
     },
   },
-  // 显式声明持久化 key（默认取 store id），与 utils/storage.ts 的 STORAGE_KEYS.SETTING 保持一致
-  persist: { key: STORAGE_KEYS.SETTING },
+  // 显式声明持久化 key（默认取 store id），与 utils/storage.ts 的 STORAGE_KEYS.SETTING 保持一致。
+  // 只持久化 navigations：settings 是后台实时配置，若一并持久化到 localStorage，
+  // 后台改配置后前端刷新仍会命中 needFetchSettings 的缓存判断而跳过重新拉取，导致配置不生效。
+  persist: { key: STORAGE_KEYS.SETTING, paths: ['navigations'] },
 })
