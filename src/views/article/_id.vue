@@ -572,14 +572,14 @@ onBeforeUnmount(() => {
     margin-top: 15px;
     .el-breadcrumb__inner a,
     .el-breadcrumb__inner.is-link {
-      color: #666;
+      color: var(--app-text-muted);
     }
     .el-breadcrumb__item:last-child .el-breadcrumb__inner {
-      color: #777;
+      color: var(--app-text-muted-light);
     }
     .el-breadcrumb__inner a:hover,
     .el-breadcrumb__inner.is-link:hover {
-      color: #409eff;
+      color: var(--el-color-primary);
     }
   }
   .el-card__header {
@@ -587,7 +587,7 @@ onBeforeUnmount(() => {
       font-size: 24px;
       font-weight: 400;
       margin: 0;
-      color: #111;
+      color: var(--el-color-black);
       .icon-recommend {
         height: 30px;
         vertical-align: middle;
@@ -619,7 +619,7 @@ onBeforeUnmount(() => {
       text-overflow: ellipsis;
       height: 40px;
       line-height: 40px;
-      border-bottom: 1px dashed #efefef;
+      border-bottom: 1px dashed var(--app-border-color-light);
     }
   }
   article {
@@ -641,15 +641,15 @@ onBeforeUnmount(() => {
     }
     blockquote {
       padding: 10px;
-      color: #777;
+      color: var(--app-text-muted-light);
       font-size: 0.95em;
-      background-color: #f6f8fa;
+      background-color: var(--app-bg-hover);
     }
   }
   .m-userinfo {
     display: flex;
     align-items: center;
-    color: #999;
+    color: var(--app-text-muted-lighter);
     .user-profile {
       margin-left: 10px;
       position: relative;
@@ -660,7 +660,7 @@ onBeforeUnmount(() => {
     }
     .article-info {
       margin-top: 15px;
-      color: #999;
+      color: var(--app-text-muted-lighter);
       font-size: 12px;
       flex: 1;
       text-align: right;
@@ -679,14 +679,14 @@ onBeforeUnmount(() => {
   }
   .source {
     font-size: 15px;
-    color: #555;
-    background-color: #f9f9f9;
+    color: var(--app-text-body-strong);
+    background-color: var(--app-bg-lighter);
     padding: 1px 15px 15px;
     border-radius: 6px;
     margin: 10px 0;
     a {
       // margin-left: 10px;
-      color: #409eff;
+      color: var(--el-color-primary);
       word-break: break-all;
       &:hover {
         text-decoration: underline;

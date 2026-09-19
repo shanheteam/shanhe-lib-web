@@ -163,7 +163,7 @@
                     v-model="document.score"
                     disabled
                     show-score
-                    text-color="#ff9900"
+                    text-color="var(--app-color-tag-warning)"
                     score-template="{value}"
                   ></el-rate>
                 </span>
@@ -211,7 +211,7 @@
                   v-model="item.value"
                   disabled
                   show-score
-                  text-color="#ff9900"
+                  text-color="var(--app-color-tag-warning)"
                   score-template="{value}"
                 ></el-rate>
               </span>
@@ -277,7 +277,7 @@
           <div ref="docPages" class="doc-pages" @contextmenu.prevent>
             <el-skeleton v-if="!document.id" animated>
               <template #template>
-                <div style="background-color: #f6f6f6; padding: 5px">
+                <div style="background-color: var(--app-bg-light); padding: 5px">
                   <el-skeleton-item
                     variant="image"
                     style="width: 100%; height: 520px"
@@ -619,6 +619,7 @@ import {
   getIcon,
   genPrevPage,
   categoryToTrees,
+  cssVar,
 } from '@/utils/utils'
 import { documentStatusOptions, advertisementPositions } from '@/utils/enum'
 import { getAdvertisementByPosition } from '@/api/advertisement'
@@ -1318,7 +1319,7 @@ async function genQrcode() {
   const url = await QRCode.toDataURL(location.href, {
     width: 200,
     margin: 1,
-    color: { dark: '#000', light: '#fff' },
+    color: { dark: cssVar('--el-color-black'), light: cssVar('--el-color-white') },
   })
   const img = window.document.createElement('img')
   img.src = url
@@ -1379,7 +1380,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 .viewer-canvas > img {
-  background-color: #fff;
+  background-color: var(--el-color-white);
 }
 .page-document {
   .doc-main {
@@ -1399,7 +1400,7 @@ onBeforeUnmount(() => {
       top: 3px;
     }
     .fa-qrcode {
-      color: #aaa;
+      color: var(--app-text-faint-2);
       cursor: pointer;
       margin-left: 5px;
       font-size: 26px;
@@ -1419,7 +1420,7 @@ onBeforeUnmount(() => {
   .el-breadcrumb {
     font-weight: normal;
     margin-top: 12px;
-    color: #565656;
+    color: var(--app-text-body);
     .el-breadcrumb__inner a,
     .el-breadcrumb__inner.is-link {
       font-weight: normal;
@@ -1428,7 +1429,7 @@ onBeforeUnmount(() => {
       margin: 0 3px;
     }
     .el-breadcrumb__inner {
-      color: #666;
+      color: var(--app-text-muted);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -1441,7 +1442,7 @@ onBeforeUnmount(() => {
     position: relative;
     top: -16px;
     font-size: 14px;
-    color: #bbb;
+    color: var(--app-text-faint-light);
     & > span {
       margin-left: 8px;
     }
@@ -1464,7 +1465,7 @@ onBeforeUnmount(() => {
       border-bottom: 0;
       img {
         width: 100%;
-        background-color: #fff;
+        background-color: var(--el-color-white);
       }
       .el-image__error {
         min-height: 360px;
@@ -1474,14 +1475,14 @@ onBeforeUnmount(() => {
   .doc-page-more {
     padding: 30px 0;
     border: 5px solid $background-grey-light;
-    color: #565656;
+    color: var(--app-text-body);
     .el-button {
       margin: 10px 0;
     }
   }
   .share-info {
     font-size: 15px;
-    color: #666;
+    color: var(--app-text-muted);
     margin: 15px 0;
     .el-link {
       top: -2px;
@@ -1496,7 +1497,7 @@ onBeforeUnmount(() => {
     z-index: 100;
     width: 100%;
     min-width: $min-width;
-    background-color: #ecf0f1;
+    background-color: var(--app-bg-soft-2);
     height: 50px;
     [class*=' el-icon-'],
     [class^='el-icon-'] {
@@ -1521,18 +1522,18 @@ onBeforeUnmount(() => {
         position: relative;
         background-color: transparent;
         &:hover {
-          background-color: #ecf5ff;
+          background-color: var(--app-bg-blue-weak);
         }
       }
       .btn-actions .el-button {
         background-color: transparent;
         &:hover {
-          background-color: #ecf5ff;
+          background-color: var(--app-bg-blue-weak);
         }
       }
       .btn-coin {
         background-color: transparent;
-        color: #606266;
+        color: var(--el-text-color-regular);
         cursor: auto;
       }
     }
@@ -1541,7 +1542,7 @@ onBeforeUnmount(() => {
     position: relative;
     top: 3px;
     margin-right: 10px;
-    color: #565656;
+    color: var(--app-text-body);
   }
 
   .document-descriptions {

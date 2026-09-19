@@ -82,7 +82,7 @@ h3 {
 }
 .doc-desc {
   font-size: 14px;
-  color: #6b7a88;
+  color: var(--app-text-muted-deep);
   line-height: 180%;
   word-break: break-all;
   margin-bottom: 10px;
@@ -94,7 +94,7 @@ h3 {
   text-overflow: ellipsis;
 }
 .doc-info {
-  color: #bdc3c7;
+  color: var(--app-text-faint-light);
   font-size: 13px;
   display: flex;
   align-items: center;

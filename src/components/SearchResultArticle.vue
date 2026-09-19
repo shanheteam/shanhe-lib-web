@@ -54,7 +54,7 @@ defineProps({
     text-align: center;
     font-size: 14px;
     line-height: 200px;
-    color: #999;
+    color: var(--app-text-muted-lighter);
   }
 }
 h3 {
@@ -76,7 +76,7 @@ h3 {
 }
 .article-desc {
   font-size: 14px;
-  color: #6b7a88;
+  color: var(--app-text-muted-deep);
   line-height: 180%;
   word-break: break-all;
   margin-bottom: 10px;
@@ -88,7 +88,7 @@ h3 {
   text-overflow: ellipsis;
 }
 .article-info {
-  color: #bdc3c7;
+  color: var(--app-text-faint-light);
   font-size: 13px;
 }
 </style>

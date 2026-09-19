@@ -107,7 +107,7 @@ const getUser = () => {
     }
   }
   .el-descriptions__body .el-descriptions__table {
-    color: #888;
+    color: var(--app-text-faint);
   }
   .edit-avatar {
     position: relative;

@@ -108,11 +108,11 @@ const commentSuccess = () => {
   .comment-content {
     margin-top: 10px;
     margin-bottom: 10px;
-    background-color: #f5f7f8;
+    background-color: var(--el-fill-color-light);
     border-radius: 4px;
     padding: 20px;
     box-sizing: border-box;
-    color: #565656;
+    color: var(--app-text-body);
     span {
       position: relative;
       top: -2px;

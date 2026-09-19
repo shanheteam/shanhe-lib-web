@@ -96,7 +96,7 @@ const setDocumentsLanguage = () => {
     }
     li {
       line-height: 30px;
-      color: #777;
+      color: var(--app-text-muted-light);
     }
   }
 }

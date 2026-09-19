@@ -27,7 +27,7 @@
                 class="text-danger"
                 >不可删除。用户文档或文章数量大于0</span
               >
-              <span v-else style="color: #67c23a"
+              <span v-else style="color: var(--el-color-success)"
                 >可删除。用户未发布文档和文章</span
               >
             </template>

@@ -41,8 +41,8 @@
             <el-switch
               v-model="advertisement.enable"
               style="display: block"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
+              active-color="var(--app-color-switch-on)"
+              inactive-color="var(--app-color-switch-off)"
               active-text="是"
               inactive-text="否"
             >

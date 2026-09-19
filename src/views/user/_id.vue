@@ -144,7 +144,7 @@ onMounted(() => {
   }
 
   .user-panel {
-    // border: 1px solid #e8edf5;
+    // border: 1px solid var(--app-bg-soft-9);
     border-radius: 18px;
     box-shadow: 0 10px 30px rgba(31, 45, 61, 0.05);
 
@@ -157,7 +157,7 @@ onMounted(() => {
     margin-top: -6px;
 
     .el-tabs__nav-wrap::after {
-      background-color: #edf1f7;
+      background-color: var(--app-border-color-soft-4);
     }
 
     // .el-tabs__item {
@@ -170,7 +170,7 @@ onMounted(() => {
     .el-tabs__active-bar {
       height: 3px;
       border-radius: 999px;
-      background: #409eff;
+      background: var(--el-color-primary);
     }
 
     & > .el-tabs__content {
@@ -192,7 +192,7 @@ onMounted(() => {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: #6b7280;
+    color: var(--app-text-muted-soft-2);
     font-size: 15px;
     font-weight: 500;
     text-decoration: none;
@@ -200,7 +200,7 @@ onMounted(() => {
 
     &.is-active,
     &:hover {
-      color: #409eff;
+      color: var(--el-color-primary);
     }
   }
 

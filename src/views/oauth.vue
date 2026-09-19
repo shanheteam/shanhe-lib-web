@@ -3,16 +3,16 @@
     <el-card shadow="never">
       <div v-if="loading" style="padding: 150px 0; text-align: center">
         <el-icon class="is-loading" :size="40"><Loading /></el-icon>
-        <p style="margin-top: 20px; color: #666">登录中...</p>
+        <p style="margin-top: 20px; color: var(--app-text-muted)">登录中...</p>
       </div>
       <div v-else-if="error" style="padding: 150px 0; text-align: center">
-        <el-icon :size="40" color="#f56c6c"><CircleClose /></el-icon>
-        <p style="margin-top: 20px; color: #666">{{ error }}</p>
+        <el-icon :size="40" color="var(--el-color-danger)"><CircleClose /></el-icon>
+        <p style="margin-top: 20px; color: var(--app-text-muted)">{{ error }}</p>
         <el-button type="primary" style="margin-top: 20px" @click="goHome">返回首页</el-button>
       </div>
       <div v-else style="padding: 150px 0; text-align: center">
-        <el-icon :size="40" color="#67c23a"><SuccessFilled /></el-icon>
-        <p style="margin-top: 20px; color: #666">登录成功，正在跳转...</p>
+        <el-icon :size="40" color="var(--el-color-success)"><SuccessFilled /></el-icon>
+        <p style="margin-top: 20px; color: var(--app-text-muted)">登录成功，正在跳转...</p>
       </div>
     </el-card>
   </div>

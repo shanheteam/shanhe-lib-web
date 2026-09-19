@@ -31,7 +31,7 @@ li {
   list-style: none;
 }
 li {
-  border-bottom: 1px solid #f6f6f6;
+  border-bottom: 1px solid var(--app-bg-light);
   padding-bottom: 15px;
   margin-bottom: 10px;
   &:last-of-type {

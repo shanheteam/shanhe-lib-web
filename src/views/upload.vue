@@ -886,36 +886,36 @@ const removeFile = (file: any) => {
       h4 {
         margin: 0 0 8px 0;
         font-size: 18px;
-        color: #303133;
+        color: var(--el-text-color-primary);
         font-weight: 600;
       }
 
       .section-desc {
         margin: 0;
-        color: #909399;
+        color: var(--el-text-color-secondary);
         font-size: 14px;
       }
     }
   }
 
   .config-form {
-    background: #fafafa;
+    background: var(--app-bg-lighter);
     padding: 24px;
     border-radius: 8px;
-    border: 1px solid #ebeef5;
+    border: 1px solid var(--el-border-color-lighter);
   }
 
   .enhanced-upload {
     .el-upload-dragger {
       width: 100%;
       height: 200px;
-      border: 2px dashed #d9d9d9;
+      border: 2px dashed var(--app-border-color);
       border-radius: 8px;
       transition: all 0.3s ease;
 
       &:hover {
-        border-color: #409eff;
-        background-color: #f0f8ff;
+        border-color: var(--el-color-primary);
+        background-color: var(--app-bg-blue-weak);
       }
     }
 
@@ -925,13 +925,13 @@ const removeFile = (file: any) => {
 
       .upload-icon {
         font-size: 48px;
-        color: #c0c4cc;
+        color: var(--el-text-color-placeholder);
         margin-bottom: 16px;
       }
 
       .upload-hint {
         margin-top: 12px;
-        color: #909399;
+        color: var(--el-text-color-secondary);
         font-size: 12px;
       }
     }
@@ -940,7 +940,7 @@ const removeFile = (file: any) => {
   .file-list-container {
     background: white;
     border-radius: 8px;
-    border: 1px solid #ebeef5;
+    border: 1px solid var(--el-border-color-lighter);
     overflow: hidden;
   }
 
@@ -964,17 +964,17 @@ const removeFile = (file: any) => {
         font-size: 14px;
 
         .file-size {
-          color: #909399;
+          color: var(--el-text-color-secondary);
           font-size: 12px;
         }
 
         .remove-btn {
-          color: #f56c6c;
+          color: var(--el-color-danger);
           font-size: 12px;
           padding: 0;
 
           &:hover {
-            color: #f78989;
+            color: var(--app-color-danger-light);
           }
         }
       }
@@ -992,7 +992,7 @@ const removeFile = (file: any) => {
         .field-label {
           display: block;
           font-size: 12px;
-          color: #606266;
+          color: var(--el-text-color-regular);
           margin-bottom: 4px;
           font-weight: 500;
         }
@@ -1061,7 +1061,7 @@ const removeFile = (file: any) => {
 
               span {
                 font-size: 12px;
-                color: #666;
+                color: var(--app-text-muted);
               }
             }
           }
@@ -1069,7 +1069,7 @@ const removeFile = (file: any) => {
       }
 
       .required {
-        color: #f56c6c;
+        color: var(--el-color-danger);
         font-weight: bold;
       }
     }
@@ -1137,7 +1137,7 @@ const removeFile = (file: any) => {
     .file-size {
       display: inline-block;
       margin: 0 8px;
-      color: #999;
+      color: var(--app-text-muted-lighter);
     }
     .el-button--text {
       color: red;
@@ -1146,19 +1146,19 @@ const removeFile = (file: any) => {
 
   // 文本颜色类
   .text-warning {
-    color: #e6a23c;
+    color: var(--el-color-warning);
   }
 
   .text-primary {
-    color: #409eff;
+    color: var(--el-color-primary);
   }
 
   .text-success {
-    color: #67c23a;
+    color: var(--el-color-success);
   }
 
   .text-info {
-    color: #909399;
+    color: var(--el-text-color-secondary);
   }
 }
 

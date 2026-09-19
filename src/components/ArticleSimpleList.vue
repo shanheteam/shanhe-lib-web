@@ -46,7 +46,7 @@ defineProps({
       text-overflow: ellipsis;
       line-height: 40px;
       height: 40px;
-      border-bottom: 1px dashed #efefef;
+      border-bottom: 1px dashed var(--app-border-color-light);
       img {
         height: 18px;
         position: relative;

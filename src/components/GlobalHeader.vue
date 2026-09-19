@@ -178,7 +178,7 @@
           </template>
           <div v-else class="header-login-btn">
             <el-button type="primary" round @click="showLoginDialog">
-              <el-icon style="color: #fff; font-size: 1.2em"><User /></el-icon>
+              <el-icon style="color: var(--el-color-white); font-size: 1.2em"><User /></el-icon>
               登录
             </el-button>
           </div>
@@ -816,7 +816,7 @@ init()
 .com-global-header {
   .el-header {
     padding: 0;
-    background: #fff;
+    background: var(--el-color-white);
     position: fixed;
     width: 100%;
     top: 0;
@@ -934,7 +934,7 @@ init()
     }
     .el-menu-item {
       padding: 0;
-      color: #333;
+      color: var(--app-text-strong);
       font-weight: bold;
       height: 70px;
       line-height: 70px;
@@ -947,7 +947,7 @@ init()
         top: -1px;
       }
       &.is-active {
-        color: #6095f7;
+        color: var(--app-ext-doc);
       }
     }
 
@@ -959,7 +959,7 @@ init()
         background-color: $background-grey-light;
         cursor: pointer;
         &:focus {
-          background-color: #fff;
+          background-color: var(--el-color-white);
         }
       }
     }
@@ -991,7 +991,7 @@ init()
   .search-modal {
     width: calc(100% - 32px);
     max-width: 560px;
-    background: #fff;
+    background: var(--el-color-white);
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
@@ -1008,12 +1008,12 @@ init()
     align-items: center;
     justify-content: space-between;
     padding: 18px 20px;
-    border-bottom: 1px solid #f0f1f2;
+    border-bottom: 1px solid var(--app-bg-soft);
 
     h3 {
       margin: 0;
       font-size: 18px;
-      color: #303133;
+      color: var(--el-text-color-primary);
     }
 
     .close-btn {
@@ -1021,12 +1021,12 @@ init()
       height: 32px;
       border: 0;
       border-radius: 8px;
-      background: #f5f7fa;
-      color: #909399;
+      background: var(--el-fill-color-light);
+      color: var(--el-text-color-secondary);
       cursor: pointer;
 
       &:hover {
-        color: #606266;
+        color: var(--el-text-color-regular);
       }
     }
   }
@@ -1055,7 +1055,7 @@ init()
 
   .search-modal-footer {
     padding: 0 20px 18px;
-    color: #909399;
+    color: var(--el-text-color-secondary);
     font-size: 13px;
     text-align: center;
   }
@@ -1159,13 +1159,13 @@ init()
 .oauth-login-title {
   font-size: 22px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--app-text-heading-strong);
   margin: 0 0 8px;
 }
 
 .oauth-login-subtitle {
   font-size: 13px;
-  color: #999;
+  color: var(--app-text-muted-lighter);
   margin: 0 0 32px;
 }
 
@@ -1189,7 +1189,7 @@ init()
   font-weight: 500;
   cursor: pointer;
   transition: opacity 0.2s, transform 0.1s;
-  color: #fff;
+  color: var(--el-color-white);
 }
 
 .oauth-btn:hover {
@@ -1201,27 +1201,27 @@ init()
 }
 
 .oauth-btn-6 {
-  background: #4e9bff;
+  background: var(--app-color-primary-soft);
 }
 
 .oauth-btn-1 {
-  background: #12b7f5;
+  background: var(--app-brand-blue);
 }
 
 .oauth-btn-2 {
-  background: #07c160;
+  background: var(--app-brand-weixin);
 }
 
 .oauth-btn-4 {
-  background: #333;
+  background: var(--app-text-strong);
 }
 
 .oauth-btn-3 {
-  background: #fc6d26;
+  background: var(--app-brand-gitlab);
 }
 
 .oauth-btn-7 {
-  background: #4285f4;
+  background: var(--app-brand-google);
 }
 
 .oauth-btn-text {
@@ -1231,7 +1231,7 @@ init()
 .oauth-login-hint {
   margin-top: 20px;
   font-size: 12px;
-  color: #999;
+  color: var(--app-text-muted-lighter);
   text-align: center;
 }
 
@@ -1263,15 +1263,15 @@ init()
     align-items: center;
     gap: 4px;
     padding: 12px 16px;
-    border-bottom: 1px solid #ebedf0;
-    color: #333;
+    border-bottom: 1px solid var(--app-border-color-soft-6);
+    color: var(--app-text-strong);
     font-size: 14px;
   }
   .mobile-nav-items {
     list-style: none;
     margin: 0;
     padding: 0 16px 8px 40px;
-    border-bottom: 1px solid #ebedf0;
+    border-bottom: 1px solid var(--app-border-color-soft-6);
     li {
       padding: 8px 0;
     }

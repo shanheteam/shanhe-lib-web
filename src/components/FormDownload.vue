@@ -154,7 +154,7 @@ async function execDownload() {
   }
   .tips {
     margin-bottom: 20px;
-    border: 1px dashed #f60;
+    border: 1px dashed var(--app-color-warning-strong);
     padding: 15px 20px;
     border-radius: 4px;
     line-height: 24px;

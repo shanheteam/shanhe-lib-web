@@ -30,8 +30,8 @@ export default { name: 'DefaultLayout' }
     line-height: 45px;
     padding: 1px 0 5px;
     &.el-table__cell {
-      background-color: #f7fbff;
-      color: #000;
+      background-color: var(--app-bg-header);
+      color: var(--el-color-black);
       font-weight: normal;
       &.el-table-column--selection > .cell {
         padding-left: 14px;
@@ -56,7 +56,7 @@ export default { name: 'DefaultLayout' }
     }
     .el-rate__text {
       margin-left: 5px;
-      color: #bdc3c7 !important;
+      color: var(--app-text-faint-light) !important;
     }
   }
   .el-breadcrumb__inner a,
@@ -99,9 +99,9 @@ export default { name: 'DefaultLayout' }
 }
 .channel-category {
   &.is-active {
-    background-color: #f2f6fc !important;
+    background-color: var(--el-fill-color-lighter) !important;
     a {
-      color: #409eff;
+      color: var(--el-color-primary);
     }
   }
   a {

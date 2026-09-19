@@ -89,8 +89,8 @@ const statItems = computed(() => {
   }
 
   .el-avatar {
-    border: 4px solid #0d2b4d;
-    background-color: #fff;
+    border: 4px solid var(--app-border-navy);
+    background-color: var(--el-color-white);
     img {
       border-radius: 50%;
     }
@@ -102,7 +102,7 @@ const statItems = computed(() => {
 
   .user-card__username {
     margin: 0;
-    color: #1f2937;
+    color: var(--app-text-heading);
     font-size: 34px;
     font-weight: 700;
     line-height: 1.15;
@@ -110,7 +110,7 @@ const statItems = computed(() => {
 
   .user-card__signature {
     margin-top: 14px;
-    color: #7b8794;
+    color: var(--app-text-muted-soft);
     font-size: 14px;
     line-height: 1.8;
     min-height: 50px;
@@ -118,7 +118,7 @@ const statItems = computed(() => {
 
   .user-card__joined {
     margin-top: 14px;
-    color: #9aa5b1;
+    color: var(--app-text-muted-soft-3);
     font-size: 13px;
 
     i {
@@ -132,8 +132,8 @@ const statItems = computed(() => {
     background: linear-gradient(
       90deg,
       rgba(232, 237, 245, 0) 0%,
-      #e8edf5 18%,
-      #e8edf5 82%,
+      var(--app-bg-soft-9) 18%,
+      var(--app-bg-soft-9) 82%,
       rgba(232, 237, 245, 0) 100%
     );
   }
@@ -149,7 +149,7 @@ const statItems = computed(() => {
   }
 
   .user-card__stat-value {
-    color: #1f2937;
+    color: var(--app-text-heading);
     font-size: 20px;
     font-weight: 700;
     line-height: 1;
@@ -157,7 +157,7 @@ const statItems = computed(() => {
 
   .user-card__stat-label {
     margin-top: 8px;
-    color: #8a94a6;
+    color: var(--app-text-muted-2-light);
     font-size: 13px;
   }
 }

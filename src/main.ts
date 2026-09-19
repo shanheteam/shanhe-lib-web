@@ -17,6 +17,8 @@ import { useSettingStore } from './store/setting'
 
 // 全局样式（与原版 nuxt.config.css 对应）
 import './assets/font-awesome-4.7.0/css/font-awesome.min.css'
+// 设计令牌：定义 :root 变量，须在 element-plus/dist/index.css 之后、app.scss 之前引入。
+import './assets/css/tokens.scss'
 import './assets/css/app.scss'
 import './assets/css/markdown.css'
 

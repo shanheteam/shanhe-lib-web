@@ -129,7 +129,7 @@
     <!-- 注册提示弹窗 -->
     <el-dialog v-model="showRegDialog" title="注册账号" width="420" :close-on-click-modal="true">
       <div style="text-align: center; padding: 10px 0">
-        <p style="margin-bottom: 16px; color: #606266">
+        <p style="margin-bottom: 16px; color: var(--el-text-color-regular)">
           山河大学图书馆不支持注册，请前往山河大学学籍系统注册。
         </p>
         <el-button type="primary" @click="goRegister">前往注册</el-button>
@@ -256,14 +256,14 @@ onMounted(() => {
 
       :deep(.el-card__header) {
         padding: 16px 18px 12px;
-        border-bottom: 1px solid #eef2f6;
+        border-bottom: 1px solid var(--app-border-color-soft-2);
 
         .card-title {
           display: flex;
           align-items: center;
           gap: 6px;
           margin: 0;
-          color: #111827;
+          color: var(--app-text-heading-strong);
           font-size: 15px;
           font-weight: 600;
         }
@@ -298,7 +298,7 @@ onMounted(() => {
       .username,
       h3 {
         margin: 0 0 4px;
-        color: #111827;
+        color: var(--app-text-heading-strong);
         font-size: 16px;
         font-weight: 600;
         overflow: hidden;
@@ -309,7 +309,7 @@ onMounted(() => {
       .signature,
       p {
         margin: 0;
-        color: #7b8794;
+        color: var(--app-text-muted-soft);
         font-size: 12px;
         overflow: hidden;
         white-space: nowrap;
@@ -324,20 +324,20 @@ onMounted(() => {
     margin-bottom: 16px;
     padding: 14px 0;
     border-radius: 8px;
-    background: #f8fafc;
+    background: var(--app-bg-soft-4);
 
     .stat-col {
       text-align: center;
 
       .stat-value {
-        color: #2f7cf6;
+        color: var(--el-color-primary);
         font-size: 18px;
         font-weight: 600;
       }
 
       .stat-name {
         margin-top: 2px;
-        color: #7b8794;
+        color: var(--app-text-muted-soft);
         font-size: 12px;
       }
     }
@@ -387,8 +387,8 @@ onMounted(() => {
       justify-content: space-between;
       gap: 10px;
       padding: 11px 0;
-      border-bottom: 1px dashed #edf2f7;
-      color: #344054;
+      border-bottom: 1px dashed var(--app-border-color-soft-7);
+      color: var(--app-text-body-dark);
       text-decoration: none;
 
       &:last-child {
@@ -406,12 +406,12 @@ onMounted(() => {
 
       .update-time {
         flex-shrink: 0;
-        color: #98a2b3;
+        color: var(--app-text-muted-soft-3);
         font-size: 12px;
       }
 
       &:hover .update-title {
-        color: #2f7cf6;
+        color: var(--el-color-primary);
       }
     }
   }
@@ -431,8 +431,8 @@ onMounted(() => {
       gap: 8px;
       padding: 16px 8px;
       border-radius: 8px;
-      background: #f8fafc;
-      color: #344054;
+      background: var(--app-bg-soft-4);
+      color: var(--app-text-body-dark);
       text-decoration: none;
       transition: all 0.2s ease;
 
@@ -445,8 +445,8 @@ onMounted(() => {
       }
 
       &:hover {
-        background: #2f7cf6;
-        color: #fff;
+        background: var(--el-color-primary);
+        color: var(--el-color-white);
         transform: translateY(-2px);
         box-shadow: 0 6px 16px rgba(47, 124, 246, 0.3);
       }

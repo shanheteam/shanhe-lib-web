@@ -1,7 +1,8 @@
+// 全局样式：颜色一律引用 tokens.scss 中的设计令牌，禁止硬编码 hex。
 body {
     margin: 0;
     padding: 0;
-    background-color: #fff;
+    background-color: var(--el-color-white);
 }
 .pointer {
     cursor: pointer;
@@ -11,7 +12,7 @@ body {
     width: 100%;
 }
 .el-dropdown [disabled] {
-    color: #eee;
+    color: var(--app-border-color-lighter);
 }
 .mgt-20px {
     margin-top: 20px;
@@ -32,10 +33,10 @@ body {
     text-align: center;
 }
 .text-warning {
-    color: #f39c12;
+    color: var(--app-color-warning-amber);
 }
 .text-danger {
-    color: #e74c3c;
+    color: var(--app-color-danger-deep);
 }
 .float-right {
     float: right;
@@ -50,26 +51,26 @@ body {
     font-weight: bold;
 }
 .help-block {
-    color: #888;
+    color: var(--app-text-faint);
     font-size: 15px;
 }
 .text-muted {
-    color: #bdc3c7;
+    color: var(--app-text-faint-light);
 }
 .el-image-viewer__canvas img {
-    background-color: #fff;
+    background-color: var(--el-color-white);
 }
 .el-image__error,
 .el-image__inner,
 .el-image__placeholder {
-    background-color: #eee;
+    background-color: var(--app-border-color-lighter);
 }
 .block {
     display: block;
 }
 .el-footer {
     padding: 0;
-    background-color: #ffffff;
+    background-color: var(--el-color-white);
 }
 .font-normal {
     font-weight: normal;
@@ -89,7 +90,7 @@ body {
 }
 
 .ext-icon::after {
-    color: #fff;
+    color: var(--el-color-white);
     padding: 2px 5px;
     font-size: 10px;
     margin-left: 5px;
@@ -98,68 +99,68 @@ body {
     right: 0;
     border-top-left-radius: 5px;
     content: "OTHER";
-    background-color: #70c9ad;
+    background-color: var(--app-ext-other);
 }
 
 .ext-pdf::after {
     content: "PDF";
-    background-color: #ec6660;
+    background-color: var(--app-ext-pdf);
 }
 .ext-ppt::after {
     content: "PPT";
-    background-color: #f39c12;
+    background-color: var(--app-color-warning-amber);
 }
 
 .ext-xls::after,
 .ext-excel::after {
     content: "XLS";
-    background-color: #27ae60;
+    background-color: var(--app-ext-xls);
 }
 
 .ext-doc::after,
 .ext-word::after {
     content: "DOC";
-    background-color: #6095f7;
+    background-color: var(--app-ext-doc);
 }
 
 .ext-epub::after {
     content: "EPUB";
-    background-color: #70c9ad;
+    background-color: var(--app-ext-other);
 }
 
 .ext-chm::other {
     content: "OTHER";
-    background-color: #70c9ad;
+    background-color: var(--app-ext-other);
 }
 
 .ext-code::after {
     content: "CODE";
-    background-color: #70c9ad;
+    background-color: var(--app-ext-other);
 }
 
 .ext-mobi::after {
     content: "MOBI";
-    background-color: #70c9ad;
+    background-color: var(--app-ext-other);
 }
 .ext-txt::after,
 .ext-text::after {
     content: "TXT";
-    background-color: #34495e;
+    background-color: var(--app-ext-txt);
 }
 .ext-umd::after {
     content: "UMD";
-    background-color: #70c9ad;
+    background-color: var(--app-ext-other);
 }
 .ext-other::after {
     content: "OTHER";
-    background-color: #70c9ad;
+    background-color: var(--app-ext-other);
 }
 
 .mce-content-body:not([dir="rtl"]) blockquote {
     padding: 10px;
-    color: #777;
+    color: var(--app-text-muted-light);
     font-size: 0.95em;
-    background-color: #f6f8fa;
+    background-color: var(--app-bg-hover);
 }
 
 .el-page-header__content {
@@ -169,23 +170,23 @@ body {
 // 自定义滚动条样式，效果类似macOS
 .custom-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: rgba(50, 50, 50, 0.4) rgba(50, 50, 50, 0.4);
+    scrollbar-color: var(--app-scrollbar-thumb) var(--app-scrollbar-thumb);
     ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
     }
     ::-webkit-scrollbar-thumb {
-        background-color: rgba(50, 50, 50, 0.4);
+        background-color: var(--app-scrollbar-thumb);
         border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover {
-        background-color: #dcdde1;
+        background-color: var(--app-scrollbar-thumb-hover);
     }
     ::-webkit-scrollbar-track {
-        background-color: rgba(50, 50, 50, 0.4);
+        background-color: var(--app-scrollbar-thumb);
     }
     ::-webkit-scrollbar-corner {
-        background-color: rgba(50, 50, 50, 0.4);
+        background-color: var(--app-scrollbar-thumb);
     }
 }
 .custom-vxe-table {
@@ -195,12 +196,12 @@ body {
         .vxe-checkbox--icon {
             font-weight: normal !important;
             font-size: 1.2em;
-            color: #ccc;
+            color: var(--app-text-disabled);
         }
     }
     .vxe-table--header-wrapper {
-        background-color: #f7fbff !important;
-        color: #000 !important;
+        background-color: var(--app-bg-header) !important;
+        color: var(--el-color-black) !important;
         .vxe-header--column {
             padding: 15px 0;
         }
@@ -218,15 +219,15 @@ body {
 }
 
 .el-descriptions .is-bordered .el-descriptions-item__cell {
-    border-color: #e9eef3;
+    border-color: var(--app-border-color-soft);
 }
 .el-descriptions-item__label.is-bordered-label {
-    background-color: #e9eef3;
+    background-color: var(--app-border-color-soft);
 }
 
 .hover-link:hover {
-    color: #409eff;
+    color: var(--el-color-primary);
 }
 .hover-link-imp:hover {
-    color: #409eff !important;
+    color: var(--el-color-primary) !important;
 }

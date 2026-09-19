@@ -328,7 +328,7 @@ onMounted(() => {
   overflow-y: auto;
   font-family: 'Courier New', monospace;
   font-size: 13px;
-  background: #f5f7fa;
+  background: var(--el-fill-color-light);
   border-radius: 4px;
   padding: 12px;
 
@@ -336,14 +336,14 @@ onMounted(() => {
     display: flex;
     align-items: flex-start;
     padding: 6px 0;
-    border-bottom: 1px solid #ebeef5;
+    border-bottom: 1px solid var(--el-border-color-lighter);
 
     &:last-child {
       border-bottom: none;
     }
 
     .log-time {
-      color: #909399;
+      color: var(--el-text-color-secondary);
       margin-right: 8px;
       flex-shrink: 0;
       font-size: 12px;
@@ -360,19 +360,19 @@ onMounted(() => {
     }
 
     &.info .log-message {
-      color: #409eff;
+      color: var(--el-color-primary);
     }
 
     &.success .log-message {
-      color: #67c23a;
+      color: var(--el-color-success);
     }
 
     &.error .log-message {
-      color: #f56c6c;
+      color: var(--el-color-danger);
     }
 
     &.warn .log-message {
-      color: #e6a23c;
+      color: var(--el-color-warning);
     }
   }
 }

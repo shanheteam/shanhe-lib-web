@@ -33,9 +33,9 @@ const errorAvatar = () => true
   display: inline-block;
   position: relative;
   .el-avatar {
-    border: 2px solid #ddddddae;
+    border: 2px solid var(--app-border-avatar);
     box-sizing: border-box;
-    background-color: #fff;
+    background-color: var(--el-color-white);
     img {
       margin: 0 auto;
     }

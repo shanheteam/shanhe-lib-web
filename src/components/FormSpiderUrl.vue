@@ -38,8 +38,8 @@
           <el-form-item label="启用浏览器渲染(针对JS渲染页面)">
             <el-switch
               v-model="spiderurl.enable_browser"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
+              active-color="var(--app-color-switch-on)"
+              inactive-color="var(--app-color-switch-off)"
             ></el-switch>
           </el-form-item>
         </el-col>
@@ -230,15 +230,15 @@ defineExpose({ reset, clearValidate })
 }
 .generator-container {
   padding: 20px;
-  border: 1px dashed #f60;
+  border: 1px dashed var(--app-color-warning-strong);
   border-radius: 5px;
 }
 .generator-tip {
   line-height: 1;
   padding: 5px 10px;
   margin-top: 10px;
-  background: #fff7e6;
-  border: 1px solid #ffe58f;
+  background: var(--app-bg-warning);
+  border: 1px solid var(--app-border-color-warning);
   border-radius: 5px;
 }
 </style>

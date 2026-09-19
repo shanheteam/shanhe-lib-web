@@ -144,7 +144,7 @@ onMounted(async () => {
 <style lang="scss">
 .page-post {
   min-height: calc(100vh - 150px);
-  background-color: #f8f9fa;
+  background-color: var(--app-bg-soft-3);
   border-radius: 12px;
 }
 
@@ -164,30 +164,30 @@ onMounted(async () => {
     justify-content: space-between;
     align-items: center;
     padding: 0 0 24px 0;
-    border-bottom: 1px solid #e4e7ed;
+    border-bottom: 1px solid var(--el-border-color-light);
     margin-bottom: 32px;
 
     .breadcrumb {
       :deep(.el-breadcrumb) {
         .el-breadcrumb__item {
           .el-breadcrumb__inner {
-            color: #606266;
+            color: var(--el-text-color-regular);
             font-size: 14px;
             font-weight: 500;
             transition: color 0.3s ease;
 
             &:hover {
-              color: #409eff;
+              color: var(--el-color-primary);
             }
 
             i {
               margin-right: 6px;
-              color: #909399;
+              color: var(--el-text-color-secondary);
             }
           }
 
           .el-breadcrumb__separator {
-            color: #c0c4cc;
+            color: var(--el-text-color-placeholder);
             margin: 0 8px;
           }
         }
@@ -204,28 +204,28 @@ onMounted(async () => {
         align-items: center;
         gap: 6px;
         font-size: 13px;
-        color: #909399;
-        background-color: #f0f2f5;
+        color: var(--el-text-color-secondary);
+        background-color: var(--app-bg-soft);
         padding: 4px 12px;
         border-radius: 12px;
-        border: 1px solid #e4e7ed;
+        border: 1px solid var(--el-border-color-light);
 
         i {
           font-size: 13px;
-          color: #409eff;
+          color: var(--el-color-primary);
         }
       }
 
       .back-link {
-        color: #606266;
+        color: var(--el-text-color-regular);
         font-size: 14px;
         padding: 6px 12px;
         border-radius: 4px;
         transition: all 0.3s ease;
 
         &:hover {
-          color: #409eff;
-          background-color: #ecf5ff;
+          color: var(--el-color-primary);
+          background-color: var(--app-bg-blue-weak);
         }
 
         i {

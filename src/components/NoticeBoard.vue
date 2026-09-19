@@ -71,7 +71,7 @@ withDefaults(
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      color: #f56c6c;
+      color: var(--el-color-danger);
       font-size: 14px;
       text-decoration: none;
       .el-icon {
@@ -89,7 +89,7 @@ withDefaults(
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background-color: #fff;
+      background-color: var(--el-color-white);
 
       .notice-item-link {
         flex: 1;
@@ -99,11 +99,11 @@ withDefaults(
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        color: #303133;
+        color: var(--el-text-color-primary);
         text-decoration: none;
 
         &:hover {
-          color: #2f7cf6;
+          color: var(--el-color-primary);
         }
       }
 
@@ -111,7 +111,7 @@ withDefaults(
         flex-shrink: 0;
         padding-left: 30px;
         font-size: 13px;
-        color: #909399;
+        color: var(--el-text-color-secondary);
         cursor: auto;
       }
     }
@@ -125,7 +125,7 @@ withDefaults(
   .notice-more {
     flex-shrink: 0;
     margin-left: 12px;
-    color: #2f7cf6;
+    color: var(--el-color-primary);
     text-decoration: none;
     font-size: 13px;
     white-space: nowrap;

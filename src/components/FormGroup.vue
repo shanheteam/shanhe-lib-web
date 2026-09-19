@@ -38,8 +38,8 @@
             <el-switch
               v-model="group.is_default"
               style="display: block"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
+              active-color="var(--app-color-switch-on)"
+              inactive-color="var(--app-color-switch-off)"
               active-text="是"
               inactive-text="否"
             >
@@ -53,8 +53,8 @@
             <el-switch
               v-model="group.enable_upload"
               style="display: block"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
+              active-color="var(--app-color-switch-on)"
+              inactive-color="var(--app-color-switch-off)"
               active-text="是"
               inactive-text="否"
             >
@@ -66,8 +66,8 @@
             <el-switch
               v-model="group.enable_document_review"
               style="display: block"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
+              active-color="var(--app-color-switch-on)"
+              inactive-color="var(--app-color-switch-off)"
               active-text="是"
               inactive-text="否"
             >
@@ -79,8 +79,8 @@
             <el-switch
               v-model="group.enable_comment"
               style="display: block"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
+              active-color="var(--app-color-switch-on)"
+              inactive-color="var(--app-color-switch-off)"
               active-text="是"
               inactive-text="否"
             >
@@ -92,8 +92,8 @@
             <el-switch
               v-model="group.enable_comment_approval"
               style="display: block"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
+              active-color="var(--app-color-switch-on)"
+              inactive-color="var(--app-color-switch-off)"
               active-text="是"
               inactive-text="否"
             >
@@ -105,8 +105,8 @@
             <el-switch
               v-model="group.enable_article"
               style="display: block"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
+              active-color="var(--app-color-switch-on)"
+              inactive-color="var(--app-color-switch-off)"
               active-text="是"
               inactive-text="否"
             >
@@ -118,8 +118,8 @@
             <el-switch
               v-model="group.enable_article_approval"
               style="display: block"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
+              active-color="var(--app-color-switch-on)"
+              inactive-color="var(--app-color-switch-off)"
               active-text="是"
               inactive-text="否"
             >

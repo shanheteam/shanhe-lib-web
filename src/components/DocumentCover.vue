@@ -70,7 +70,7 @@ onBeforeUnmount(() => {
 </script>
 <style lang="scss">
 .com-document-cover {
-  border: 2px solid #efefef;
+  border: 2px solid var(--app-border-color-light);
   border-radius: 5px;
   img {
     width: 100% !important;

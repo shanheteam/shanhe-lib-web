@@ -350,17 +350,17 @@ onBeforeUnmount(() => {})
     padding-bottom: 0;
     .el-pagination {
       padding: 20px 0;
-      border-top: 1px dashed #efefef;
+      border-top: 1px dashed var(--app-border-color-light);
     }
   }
 
   .cate-description {
     padding: 10px 0;
-    color: #909399;
+    color: var(--el-text-color-secondary);
     line-height: 170%;
     font-size: 13px;
     word-break: break-all;
-    border: 1px dashed #ddd;
+    border: 1px dashed var(--app-border-color);
     padding: 10px;
     border-radius: 4px;
     margin: 10px -10px 0;
@@ -378,7 +378,7 @@ onBeforeUnmount(() => {})
       font-weight: normal;
       height: 40px;
       line-height: 40px;
-      border-bottom: 1px dashed #efefef;
+      border-bottom: 1px dashed var(--app-border-color-light);
       &:last-of-type {
         border-bottom: 0;
       }

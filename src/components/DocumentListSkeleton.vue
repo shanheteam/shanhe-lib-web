@@ -71,7 +71,7 @@ const settings = computed(() => settingStore.settings)
   li {
     margin-bottom: 20px;
     padding-bottom: 18px;
-    border-bottom: 1px dashed #ddd;
+    border-bottom: 1px dashed var(--app-border-color);
   }
   h3 {
     margin: 0;
@@ -93,7 +93,7 @@ const settings = computed(() => settingStore.settings)
   .doc-cover {
     .el-image {
       width: 100%;
-      border: 2px solid #efefef;
+      border: 2px solid var(--app-border-color-light);
       border-radius: 5px;
       &:hover img {
         transform: scale(1.2);
@@ -103,15 +103,15 @@ const settings = computed(() => settingStore.settings)
   .doc-info {
     margin: 10px 0;
     font-size: 13px;
-    color: #888;
+    color: var(--app-text-faint);
     .line {
-      color: #ddd;
+      color: var(--app-border-color);
       margin: 0 5px;
     }
   }
   .doc-desc {
     font-size: 14px;
-    color: #999;
+    color: var(--app-text-muted-lighter);
     line-height: 180%;
     overflow: hidden;
     text-overflow: ellipsis;

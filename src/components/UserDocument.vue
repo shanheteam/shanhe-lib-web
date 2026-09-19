@@ -454,9 +454,9 @@ const filterStatus = (status: any) => {
 .com-user-document {
   .document-filter-panel {
     padding: 20px 24px 14px;
-    border: 1px solid #edf1f7;
+    border: 1px solid var(--app-border-color-soft-4);
     border-radius: 16px;
-    background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
+    background: linear-gradient(180deg, var(--el-color-white) 0%, var(--app-bg-fade) 100%);
   }
 
   .document-filter-form {
@@ -476,8 +476,8 @@ const filterStatus = (status: any) => {
     .el-input__inner {
       height: 48px;
       border-radius: 12px;
-      border-color: #edf1f7;
-      background-color: #fff;
+      border-color: var(--app-border-color-soft-4);
+      background-color: var(--el-color-white);
     }
   }
 
@@ -496,7 +496,7 @@ const filterStatus = (status: any) => {
   .document-filter-form__advanced {
     margin-top: 16px;
     padding-top: 16px;
-    border-top: 1px dashed #edf1f7;
+    border-top: 1px dashed var(--app-border-color-soft-4);
 
     .el-form-item {
       margin-bottom: 0;
@@ -515,7 +515,7 @@ const filterStatus = (status: any) => {
     padding: 0;
     border: 0;
     background: transparent;
-    color: #409eff;
+    color: var(--el-color-primary);
     font-size: 13px;
     cursor: pointer;
   }
@@ -525,15 +525,15 @@ const filterStatus = (status: any) => {
     align-items: center;
     gap: 8px;
     margin: 24px 0 14px;
-    color: #6b7280;
+    color: var(--app-text-muted-soft-2);
     font-size: 15px;
 
     .el-icon {
-      color: #409eff;
+      color: var(--el-color-primary);
     }
 
     strong {
-      color: #409eff;
+      color: var(--el-color-primary);
       font-size: 24px;
       font-weight: 700;
     }
@@ -555,8 +555,8 @@ const filterStatus = (status: any) => {
 
   .document-list__head {
     padding: 16px 22px;
-    background-color: #f6f8fb;
-    color: #4b5563;
+    background-color: var(--app-bg-soft-5);
+    color: var(--app-text-body-2);
     font-size: 14px;
     font-weight: 600;
   }
@@ -578,7 +578,7 @@ const filterStatus = (status: any) => {
 
     td {
       padding: 0;
-      border-bottom: 1px solid #f1f4f8;
+      border-bottom: 1px solid var(--app-border-color-soft-5);
       vertical-align: top;
     }
 
@@ -613,9 +613,9 @@ const filterStatus = (status: any) => {
     width: 54px;
     min-width: 54px;
     height: 72px;
-    border: 1px solid #edf1f7;
+    border: 1px solid var(--app-border-color-soft-4);
     border-radius: 8px;
-    background: #fff;
+    background: var(--el-color-white);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -636,7 +636,7 @@ const filterStatus = (status: any) => {
 
   .document-row__title {
     display: block;
-    color: #1f2937;
+    color: var(--app-text-heading);
     font-size: 18px;
     font-weight: 600;
     line-height: 1.45;
@@ -646,7 +646,7 @@ const filterStatus = (status: any) => {
     text-overflow: ellipsis;
 
     &:hover {
-      color: #409eff;
+      color: var(--el-color-primary);
     }
   }
 
@@ -656,7 +656,7 @@ const filterStatus = (status: any) => {
     flex-wrap: wrap;
     gap: 10px 14px;
     margin-top: 10px;
-    color: #8b95a7;
+    color: var(--app-text-muted-2);
     font-size: 13px;
 
     span {
@@ -667,7 +667,7 @@ const filterStatus = (status: any) => {
   }
 
   .document-cell--stats {
-    color: #6b7280;
+    color: var(--app-text-muted-soft-2);
     font-size: 14px;
     padding-right: 18px;
   }
@@ -703,7 +703,7 @@ const filterStatus = (status: any) => {
   }
 
   .document-row__rating-value {
-    color: #f59e0b;
+    color: var(--app-color-warning-amber);
     font-weight: 600;
   }
 
@@ -717,11 +717,11 @@ const filterStatus = (status: any) => {
     .el-button {
       margin-left: 0;
       padding: 0;
-      color: #409eff;
+      color: var(--el-color-primary);
     }
 
     .el-button.is-danger {
-      color: #f56c6c;
+      color: var(--el-color-danger);
     }
   }
 
@@ -817,7 +817,7 @@ const filterStatus = (status: any) => {
 
       .el-table__row {
         padding: 18px 16px;
-        border-top: 1px solid #f1f4f8;
+        border-top: 1px solid var(--app-border-color-soft-5);
       }
 
       .el-table__row:first-child {

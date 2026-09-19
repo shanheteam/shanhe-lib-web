@@ -208,3 +208,11 @@ export function genPrevPage(hash: string, pageNO: number, ext?: string, enableGZ
   if (ext === '.svg' && enableGZIP) ext = '.gzip.svg'
   return `/view/page/${hash}/${pageNO}${ext}`
 }
+
+// 运行时读取设计令牌（tokens.scss :root 变量）的实际色值。
+// 用于 echarts / qrcode 等 canvas 场景——canvas 不解析 var()，需取真实颜色字符串。
+export function cssVar(name: string, fallback = ''): string {
+  if (typeof window === 'undefined') return fallback
+  const value = getComputedStyle(window.document.documentElement).getPropertyValue(name).trim()
+  return value || fallback
+}

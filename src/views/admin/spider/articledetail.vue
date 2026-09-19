@@ -622,8 +622,8 @@ watch(
 .article-preview {
   min-height: 320px;
   padding: 16px;
-  background: #fafafa;
-  border: 1px solid #ebeef5;
+  background: var(--app-bg-lighter);
+  border: 1px solid var(--el-border-color-lighter);
   border-radius: 4px;
   overflow: auto;
 }

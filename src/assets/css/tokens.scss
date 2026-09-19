@@ -1,0 +1,132 @@
+// ============================================================
+// 设计令牌（Design Tokens）
+//
+// 本文件是全站样式的唯一配色来源，替换原先散落在组件/全局样式里的硬编码 hex。
+// 约定：
+// 1. 与 Element Plus 语义完全一致的色值，直接复用其内置 CSS 变量
+//    （--el-color-* / --el-text-color-* / --el-border-color-* / --el-fill-color-* 等），
+//    不在此重复定义，保证组件与自定义样式永远同步。
+// 2. 其余色值按语义收拢为 --app-* 令牌，值与原实现完全一致（保真迁移）。
+// 3. 品牌主色统一为 --el-color-primary（#409eff），原首页品牌蓝 #2f7cf6 已归并至此。
+// 4. 仅出现 1 次的组件局部色值（vendor 样式、渐变 stop、品牌 logo 色等）不纳入。
+// ============================================================
+
+:root {
+  /* ===== 品牌色（对齐 Element Plus 主题）===== */
+  --el-color-primary: #409eff; /* 主色：全站唯一品牌蓝 */
+  --app-color-primary-light: #66b1ff; /* 主色浅一档（按钮 hover 等） */
+  --app-color-primary-soft: #4e9bff; /* 主色柔和蓝 */
+  --app-color-brand-purple: #667eea; /* 搜索页品牌渐变紫 */
+  --app-color-brand-purple-deep: #764ba2; /* 搜索页品牌渐变紫深 */
+
+  /* ===== 状态色（对齐 Element Plus 语义，值保持原样）===== */
+  // 成功/警告/危险/信息 直接使用 --el-color-success(#67c23a) / --el-color-warning(#e6a23c)
+  // / --el-color-danger(#f56c6c) / --el-color-info(#909399)。
+  --app-color-warning-amber: #f39c12; /* 琥珀色警告 */
+  --app-color-warning-strong: #f60; /* 强提示橙（输入校验等） */
+  --app-color-danger-deep: #e74c3c; /* 深红危险 */
+  --app-color-danger-soft: #f56565; /* 柔红 */
+  --app-color-switch-on: #13ce66; /* el-switch 开启态 */
+  --app-color-switch-off: #ff4949; /* el-switch 关闭态 */
+
+  /* ===== 中性文本 ===== */
+  // 一级/常规/次要/占位 直接使用 --el-text-color-primary(#303133) / --el-text-color-regular(#606266)
+  // / --el-text-color-secondary(#909399) / --el-text-color-placeholder(#c0c4cc)。
+  --app-text-strong: #333; /* 强调文本 */
+  --app-text-body-strong: #555; /* 正文强调 */
+  --app-text-body: #565656; /* 正文（文档详情） */
+  --app-text-body-2: #4b5563; /* 正文（列表） */
+  --app-text-body-dark: #344054; /* 正文深灰 */
+  --app-text-muted: #666; /* 弱化文本 */
+  --app-text-muted-light: #777; /* 弱化文本偏浅 */
+  --app-text-muted-lighter: #999; /* 弱化文本更浅 */
+  --app-text-muted-soft: #7b8794; /* 柔和灰（首页） */
+  --app-text-muted-soft-2: #6b7280; /* 柔和灰（用户页） */
+  --app-text-muted-soft-3: #98a2b3; /* 柔和灰（首页副信息） */
+  --app-text-muted-deep: #6b7a88; /* 深柔灰（搜索聚合） */
+  --app-text-muted-deep-2: #6f7f90; /* 深柔灰（分类页） */
+  --app-text-muted-2: #8b95a7; /* 柔和灰（用户列表） */
+  --app-text-muted-2-light: #8a94a6; /* 柔和灰（用户卡片） */
+  --app-text-faint: #888; /* 微弱文本 */
+  --app-text-faint-light: #bdc3c7; /* 微弱文本偏浅 */
+  --app-text-faint-2: #aaa; /* 微弱文本（分类页） */
+  --app-text-disabled: #ccc; /* 禁用文本 */
+  --app-text-heading: #1f2937; /* 标题深灰 */
+  --app-text-heading-strong: #111827; /* 标题最深 */
+  --app-text-heading-soft: #243b53; /* 标题蓝灰 */
+  --app-text-footer: #a4acb7; /* 页脚文本 */
+  --app-text-error-strong: #47494e; /* 错误页代码文本 */
+  --app-color-tag-warning: #ff9900; /* 文档状态标签文字（审核中） */
+
+  /* ===== 品牌/平台标识色（单处使用，保持原值）===== */
+  --app-brand-weixin: #07c160;
+  --app-brand-gitlab: #fc6d26;
+  --app-brand-google: #4285f4;
+  --app-brand-blue: #12b7f5;
+  --app-share-telegram: #208de1;
+  --app-share-turquoise: #1abc9c;
+
+  /* ===== 强调色/渐变（单处使用，保持原值）===== */
+  --app-color-primary-deep: #3a7be0; /* 搜索页链接 */
+  --app-color-primary-faint: #8fb3d9; /* 分类页选中链接 */
+  --app-color-green: #2eb85c; /* 首页徽标绿 */
+  --app-color-danger-light: #f78989; /* 上传失败提示 */
+  --app-grad-warm-a: #ff8a5b; /* 首页暖色渐变 */
+  --app-grad-warm-b: #ff6b57;
+  --app-grad-green-a: #5bc58c; /* 首页绿色渐变 */
+  --app-grad-green-b: #33a06f;
+  --app-grad-red: #ff7a59; /* 首页红色徽标 */
+  --app-bg-navbar: #21293c14; /* 文章导航栏半透明底 */
+  --app-border-avatar: #ddddddae; /* 头像描边（带透明度） */
+  --app-border-navy: #0d2b4d; /* 用户卡片描边 */
+  --app-error-svg: #dbe1ec; /* 错误页插画填充 */
+
+  /* ===== 中性背景 ===== */
+  --app-bg-page: #f4f5f7; /* 页面底色（与 var.scss $background-grey-light 一致） */
+  --app-bg-hover: #f6f8fa; /* 悬停/代码块底色 */
+  --app-bg-light: #f6f6f6; /* 浅灰底 */
+  --app-bg-lighter: #fafafa; /* 更浅灰底 */
+  --app-bg-soft: #f0f2f5; /* 柔和底 */
+  --app-bg-soft-2: #ecf0f1; /* 柔和底（文档页） */
+  --app-bg-soft-3: #f8f9fa; /* 柔和底（文章/搜索） */
+  --app-bg-soft-4: #f8fafc; /* 柔和底（侧栏） */
+  --app-bg-soft-5: #f6f8fb; /* 柔和底（用户列表） */
+  --app-bg-soft-6: #f9fbfe; /* 柔和底（分类页） */
+  --app-bg-soft-7: #f2f5f9; /* 柔和底（分类页卡片） */
+  --app-bg-header: #f7fbff; /* 表格表头底 */
+  --app-bg-grey-weak: #f5f7fa; /* 极浅灰底（面板） */
+  --app-bg-blue-weak: #ecf5ff; /* 极浅蓝底（选中态） */
+  --app-bg-soft-9: #e8edf5; /* 柔和底（用户卡片渐变） */
+  --app-bg-fade: #fbfcfe; /* 卡片底部渐隐 */
+  --app-bg-grad-end: #f5f8fc; /* 渐变收尾浅色（分类页/搜索页卡片头） */
+  --app-bg-footer: #1c2b40; /* 页脚深蓝底 */
+  --app-bg-warning: #fff7e6; /* 警告提示底 */
+
+  /* ===== 中性边框 ===== */
+  // --el-border-color(#dcdfe6) / --el-border-color-light(#e4e7ed) / --el-border-color-lighter(#ebeef5)
+  // 直接复用 EP 变量。
+  --app-border-color: #ddd; /* 常规边框 */
+  --app-border-color-light: #efefef; /* 浅边框（列表分割线） */
+  --app-border-color-lighter: #eee; /* 更浅边框 */
+  --app-border-color-muted: #e6e6e6; /* 后台侧栏边框 */
+  --app-border-color-soft: #e9eef3; /* 柔和边框 */
+  --app-border-color-soft-2: #eef2f6; /* 柔和边框（首页/侧栏） */
+  --app-border-color-soft-3: #eef3f8; /* 柔和边框（分类页） */
+  --app-border-color-soft-4: #edf1f7; /* 柔和边框（用户列表） */
+  --app-border-color-soft-5: #f1f4f8; /* 柔和边框（用户列表分割线） */
+  --app-border-color-soft-6: #ebedf0; /* 柔和边框（页头） */
+  --app-border-color-soft-7: #edf2f7; /* 柔和边框（首页/侧栏分割线） */
+  --app-border-color-soft-8: #e9ecef; /* 柔和边框（搜索页） */
+  --app-border-color-warning: #ffe58f; /* 警告边框 */
+
+  /* ===== 文档扩展名徽标 ===== */
+  --app-ext-other: #70c9ad; /* EPUB/CODE/MOBI/UMD/OTHER */
+  --app-ext-pdf: #ec6660;
+  --app-ext-xls: #27ae60;
+  --app-ext-doc: #6095f7;
+  --app-ext-txt: #34495e;
+
+  /* ===== 滚动条 ===== */
+  --app-scrollbar-thumb: rgba(50, 50, 50, 0.4);
+  --app-scrollbar-thumb-hover: #dcdde1;
+}

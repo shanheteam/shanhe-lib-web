@@ -95,7 +95,7 @@ watch(
     display: flex;
     justify-content: space-between;
     padding: 15px 0;
-    border-bottom: 1px dashed #f1f2f3;
+    border-bottom: 1px dashed var(--app-bg-soft);
     &.row-line {
       display: inline-block;
       border-bottom: 0;
@@ -116,7 +116,7 @@ watch(
       padding: 3px 0;
     }
     .lv1 {
-      border-right: 1px solid #eee;
+      border-right: 1px solid var(--app-border-color-lighter);
       width: 100px;
       :deep(.el-link--default) {
         display: block;

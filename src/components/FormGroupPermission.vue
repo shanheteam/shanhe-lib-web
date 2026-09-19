@@ -168,7 +168,7 @@ const resetChecked = () => {
     position: absolute;
     bottom: -22px;
     z-index: 99;
-    background: #fff;
+    background: var(--el-color-white);
     width: 100%;
     margin-left: -20px;
     padding: 20px;

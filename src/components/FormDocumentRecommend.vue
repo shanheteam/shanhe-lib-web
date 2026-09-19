@@ -29,8 +29,8 @@
           v-else
           v-model="document.type"
           style="display: block"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
+          active-color="var(--app-color-switch-on)"
+          inactive-color="var(--app-color-switch-off)"
           active-text="设为推荐"
           inactive-text="未推荐"
           :active-value="1"

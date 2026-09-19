@@ -67,7 +67,7 @@ getUsers()
 <style lang="scss">
 .com-user-list {
   .el-row {
-    border-bottom: 1px dashed #efefef;
+    border-bottom: 1px dashed var(--app-border-color-light);
     padding: 15px 0 10px;
     margin-left: 0 !important;
     margin-right: 0 !important;
@@ -85,13 +85,13 @@ getUsers()
       }
     }
     .el-avatar {
-      border: 2px solid #ddd;
+      border: 2px solid var(--app-border-color);
       padding: 3px;
-      background-color: #fff;
+      background-color: var(--el-color-white);
       width: 55px;
       height: 55px;
       &:hover {
-        border: 2px solid #409eff;
+        border: 2px solid var(--el-color-primary);
       }
       img {
         border-radius: 50%;

@@ -96,18 +96,18 @@ ul {
   }
 }
 .el-link--default {
-  color: #21293c;
+  color: var(--app-text-heading);
   display: block;
   line-height: 40px;
   font-weight: normal;
   padding: 0 10px;
   border-radius: 6px;
   &:hover {
-    background-color: #21293c14;
+    background-color: var(--app-bg-navbar);
   }
   &.active {
-    background-color: #fff;
-    color: #409eff;
+    background-color: var(--el-color-white);
+    color: var(--el-color-primary);
   }
 }
 </style>

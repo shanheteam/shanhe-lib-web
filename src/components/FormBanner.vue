@@ -65,8 +65,8 @@
             <el-switch
               v-model="banner.enable"
               style="display: block; margin-top: 8px"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
+              active-color="var(--app-color-switch-on)"
+              inactive-color="var(--app-color-switch-off)"
               active-text="是"
               inactive-text="否"
             >

@@ -120,14 +120,14 @@ const go2top = () => {
         height: 40px;
         line-height: 40px;
         text-align: center;
-        background-color: #f5f5f5;
+        background-color: var(--el-fill-color-light);
         border-radius: 50%;
-        color: #666;
+        color: var(--app-text-muted);
         font-size: 12px;
         box-shadow: 0px 1px 20px 0px rgba(0, 0, 0, 0.1),
           inset 0px -1px 0px 0px rgba(0, 0, 0, 0.1);
         &:hover {
-          background-color: #f0f0f0;
+          background-color: var(--app-border-color-light);
         }
         .el-icon {
           font-size: 16px;

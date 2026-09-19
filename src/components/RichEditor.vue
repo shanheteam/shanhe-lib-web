@@ -194,17 +194,17 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .rich-editor {
-  border: 1px solid #dcdfe6;
+  border: 1px solid var(--el-border-color);
   border-radius: 4px;
   overflow: hidden;
 
   :deep(.w-e-toolbar) {
-    border-bottom: 1px solid #e4e7ed;
-    background-color: #fafafa;
+    border-bottom: 1px solid var(--el-border-color-light);
+    background-color: var(--app-bg-lighter);
   }
 
   :deep(.w-e-text-container) {
-    background-color: #fff;
+    background-color: var(--el-color-white);
   }
 }
 </style>

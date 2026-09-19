@@ -109,7 +109,7 @@ const currentYear = new Date().getFullYear()
     margin-right: 10px;
   }
   .powered-by {
-    color: #898989;
+    color: var(--app-text-faint);
     font-size: 12px;
     .el-link {
       margin-right: 0;
@@ -121,7 +121,7 @@ const currentYear = new Date().getFullYear()
   .copyright-year {
     position: relative;
     top: 1px;
-    color: #606266;
+    color: var(--el-text-color-regular);
   }
 }
 </style>

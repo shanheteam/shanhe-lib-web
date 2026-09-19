@@ -179,13 +179,13 @@ watch(
     }
   }
   .el-avatar {
-    border: 2px solid #ddd;
+    border: 2px solid var(--app-border-color);
     padding: 3px;
-    background-color: #fff;
+    background-color: var(--el-color-white);
     width: 80px;
     height: 80px;
     &:hover {
-      border: 2px solid #409eff;
+      border: 2px solid var(--el-color-primary);
     }
     img {
       border-radius: 50%;
@@ -207,9 +207,9 @@ watch(
         margin-top: 5px;
       }
       .el-col {
-        border-right: 1px solid #eee;
+        border-right: 1px solid var(--app-border-color-lighter);
         &:first-child {
-          border-left: 1px solid #eee;
+          border-left: 1px solid var(--app-border-color-lighter);
         }
       }
     }

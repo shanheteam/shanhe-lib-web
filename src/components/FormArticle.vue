@@ -190,8 +190,8 @@
                   v-model="article.is_recommend"
                   active-text="是"
                   inactive-text="否"
-                  active-color="#67C23A"
-                  inactive-color="#F56C6C"
+                  active-color="var(--el-color-success)"
+                  inactive-color="var(--el-color-danger)"
                 />
               </el-form-item>
 
@@ -336,8 +336,8 @@ defineExpose({ onSubmit })
 
 // 页面头部
 .wp-header {
-  background: #fff;
-  border-bottom: 1px solid #e4e7ed;
+  background: var(--el-color-white);
+  border-bottom: 1px solid var(--el-border-color-light);
   padding: 0;
   position: sticky;
   top: 0;
@@ -357,7 +357,7 @@ defineExpose({ onSubmit })
     margin: 0;
     font-size: 24px;
     font-weight: 500;
-    color: #303133;
+    color: var(--el-text-color-primary);
     line-height: 1.3;
   }
 
@@ -367,9 +367,9 @@ defineExpose({ onSubmit })
   }
 
   .wp-publish-btn {
-    background: #409eff;
-    border-color: #409eff;
-    color: #fff;
+    background: var(--el-color-primary);
+    border-color: var(--el-color-primary);
+    color: var(--el-color-white);
     text-decoration: none;
     font-size: 14px;
     line-height: 1;
@@ -383,14 +383,14 @@ defineExpose({ onSubmit })
     font-weight: 500;
 
     &:hover:not(:disabled) {
-      background: #66b1ff;
-      border-color: #66b1ff;
+      background: var(--app-color-primary-light);
+      border-color: var(--app-color-primary-light);
     }
 
     &:disabled {
-      background: #c0c4cc;
-      border-color: #c0c4cc;
-      color: #fff;
+      background: var(--el-text-color-placeholder);
+      border-color: var(--el-text-color-placeholder);
+      color: var(--el-color-white);
     }
   }
 }
@@ -409,8 +409,8 @@ defineExpose({ onSubmit })
 // 左侧主内容
 .wp-main-content {
   flex: 1;
-  background: #fff;
-  border: 1px solid #e4e7ed;
+  background: var(--el-color-white);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -418,7 +418,7 @@ defineExpose({ onSubmit })
 // 标题输入区域
 .wp-title-section {
   padding: 20px 20px 0;
-  border-bottom: 1px solid #e4e7ed;
+  border-bottom: 1px solid var(--el-border-color-light);
 
   .wp-title-input {
     :deep(.el-input__inner) {
@@ -428,11 +428,11 @@ defineExpose({ onSubmit })
       line-height: 1.4;
       padding: 16px 0;
       background: transparent;
-      color: #303133;
+      color: var(--el-text-color-primary);
       box-shadow: none;
 
       &::placeholder {
-        color: #c0c4cc;
+        color: var(--el-text-color-placeholder);
         opacity: 1;
       }
 
@@ -474,11 +474,11 @@ defineExpose({ onSubmit })
       align-items: center;
       justify-content: center;
       padding: 30px;
-      background: #f5f7fa;
-      border: 2px dashed #dcdfe6;
+      background: var(--el-fill-color-light);
+      border: 2px dashed var(--el-border-color);
       border-radius: 4px;
       margin-bottom: 16px;
-      color: #909399;
+      color: var(--el-text-color-secondary);
 
       .el-icon {
         font-size: 24px;
@@ -496,14 +496,14 @@ defineExpose({ onSubmit })
 // 摘要区域
 .wp-excerpt-section {
   padding: 20px;
-  border-top: 1px solid #e4e7ed;
-  background: #fafafa;
+  border-top: 1px solid var(--el-border-color-light);
+  background: var(--app-bg-lighter);
 
   .wp-section-title {
     margin: 0 0 16px;
     font-size: 16px;
     font-weight: 500;
-    color: #303133;
+    color: var(--el-text-color-primary);
   }
 
   :deep(.el-form-item) {
@@ -511,18 +511,18 @@ defineExpose({ onSubmit })
   }
 
   :deep(.el-textarea__inner) {
-    border: 1px solid #dcdfe6;
+    border: 1px solid var(--el-border-color);
     border-radius: 4px;
     font-size: 14px;
     line-height: 1.5;
-    color: #606266;
+    color: var(--el-text-color-regular);
 
     &:focus {
-      border-color: #409eff;
+      border-color: var(--el-color-primary);
     }
 
     &::placeholder {
-      color: #c0c4cc;
+      color: var(--el-text-color-placeholder);
     }
   }
 }
@@ -539,8 +539,8 @@ defineExpose({ onSubmit })
 
 // 元信息框
 .wp-meta-box {
-  background: #fff;
-  border: 1px solid #e4e7ed;
+  background: var(--el-color-white);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 4px;
   margin-bottom: 20px;
 
@@ -550,9 +550,9 @@ defineExpose({ onSubmit })
     font-size: 16px;
     font-weight: 500;
     line-height: 1.4;
-    color: #303133;
-    background: #fafafa;
-    border-bottom: 1px solid #e4e7ed;
+    color: var(--el-text-color-primary);
+    background: var(--app-bg-lighter);
+    border-bottom: 1px solid var(--el-border-color-light);
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
   }
@@ -567,9 +567,9 @@ defineExpose({ onSubmit })
 
   .wp-publish-btn-sidebar {
     width: 100%;
-    background: #409eff;
-    border-color: #409eff;
-    color: #fff;
+    background: var(--el-color-primary);
+    border-color: var(--el-color-primary);
+    color: var(--el-color-white);
     font-size: 14px;
     line-height: 1;
     min-height: 40px;
@@ -578,14 +578,14 @@ defineExpose({ onSubmit })
     font-weight: 500;
 
     &:hover:not(:disabled) {
-      background: #66b1ff;
-      border-color: #66b1ff;
+      background: var(--app-color-primary-light);
+      border-color: var(--app-color-primary-light);
     }
 
     &:disabled {
-      background: #c0c4cc;
-      border-color: #c0c4cc;
-      color: #fff;
+      background: var(--el-text-color-placeholder);
+      border-color: var(--el-text-color-placeholder);
+      color: var(--el-color-white);
     }
   }
 
@@ -598,7 +598,7 @@ defineExpose({ onSubmit })
     }
 
     .el-form-item__label {
-      color: #606266;
+      color: var(--el-text-color-regular);
       font-weight: 500;
       font-size: 14px;
       line-height: 1.4;
@@ -608,18 +608,18 @@ defineExpose({ onSubmit })
 
     .el-input__inner,
     .el-textarea__inner {
-      border: 1px solid #dcdfe6;
+      border: 1px solid var(--el-border-color);
       border-radius: 4px;
       font-size: 14px;
       line-height: 1.5;
-      color: #606266;
+      color: var(--el-text-color-regular);
 
       &:focus {
-        border-color: #409eff;
+        border-color: var(--el-color-primary);
       }
 
       &::placeholder {
-        color: #c0c4cc;
+        color: var(--el-text-color-placeholder);
       }
     }
 
@@ -634,7 +634,7 @@ defineExpose({ onSubmit })
 
     .el-switch {
       .el-switch__label {
-        color: #606266;
+        color: var(--el-text-color-regular);
         font-size: 14px;
       }
     }

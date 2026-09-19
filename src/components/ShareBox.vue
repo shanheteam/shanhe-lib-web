@@ -43,6 +43,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import QRCode from 'qrcode'
+import { cssVar } from '@/utils/utils'
 
 const props = defineProps({
   title: {
@@ -62,7 +63,7 @@ const genQrcode = async () => {
   const url = await QRCode.toDataURL(location.href, {
     width: 200,
     margin: 1,
-    color: { dark: '#000', light: '#fff' },
+    color: { dark: cssVar('--el-color-black'), light: cssVar('--el-color-white') },
   })
   const img = document.createElement('img')
   img.src = url
@@ -86,13 +87,13 @@ onMounted(() => {
   }
   .share-qq {
     .fa {
-      color: #208de1;
+      color: var(--app-share-telegram);
     }
   }
   .share-wechat {
     cursor: pointer;
     .fa {
-      color: #1abc9c;
+      color: var(--app-share-turquoise);
     }
   }
   .article-share {

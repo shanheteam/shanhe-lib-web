@@ -50,7 +50,7 @@
                 disabled
                 class="float-right hidden-xs-only"
                 show-score
-                text-color="#ff9900"
+                text-color="var(--app-color-tag-warning)"
                 score-template="{value}"
               >
               </el-rate>
@@ -92,7 +92,7 @@ const settings = computed(() => settingStore.settings)
   li {
     margin-bottom: 20px;
     padding-bottom: 18px;
-    border-bottom: 1px dashed #ddd;
+    border-bottom: 1px dashed var(--app-border-color);
   }
   h3 {
     margin: 0;
@@ -103,7 +103,7 @@ const settings = computed(() => settingStore.settings)
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      color: #333;
+      color: var(--app-text-strong);
       max-width: 100%;
       img {
         height: 18px;
@@ -116,7 +116,7 @@ const settings = computed(() => settingStore.settings)
     .el-image {
       width: 100%;
       min-height: 120px;
-      border: 2px solid #efefef;
+      border: 2px solid var(--app-border-color-light);
       border-radius: 5px;
       &:hover img {
         transform: scale(1.2);
@@ -126,15 +126,15 @@ const settings = computed(() => settingStore.settings)
   .doc-info {
     margin: 10px 0 8px;
     font-size: 13px;
-    color: #888;
+    color: var(--app-text-faint);
     .line {
-      color: #ddd;
+      color: var(--app-border-color);
       margin: 0 5px;
     }
   }
   .doc-desc {
     font-size: 14px;
-    color: #606266;
+    color: var(--el-text-color-regular);
     line-height: 180%;
     overflow: hidden;
     text-overflow: ellipsis;

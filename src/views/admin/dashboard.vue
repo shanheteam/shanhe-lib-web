@@ -223,7 +223,7 @@ import {
   GridComponent,
 } from 'echarts/components'
 import VChart from 'vue-echarts'
-import { formatDatetime, formatBytes } from '@/utils/utils'
+import { formatDatetime, formatBytes, cssVar } from '@/utils/utils'
 import * as configApi from '@/api/config'
 
 use([
@@ -282,7 +282,7 @@ function getGaugeOption(name: string, percent: any) {
           distance: -30,
           length: 8,
           lineStyle: {
-            color: '#fff',
+            color: cssVar('--el-color-white'),
             width: 2,
           },
         },
@@ -290,7 +290,7 @@ function getGaugeOption(name: string, percent: any) {
           distance: -15,
           length: 20,
           lineStyle: {
-            color: '#fff',
+            color: cssVar('--el-color-white'),
             width: 4,
           },
         },
@@ -487,7 +487,7 @@ onBeforeUnmount(() => {
       margin: 0;
     }
     small {
-      color: #999;
+      color: var(--app-text-muted-lighter);
     }
     li {
       white-space: nowrap;

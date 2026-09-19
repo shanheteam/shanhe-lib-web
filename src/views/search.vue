@@ -792,7 +792,7 @@ onBeforeUnmount(() => {
     position: sticky;
     top: 0;
     z-index: 200;
-    background: #fff;
+    background: var(--el-color-white);
     // 吸顶时与下方区域自然分隔
     border-bottom: 1px solid transparent;
     .el-link {
@@ -803,8 +803,8 @@ onBeforeUnmount(() => {
   .search-box {
     padding: 18px 0 22px;
     margin-bottom: 20px;
-    background: linear-gradient(180deg, #fff 0%, #f7f9fc 100%);
-    border-bottom: 1px solid #edf1f7;
+    background: linear-gradient(180deg, var(--el-color-white) 0%, var(--app-bg-grad-end) 100%);
+    border-bottom: 1px solid var(--app-border-color-soft-4);
     width: 100%;
     & > .el-row {
       margin: 0 auto !important;
@@ -833,13 +833,13 @@ onBeforeUnmount(() => {
     }
     .search-form {
       .search-box-wrapper {
-        border: 2px solid #4e9bff;
+        border: 2px solid var(--app-color-primary-soft);
         border-radius: 26px;
         overflow: hidden;
         box-shadow: 0 8px 24px rgba(64, 158, 255, 0.12);
         display: flex;
         align-items: center;
-        background: #fff;
+        background: var(--el-color-white);
       }
       .search-form-shell {
         display: flex;
@@ -856,12 +856,12 @@ onBeforeUnmount(() => {
         min-width: 72px;
         padding: 4px 10px;
         border-radius: 999px;
-        background: #eef4ff;
-        color: #3a7be0;
+        background: var(--app-bg-blue-weak);
+        color: var(--app-color-primary-deep);
         font-weight: 600;
       }
       .search-form-hint {
-        color: #8a94a6;
+        color: var(--app-text-muted-2-light);
       }
     }
     .search-type-select {
@@ -882,7 +882,7 @@ onBeforeUnmount(() => {
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #243b53 !important;
+        color: var(--app-text-heading-soft) !important;
         font-weight: 600;
       }
       .el-select__caret {
@@ -908,7 +908,7 @@ onBeforeUnmount(() => {
       }
       .el-input-group__prepend {
         border: 0;
-        border-right: 1px solid #e4e7ed;
+        border-right: 1px solid var(--el-border-color-light);
         border-radius: 0;
         padding: 0;
         background: transparent;
@@ -928,10 +928,10 @@ onBeforeUnmount(() => {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #5ba7ff 0%, #409eff 100%);
+        background: linear-gradient(135deg, var(--app-color-primary-light) 0%, var(--el-color-primary) 100%);
         font-size: 18px;
         font-weight: 600;
-        color: #fff;
+        color: var(--el-color-white);
         .el-icon {
           position: absolute;
           left: 18px;
@@ -947,7 +947,7 @@ onBeforeUnmount(() => {
       width: 5px;
     }
     &::-webkit-scrollbar-thumb {
-      background-color: #ccc;
+      background-color: var(--app-text-disabled);
     }
     &::-webkit-scrollbar-thumb {
       border-radius: 3px;
@@ -1015,7 +1015,7 @@ onBeforeUnmount(() => {
     }
     .el-card__body {
       padding: 20px;
-      background-color: #fafbfc;
+      background-color: var(--app-bg-soft-4);
     }
     .filter-section {
       margin-bottom: 20px;
@@ -1030,16 +1030,16 @@ onBeforeUnmount(() => {
         margin: 0 0 16px 0;
         font-size: 16px;
         font-weight: 600;
-        color: #2c3e50;
+        color: var(--app-text-heading-soft);
         padding-bottom: 16px;
         padding-top: 2px;
-        border-bottom: 1px solid #ecf0f1;
+        border-bottom: 1px solid var(--app-bg-soft-2);
         position: relative;
         display: flex;
         align-items: center;
         i {
           margin-right: 6px;
-          color: #667eea;
+          color: var(--app-color-brand-purple);
         }
         &:after {
           content: '';
@@ -1048,7 +1048,7 @@ onBeforeUnmount(() => {
           left: 0;
           width: 30px;
           height: 2px;
-          background: linear-gradient(90deg, #667eea, #764ba2);
+          background: linear-gradient(90deg, var(--app-color-brand-purple), var(--app-color-brand-purple-deep));
         }
       }
       .filter-options {
@@ -1066,9 +1066,9 @@ onBeforeUnmount(() => {
             font-weight: 500;
           }
           &.el-link--default {
-            color: #5a6c7d;
+            color: var(--app-text-body-2);
             &:hover {
-              color: #667eea;
+              color: var(--app-color-brand-purple);
             }
           }
           .option-text {
@@ -1099,14 +1099,14 @@ onBeforeUnmount(() => {
       border-radius: 6px;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
       .clear-filters-btn {
-        color: #f56565;
+        color: var(--app-color-danger-soft);
         font-size: 12px;
         padding: 8px 16px;
-        border: 1px solid #f56565;
+        border: 1px solid var(--app-color-danger-soft);
         border-radius: 4px;
         transition: all 0.2s ease;
         &:hover {
-          background: #f56565;
+          background: var(--app-color-danger-soft);
           color: white;
         }
       }
@@ -1115,7 +1115,7 @@ onBeforeUnmount(() => {
   .search-tips {
     font-size: 14px;
     margin-top: 10px;
-    color: #999;
+    color: var(--app-text-muted-lighter);
     .el-link {
       position: relative;
       top: -2px;
@@ -1136,13 +1136,13 @@ onBeforeUnmount(() => {
     .el-button--text {
       display: inline-flex;
       align-items: center;
-      color: #6b7a88;
+      color: var(--app-text-muted-deep);
       .el-icon {
         margin-left: 4px;
         vertical-align: middle;
       }
       &:hover {
-        color: #409eff;
+        color: var(--el-color-primary);
       }
     }
     img {
@@ -1159,7 +1159,7 @@ onBeforeUnmount(() => {
     .search-box {
       padding: 12px 0 16px;
       margin-bottom: 15px;
-      background: #fff;
+      background: var(--el-color-white);
       .search-form {
         width: 100% !important;
         padding-top: 70px;
@@ -1265,13 +1265,13 @@ onBeforeUnmount(() => {
           margin-bottom: 5px;
         }
         .el-button--text {
-          background: #f8f9fa;
-          border: 1px solid #e9ecef;
+          background: var(--app-bg-soft-3);
+          border: 1px solid var(--app-border-color-soft-8);
           border-radius: 4px;
           padding: 6px 12px;
           font-size: 12px;
           &:hover {
-            background: #e9ecef;
+            background: var(--app-border-color-soft-8);
           }
         }
       }

@@ -175,7 +175,7 @@ export default {
   .logo {
     cursor: pointer;
     height: 60px;
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid var(--app-border-color-muted);
     box-sizing: border-box;
     overflow: hidden;
     display: flex;
@@ -190,12 +190,12 @@ export default {
   }
   height: 100vh;
   .el-main {
-    background-color: #f0f2f5;
+    background-color: var(--app-bg-soft);
   }
   .el-aside {
     transition: width 0.2s;
     height: 100vh;
-    border-right: 1px solid #e6e6e6;
+    border-right: 1px solid var(--app-border-color-muted);
     & > .el-menu {
       border-right: 0;
       height: calc(100vh - 60px);
@@ -206,16 +206,16 @@ export default {
     display: flex;
     align-items: center;
     box-sizing: border-box;
-    border-bottom: 1px solid #e6e6e6;
+    border-bottom: 1px solid var(--app-border-color-muted);
     padding: 0 16px;
     .fold {
       padding: 0 15px 0 0;
       font-size: 20px;
-      color: #999;
+      color: var(--app-text-muted-lighter);
       cursor: pointer;
       margin-right: auto;
       &:hover {
-        color: #555;
+        color: var(--app-text-body-strong);
       }
     }
     .user-dropdown {
@@ -233,8 +233,8 @@ export default {
     line-height: 45px;
     padding: 1px 0 5px;
     &.el-table__cell {
-      background-color: #f7fbff;
-      color: #000;
+      background-color: var(--app-bg-header);
+      color: var(--el-color-black);
       font-weight: normal;
       &.el-table-column--selection > .cell {
         padding-left: 14px;
@@ -250,7 +250,7 @@ export default {
     }
   }
   .el-menu-item.is-active {
-    background-color: #ecf5ff;
+    background-color: var(--app-bg-blue-weak);
   }
 }
 

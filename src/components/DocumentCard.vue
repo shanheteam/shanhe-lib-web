@@ -124,7 +124,7 @@ const isCommentClosed = computed(() => {
     align-items: flex-start;
     gap: 8px;
     margin-bottom: 10px;
-    color: #303133;
+    color: var(--el-text-color-primary);
     font-size: 16px;
     font-weight: 600;
     line-height: 1.5;
@@ -153,14 +153,14 @@ const isCommentClosed = computed(() => {
     flex-wrap: wrap;
     gap: 6px 10px;
     margin-bottom: 8px;
-    color: #7a7f87;
+    color: var(--app-text-muted-soft);
     font-size: 13px;
     line-height: 1.6;
 
     span::after {
       content: '•';
       margin-left: 10px;
-      color: #c4c7cc;
+      color: var(--el-text-color-placeholder);
     }
 
     span:last-child::after {
@@ -169,7 +169,7 @@ const isCommentClosed = computed(() => {
   }
 
   .doc-summary {
-    color: #5f6368;
+    color: var(--el-text-color-regular);
     font-size: 13px;
     line-height: 1.7;
     display: -webkit-box;
@@ -187,7 +187,7 @@ const isCommentClosed = computed(() => {
     flex-wrap: wrap;
     gap: 8px 14px;
     margin-top: 10px;
-    color: #8a9099;
+    color: var(--el-text-color-secondary);
     font-size: 12px;
     line-height: 1.5;
   }
@@ -199,7 +199,7 @@ const isCommentClosed = computed(() => {
 
     i {
       font-size: 13px;
-      color: #a0a7b3;
+      color: var(--app-text-muted-soft-3);
     }
   }
 

@@ -99,7 +99,7 @@ defineProps({
   h3 {
     margin: 0;
     a {
-      color: #000;
+      color: var(--el-color-black);
       font-size: 18px;
       font-weight: 400;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
@@ -114,7 +114,7 @@ defineProps({
     }
   }
   .desc {
-    color: #666;
+    color: var(--app-text-muted);
     font-size: 13px;
     margin: 10px 0;
     line-height: 1.8;
@@ -125,7 +125,7 @@ defineProps({
     -webkit-box-orient: vertical;
   }
   .info {
-    color: #999;
+    color: var(--app-text-muted-lighter);
     font-size: 12px;
     span {
       margin-right: 10px;
@@ -135,7 +135,7 @@ defineProps({
     }
   }
   li {
-    border-bottom: 1px solid #f6f6f6;
+    border-bottom: 1px solid var(--app-bg-light);
     padding-bottom: 15px;
     margin-bottom: 10px;
     &:last-of-type {
@@ -147,14 +147,14 @@ defineProps({
   .no-articles {
     text-align: center;
     font-size: 15px;
-    color: #ccc;
+    color: var(--app-text-disabled);
     padding: 40px 0;
   }
   .author {
     position: relative;
     top: -1px;
     .el-link--default {
-      color: #787878;
+      color: var(--app-text-muted-light);
       font-weight: normal;
     }
     .avatar {

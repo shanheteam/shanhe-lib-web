@@ -63,8 +63,8 @@
             <el-switch
               v-else-if="item.input_type === 'switch'"
               v-model="configs[index]['value']"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
+              active-color="var(--app-color-switch-on)"
+              inactive-color="var(--app-color-switch-off)"
               active-text="是"
               inactive-text="否"
               :active-value="'true'"

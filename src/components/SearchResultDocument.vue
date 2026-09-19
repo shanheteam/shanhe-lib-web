@@ -32,7 +32,7 @@
             v-model="doc.score"
             disabled
             show-score
-            text-color="#ff9900"
+            text-color="var(--app-color-tag-warning)"
             score-template="{value}"
             class="float-right"
           >
@@ -76,7 +76,7 @@ const settings = computed(() => settingStore.settings)
     text-align: center;
     font-size: 14px;
     line-height: 200px;
-    color: #999;
+    color: var(--app-text-muted-lighter);
   }
 }
 h3 {
@@ -98,7 +98,7 @@ h3 {
 }
 .doc-desc {
   font-size: 14px;
-  color: #6b7a88;
+  color: var(--app-text-muted-deep);
   line-height: 180%;
   word-break: break-all;
   margin-bottom: 10px;
@@ -110,7 +110,7 @@ h3 {
   text-overflow: ellipsis;
 }
 .doc-info {
-  color: #bdc3c7;
+  color: var(--app-text-faint-light);
   font-size: 13px;
 }
 </style>
