@@ -1,5 +1,6 @@
 // PKCE (Proof Key for Code Exchange) 工具函数
 // OAuth 2.1 标准，防止授权码拦截攻击
+import { STORAGE_KEYS } from '@/utils/storage'
 
 /**
  * 生成随机字符串（用于 code_verifier 和 state）
@@ -42,16 +43,16 @@ function base64UrlEncode(buffer: ArrayBuffer): string {
  * 保存 PKCE 参数到 localStorage（跨窗口共享，支持 window.open 弹窗场景）
  */
 export function savePkceParams(codeVerifier: string, state: string): void {
-  localStorage.setItem('oauth_code_verifier', codeVerifier)
-  localStorage.setItem('oauth_state', state)
+  localStorage.setItem(STORAGE_KEYS.OAUTH_CODE_VERIFIER, codeVerifier)
+  localStorage.setItem(STORAGE_KEYS.OAUTH_STATE, state)
 }
 
 /**
  * 从 localStorage 获取 PKCE 参数
  */
 export function getPkceParams(): { codeVerifier: string; state: string } | null {
-  const codeVerifier = localStorage.getItem('oauth_code_verifier')
-  const state = localStorage.getItem('oauth_state')
+  const codeVerifier = localStorage.getItem(STORAGE_KEYS.OAUTH_CODE_VERIFIER)
+  const state = localStorage.getItem(STORAGE_KEYS.OAUTH_STATE)
   if (!codeVerifier || !state) return null
   return { codeVerifier, state }
 }
@@ -60,6 +61,6 @@ export function getPkceParams(): { codeVerifier: string; state: string } | null 
  * 清除 PKCE 参数
  */
 export function clearPkceParams(): void {
-  localStorage.removeItem('oauth_code_verifier')
-  localStorage.removeItem('oauth_state')
+  localStorage.removeItem(STORAGE_KEYS.OAUTH_CODE_VERIFIER)
+  localStorage.removeItem(STORAGE_KEYS.OAUTH_STATE)
 }

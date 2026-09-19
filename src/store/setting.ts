@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { getSettings as fetchSettings } from '@/api/config'
 import { listNavigation } from '@/api/navigation'
 import { categoryToTrees } from '@/utils/utils'
+import { STORAGE_KEYS } from '@/utils/storage'
 
 // 站点配置的并发请求去重：main.ts 预取与路由守卫会几乎同时调用，
 // 若不去重会重复发起同一请求。
@@ -69,5 +70,6 @@ export const useSettingStore = defineStore('setting', {
       return res
     },
   },
-  persist: true,
+  // 显式声明持久化 key（默认取 store id），与 utils/storage.ts 的 STORAGE_KEYS.SETTING 保持一致
+  persist: { key: STORAGE_KEYS.SETTING },
 })

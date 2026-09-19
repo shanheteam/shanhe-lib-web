@@ -24,6 +24,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { Loading, CircleClose, SuccessFilled } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/user'
 import { getPkceParams, clearPkceParams } from '@/utils/pkce'
+import { resolveOauthType } from '@/utils/oauth'
 
 const router = useRouter()
 const route = useRoute()
@@ -38,7 +39,8 @@ const goHome = () => {
 
 onMounted(async () => {
   const code = route.query.code as string
-  const type = route.query.type as string
+  // 类型来源：/oauth/{类型名} 路径参数优先，兼容 /oauth/callback?type=xxx 查询参数
+  const type = (route.params.type as string) || (route.query.type as string)
   const state = route.query.state as string
 
   if (!code) {
@@ -61,20 +63,8 @@ onMounted(async () => {
     return
   }
 
-  let oauthType = 0
-  switch (type) {
-    case 'custom':
-      oauthType = 6
-      break
-    default:
-      oauthType = 6
-  }
-
-  if (oauthType === 0) {
-    error.value = '未知授权类型'
-    loading.value = false
-    return
-  }
+  // 按回调地址中的类型名解析 oauth_type（wechat/qq/gitee/... → 对应数字）
+  const oauthType = resolveOauthType(type)
 
   try {
     const res: any = await userStore.loginOauth({

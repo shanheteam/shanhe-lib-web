@@ -36,7 +36,7 @@
                 @click="handleOAuthLogin(oauth)"
               >
                 <!-- 自定义 OAuth（type=6）为本站学籍登录，文案单独处理 -->
-                {{ oauth.type === 6 ? '使用' + oauth.name + '登录' : oauth.name + ' 登录' }}
+                {{ oauth.type === OAUTH_TYPE_CUSTOM ? '使用' + oauth.name + '登录' : oauth.name + ' 登录' }}
               </el-button>
             </div>
           </div>
@@ -79,6 +79,7 @@ import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { assetUrl } from '@/utils/asset'
 import { generateRandomString, generateCodeChallenge, savePkceParams } from '@/utils/pkce'
+import { OAUTH_TYPE_CUSTOM } from '@/utils/oauth'
 
 const router = useRouter()
 const route = useRoute()

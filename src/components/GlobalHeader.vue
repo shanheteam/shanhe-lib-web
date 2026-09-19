@@ -385,7 +385,7 @@
             >
               <!-- 自定义 OAuth（type=6）为本站学籍登录，文案单独处理 -->
               <span class="oauth-btn-text">{{
-                oauth.type === 6 ? '使用' + oauth.name + '登录' : oauth.name
+                oauth.type === OAUTH_TYPE_CUSTOM ? '使用' + oauth.name + '登录' : oauth.name
               }}</span>
             </el-button>
           </div>
@@ -459,6 +459,7 @@ import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
 import { getOauths } from '@/api/oauth'
+import { OAUTH_TYPE_CUSTOM } from '@/utils/oauth'
 
 defineOptions({ name: 'GlobalHeader' })
 

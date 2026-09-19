@@ -124,6 +124,7 @@ import { ElMessage } from 'element-plus'
 import { listCategory } from '@/api/category'
 import { batchUpdateSpiderDocument } from '@/api/spiderdocument'
 import { formatBytes, categoryToTrees } from '@/utils/utils'
+import { STORAGE_KEYS } from '@/utils/storage'
 import { useSettingStore } from '@/store/setting'
 
 defineOptions({ name: 'FormPublishSpiderDocument' })
@@ -140,7 +141,7 @@ const settingStore = useSettingStore()
 const formRef = ref<any>(null)
 const trees = ref<any[]>([])
 const form = ref<any>({
-  user_id: Number(localStorage.getItem('user_id')) || 0,
+  user_id: Number(localStorage.getItem(STORAGE_KEYS.USER_ID)) || 0,
   category_id: [],
   status: 5,
   price: 0,
@@ -173,7 +174,7 @@ function batchUpdateSpiderDocuments() {
         price: form.value.price || 0,
         language: item.language || form.value.language,
       }
-      localStorage.setItem('user_id', String(form.value.user_id))
+      localStorage.setItem(STORAGE_KEYS.USER_ID, String(form.value.user_id))
       delete newItem.url_html
       delete newItem.editing
       delete newItem.disable_delete

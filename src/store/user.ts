@@ -11,6 +11,7 @@ import {
 } from '@/api/user'
 import { loginOauth, getOauths } from '@/api/oauth'
 import { permissionsToTree } from '@/utils/permission'
+import { STORAGE_KEYS, clearSiteStorage } from '@/utils/storage'
 
 interface UserState {
   user: Record<string, any>
@@ -63,7 +64,8 @@ export const useUserStore = defineStore('user', {
       this.token = ''
       this.permissions = []
       this.allowPages = []
-      localStorage.clear()
+      // 只清理站点自身管理的持久化数据，保留 OAuth PKCE 等登录流程临时参数
+      clearSiteStorage()
     },
     setPermissions(permissions: any[]) {
       this.permissions = permissions
@@ -132,7 +134,7 @@ export const useUserStore = defineStore('user', {
     checkAndRefreshUser() {
       try {
         // 以 localStorage 持久化的信息为准，刷新用户状态（对应原 store 的 checkAndRefreshUser）
-        const raw = localStorage.getItem('user')
+        const raw = localStorage.getItem(STORAGE_KEYS.USER)
         if (!raw) return
         const persisted = JSON.parse(raw)
         if (persisted && this.token !== persisted.token) {
@@ -170,5 +172,6 @@ export const useUserStore = defineStore('user', {
       return res
     },
   },
-  persist: true,
+  // 显式声明持久化 key（默认取 store id），与 utils/storage.ts 的 STORAGE_KEYS.USER 保持一致
+  persist: { key: STORAGE_KEYS.USER },
 })

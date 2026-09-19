@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { listCategory } from '@/api/category'
 import { categoryToTrees } from '@/utils/utils'
 import { categoryTypeOptions } from '@/utils/enum'
+import { STORAGE_KEYS } from '@/utils/storage'
 
 export const useCategoryStore = defineStore('category', {
   state: () => ({
@@ -47,5 +48,6 @@ export const useCategoryStore = defineStore('category', {
       return res
     },
   },
-  persist: true,
+  // 显式声明持久化 key（默认取 store id），与 utils/storage.ts 的 STORAGE_KEYS.CATEGORY 保持一致
+  persist: { key: STORAGE_KEYS.CATEGORY },
 })

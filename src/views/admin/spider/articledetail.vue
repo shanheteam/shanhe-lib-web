@@ -286,6 +286,7 @@ import RichEditor from '@/components/RichEditor.vue'
 import { createLatestGuard } from '@/utils/latest'
 import { categoryToTrees, genLinkHTML, parseQueryIntArray } from '@/utils/utils'
 import { spiderArticleDetailStatusOptions } from '@/utils/enum'
+import { STORAGE_KEYS } from '@/utils/storage'
 
 defineOptions({ name: 'AdminSpiderArticleDetail' })
 
@@ -305,7 +306,7 @@ const selectedRow = ref<any[]>([])
 const spiderArticleDetails = ref<any[]>([])
 const detailForm = ref<any>({})
 const publishForm = ref<any>({
-  user_id: Number(localStorage.getItem('user_id')) || 0,
+  user_id: Number(localStorage.getItem(STORAGE_KEYS.USER_ID)) || 0,
   category_id: [],
 })
 const categoryTrees = ref<any[]>([])
@@ -549,7 +550,7 @@ async function submitPublish() {
   })
   loadingSubmit.value = false
   if (res.status === 200) {
-    localStorage.setItem('user_id', String(publishForm.value.user_id))
+    localStorage.setItem(STORAGE_KEYS.USER_ID, String(publishForm.value.user_id))
     ElMessage.success('加入发布队列成功')
     publishVisible.value = false
     fetchData()

@@ -3,8 +3,20 @@ import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { requireLogin } from '@/utils/utils'
 
+// 相对资源路径转绝对 URL（社交平台抓取 Open Graph 图片要求绝对地址）
+function toAbsoluteUrl(p?: string | null): string {
+  if (!p) return ''
+  if (/^(https?:|data:|blob:)/i.test(p)) return p
+  return window.location.origin + (p.startsWith('/') ? p : '/' + p)
+}
+
 // 全局 SEURL meta 工具：设置页面标题与 description（供路由守卫及各详情页复用）
-export function setPageMeta(title: string, description?: string, keywords?: string) {
+export function setPageMeta(
+  title: string,
+  description?: string,
+  keywords?: string,
+  ogImage?: string,
+) {
   if (typeof document === 'undefined') return
   document.title = title
   const setMeta = (name: string, content: string) => {
@@ -34,6 +46,12 @@ export function setPageMeta(title: string, description?: string, keywords?: stri
     setProp('og:description', description)
     const tw = document.querySelector<HTMLMetaElement>('meta[name="twitter:description"]')
     if (tw) tw.setAttribute('content', description)
+  }
+  // 详情页未传 ogImage 时保持路由守卫已设置的站点 logo，避免回退为相对路径
+  if (ogImage) {
+    setProp('og:image', ogImage)
+    const twImg = document.querySelector<HTMLMetaElement>('meta[name="twitter:image"]')
+    if (twImg) twImg.setAttribute('content', ogImage)
   }
 }
 
@@ -65,6 +83,14 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/oauth/callback',
     name: 'oauth-callback',
+    component: () => import('@/views/oauth.vue'),
+    meta: { title: 'OAuth登录', noindex: true },
+  },
+  // 与 admin 配置页提示的回调地址 /oauth/{类型名}（如 /oauth/wechat）对应，
+  // 类型名由 oauth.vue 从路径参数解析；保留 /oauth/callback 兼容旧配置
+  {
+    path: '/oauth/:type',
+    name: 'oauth-type',
     component: () => import('@/views/oauth.vue'),
     meta: { title: 'OAuth登录', noindex: true },
   },
@@ -252,7 +278,8 @@ router.beforeEach(async (to, from) => {
 // 设置页面标题与 description
 router.afterEach((to) => {
   const settingStore = useSettingStore()
-  const sitename = settingStore.settings?.system?.sitename || '图书馆 - 山河大学'
+  const settings = settingStore.settings || {}
+  const sitename = settings?.system?.sitename || '图书馆 - 山河大学'
 
   // 取最深层路由的 meta（父路由设置，子页未设置时继承父级）
   const matched = to.matched.filter((r) => r.meta && r.meta.title)
@@ -273,7 +300,11 @@ router.afterEach((to) => {
   }
 
   const title = meta.title ? `${meta.title} - ${sitename}` : sitename
-  setPageMeta(title, meta.description || sitename)
+  // Open Graph 站点名与分享图：站点名来自后台配置，分享图统一为绝对 URL
+  const ogSiteName = document.querySelector<HTMLMetaElement>('meta[property="og:site_name"]')
+  if (ogSiteName) ogSiteName.setAttribute('content', sitename)
+  const logo = settings?.system?.logo || '/static/images/logo.png'
+  setPageMeta(title, meta.description || sitename, undefined, toAbsoluteUrl(logo))
 })
 
 export default router
