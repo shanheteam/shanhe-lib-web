@@ -438,15 +438,7 @@
                     <el-icon class="text-primary"><Document /></el-icon>
                     <span>
                       最大文件大小：
-                      <strong
-                        >{{
-                          settings.security &&
-                          settings.security.max_document_size
-                            ? settings.security.max_document_size.toFixed(2)
-                            : '50.00'
-                        }}
-                        MB</strong
-                      >
+                      <strong>{{ maxDocumentSizeMb.toFixed(2) }} MB</strong>
                     </span>
                   </div>
 
@@ -551,7 +543,13 @@ const document = reactive<any>({
 })
 const setMoreInfo = ref(false)
 const currentStep = ref(0)
-const maxDocumentSize = ref<number>(50 * 1024 * 1024)
+// 最大文档大小（MB）：跟随后台「安全-最大文档大小(MB)」配置，配置变更后即时生效。
+// 仅当配置缺失或非法（如 0 / 负数 / 非数字）时回退默认 50MB，不做其他硬编码
+const maxDocumentSizeMb = computed(() => {
+  const mb = Number(settings.value.security?.max_document_size)
+  return Number.isFinite(mb) && mb > 0 ? mb : 50
+})
+const maxDocumentSize = computed(() => maxDocumentSizeMb.value * 1024 * 1024)
 const fileList = ref<any[]>([])
 const filesMap = ref<Record<string, any>>({})
 const loading = ref(false)
@@ -611,13 +609,6 @@ watch(
 
 onMounted(async () => {
   await Promise.all([categoryStore.getCategories(), userStore.getUserGroups()])
-  try {
-    maxDocumentSize.value =
-      (settings.value.security.max_document_size || 50) * 1024 * 1024
-  } catch (error) {
-    // 使用默认值
-  }
-
   try {
     const configuredExt = settings.value.security.document_allowed_ext
     // settings 接口对未配置项返回 []，空数组是 truthy，直接赋值会把默认格式清空导致所有文件被拒绝
