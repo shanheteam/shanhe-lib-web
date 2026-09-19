@@ -1239,6 +1239,18 @@ init()
     // Element Plus 会把 el-dialog 的 class 透传到 .el-dialog 面板自身（而非其祖先/后代），
     // 此处必须直接作用于面板元素，后代选择器 :deep(.el-dialog) 永远匹配不到
     width: 95% !important;
+
+    // 移动端窄屏下表单与"其他登录方式"改为纵向排列，避免并排挤压
+    .oauth-login-body {
+      flex-direction: column;
+      gap: 24px;
+      min-height: 0;
+      padding: 8px 0 20px;
+    }
+
+    .oauth-login-main {
+      max-width: 100%;
+    }
   }
 }
 </style>
