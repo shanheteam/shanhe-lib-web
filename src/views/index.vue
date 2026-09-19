@@ -67,6 +67,8 @@
     <div class="page-shell">
       <el-row :gutter="24">
         <el-col :span="16" :xs="24" class="home-left">
+      <!-- 快捷入口（仅移动端显示：置于文档推荐上方；桌面端在右侧栏顶部） -->
+      <quick-links class="quick-links-mobile" />
       <section class="section-block recommend-section">
         <div class="section-header">
           <div class="recommend-header-wrap">
@@ -317,7 +319,6 @@
             :latest-documents="latestDocuments"
             :hot-documents="hotDocuments"
             :download-documents="downloadDocuments"
-            :comment-documents="commentDocuments"
           />
         </el-col>
       </el-row>
@@ -333,6 +334,7 @@ import { listArticle } from '@/api/article'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
 import { assetUrl } from '@/utils/asset'
+import QuickLinks from '@/components/QuickLinks.vue'
 
 const settingStore = useSettingStore()
 const categoryStore = useCategoryStore()
@@ -346,7 +348,6 @@ const recommends = ref<any[]>([])
 const latestDocuments = ref<any[]>([])
 const hotDocuments = ref<any[]>([])
 const downloadDocuments = ref<any[]>([])
-const commentDocuments = ref<any[]>([])
 const loadingRecommend = ref(true)
 const loadingLatest = ref(true)
 const search = ref<{ wd: string }>({ wd: '' })
@@ -461,17 +462,6 @@ async function getDownloadDocuments() {
   }
 }
 
-async function getCommentDocuments() {
-  const res: any = await listDocument({
-    field: ['id', 'title', 'uuid', 'created_at'],
-    order: 'comment_count desc',
-    limit: 8,
-  })
-  if (res.status === 200) {
-    commentDocuments.value = res.data.document || []
-  }
-}
-
 async function getLatestContent() {
   loadingLatest.value = true
   try {
@@ -479,7 +469,6 @@ async function getLatestContent() {
       getLatestDocuments(),
       getHotDocuments(),
       getDownloadDocuments(),
-      getCommentDocuments(),
       getArticles(),
     ])
   } finally {

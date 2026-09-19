@@ -72,6 +72,9 @@
       </el-card>
     </aside>
 
+    <!-- 快捷入口（桌面端显示在最新文档上方；移动端移入主列文档推荐上方，见 index.vue） -->
+    <quick-links class="sidebar-quick-links" />
+
     <!-- 最新文档 -->
     <aside v-if="latestDocuments.length" class="sidebar-card latest-updates">
       <el-card shadow="never">
@@ -144,60 +147,6 @@
       </el-card>
     </aside>
 
-    <!-- 评论最多 -->
-    <aside v-if="commentDocuments.length" class="sidebar-card latest-updates">
-      <el-card shadow="never">
-        <template #header>
-          <h3 class="card-title">
-            <el-icon><ChatDotRound /></el-icon>
-            评论最多
-          </h3>
-        </template>
-        <div class="updates-list">
-          <router-link
-            v-for="doc in commentDocuments.slice(0, 8)"
-            :key="'comment-' + doc.id"
-            :to="`/document/${doc.uuid}`"
-            target="_blank"
-            class="update-item"
-          >
-            <span class="update-title">{{ doc.title }}</span>
-            <span class="update-time">{{ formatRelativeTime(doc.created_at) }}</span>
-          </router-link>
-        </div>
-      </el-card>
-    </aside>
-
-    <!-- 快捷入口 -->
-    <aside class="sidebar-card quick-links">
-      <el-card shadow="never">
-        <template #header>
-          <h3 class="card-title">
-            <el-icon><Link /></el-icon>
-            快捷入口
-          </h3>
-        </template>
-        <div class="links-grid">
-          <router-link to="/upload" target="_blank" class="link-item">
-            <el-icon><Upload /></el-icon>
-            <span>上传文档</span>
-          </router-link>
-          <router-link to="/post" target="_blank" class="link-item">
-            <el-icon><EditPen /></el-icon>
-            <span>发布文章</span>
-          </router-link>
-          <router-link to="/category" target="_blank" class="link-item">
-            <el-icon><Files /></el-icon>
-            <span>浏览文档</span>
-          </router-link>
-          <router-link to="/article" target="_blank" class="link-item">
-            <el-icon><Reading /></el-icon>
-            <span>阅读文章</span>
-          </router-link>
-        </div>
-      </el-card>
-    </aside>
-
     <!-- 注册提示弹窗 -->
     <el-dialog v-model="showRegDialog" title="注册账号" width="420" :close-on-click-modal="true">
       <div style="text-align: center; padding: 10px 0">
@@ -218,19 +167,14 @@ import {
   CircleCheck,
   User,
   Clock,
-  Link,
   TrendCharts,
   Download,
-  ChatDotRound,
-  Upload,
-  EditPen,
-  Files,
-  Reading,
 } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { getSignedToday, signToday } from '@/api/user'
 import UserAvatar from '@/components/UserAvatar.vue'
+import QuickLinks from '@/components/QuickLinks.vue'
 
 defineOptions({ name: 'HomeSidebar' })
 
@@ -239,13 +183,11 @@ const props = withDefaults(
     latestDocuments?: any[]
     hotDocuments?: any[]
     downloadDocuments?: any[]
-    commentDocuments?: any[]
   }>(),
   {
     latestDocuments: () => [],
     hotDocuments: () => [],
     downloadDocuments: () => [],
-    commentDocuments: () => [],
   }
 )
 

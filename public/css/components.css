@@ -1785,19 +1785,19 @@
 }
 
 /* ===== src/components/HomeSidebar.vue ===== */
-.com-home-sidebar .sidebar-card {
+.sidebar-card {
   margin-bottom: 20px;
 }
-.com-home-sidebar .sidebar-card .el-card {
+.sidebar-card .el-card {
   border-radius: 12px;
   border: 0;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
 }
-.com-home-sidebar .sidebar-card .el-card .el-card__header {
+.sidebar-card .el-card .el-card__header {
   padding: 16px 18px 12px;
   border-bottom: 1px solid var(--app-border-color-soft-2);
 }
-.com-home-sidebar .sidebar-card .el-card .el-card__header .card-title {
+.sidebar-card .el-card .el-card__header .card-title {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1806,8 +1806,21 @@
   font-size: 15px;
   font-weight: 600;
 }
-.com-home-sidebar .sidebar-card .el-card .el-card__body {
+.sidebar-card .el-card .el-card__body {
   padding: 16px 18px;
+}
+
+/* 快捷入口：桌面端在右侧栏（最新文档上方）；移动端移入主列文档推荐上方（index.vue 渲染） */
+.quick-links-mobile {
+  display: none;
+}
+@media screen and (max-width: 768px) {
+  .quick-links-mobile {
+    display: block;
+  }
+  .sidebar-quick-links {
+    display: none;
+  }
 }
 
 .user-panel .user-info,
