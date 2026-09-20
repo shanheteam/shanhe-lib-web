@@ -852,38 +852,3 @@ onBeforeUnmount(() => {
 
 init()
 </script>
-<style>
-/* 山河大学账号密码登录表单 */
-.oauth-login-body .uc-acct-login {
-  width: 100%;
-  max-width: 360px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 8px;
-}
-.uc-acct-login .el-divider {
-  width: 100%;
-  margin: 20px 0;
-}
-.uc-acct-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.uc-acct-form .el-input__wrapper {
-  border-radius: 24px;
-}
-.uc-acct-submit {
-  width: 100%;
-  height: 48px;
-  border: none;
-  border-radius: 24px;
-  font-size: 16px;
-  font-weight: 500;
-  margin-top: 4px;
-}
-</style>
-
-
