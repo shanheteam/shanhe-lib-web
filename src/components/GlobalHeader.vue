@@ -382,10 +382,17 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="注册" name="register">
-            <div class="uc-reg-ssopro">
-              <el-icon class="uc-reg-ico"><User /></el-icon>
-              <p class="uc-reg-tip">还没有山河大学统一认证账号？前往统一认证中心注册，注册成功后会自动登录本站。</p>
-              <el-button type="primary" class="uc-reg-go" @click="switchToRegister">前往统一认证中心</el-button>
+            <div class="uc-reg-form">
+              <el-divider>山河大学统一认证中心注册</el-divider>
+              <el-input v-model="regForm.email" placeholder="邮箱" clearable />
+              <el-input v-model="regForm.real_name" placeholder="真实姓名（纯中文）" clearable />
+              <div class="uc-reg-stud">
+                <el-input v-model="regForm.student_id" placeholder="学号（8位数字）" clearable />
+                <el-button class="uc-reg-random" :loading="randLoading" @click="randomStudentId">随机学号</el-button>
+              </div>
+              <el-input v-model="regForm.password" type="password" show-password placeholder="密码（至少8位）" />
+              <el-input v-model="regForm.password2" type="password" show-password placeholder="确认密码" @keyup.enter="submitReg" />
+              <el-button type="primary" class="uc-reg-submit" :loading="regLoading" @click="submitReg">注册</el-button>
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -458,7 +465,7 @@ import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
 import { getOauths } from '@/api/oauth'
-import { passwordLogin } from '@/api/oauth'
+import { passwordLogin, registerUc, getAvailableStudentId } from '@/api/oauth'
 import { OAUTH_TYPE_CUSTOM } from '@/utils/oauth'
 import { OPEN_LOGIN_EVENT, openLoginDialog } from '@/utils/login'
 
@@ -593,10 +600,72 @@ watch(
 // 单点注册：整页跳转到 user-center 注册页（不使用 iframe）。注册成功后 user 会写入 .shanhe.co
 // 共享 cookie，回到 lib 时由 ssoProbe（0432 入口）探测到并自动登录。
 const ucTab: any = ref('login')
-const ucRegisterUrl = 'https://user.shanhe.co/register'
-const switchToRegister = () => {
-  window.location.href = ucRegisterUrl
-  return
+
+// 内联注册表单 state/校验（经 lib 后端转发到 user 统一认证中心注册）
+const regForm = ref<{
+  email: string
+  real_name: string
+  student_id: string
+  password: string
+  password2: string
+}>({ email: '', real_name: '', student_id: '', password: '', password2: '' })
+const regLoading = ref(false)
+const randLoading = ref(false)
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const STUDENT_RE = /^\d{8}$/
+const NAME_RE = /^[\u4e00-\u9fa5]+$/
+
+// 获取随机学号并填入（允许手改，提交仍以 8 位校验为准）
+const randomStudentId = async () => {
+  if (randLoading.value) return
+  randLoading.value = true
+  try {
+    const res: any = await getAvailableStudentId()
+    const sid = res?.data?.student_id
+    if (sid) {
+      regForm.value.student_id = String(sid)
+    } else {
+      ElMessage.error(res?.data?.message || '获取随机学号失败')
+    }
+  } catch (e: any) {
+    ElMessage.error(e?.data?.message || e?.message || '获取随机学号失败')
+  } finally {
+    randLoading.value = false
+  }
+}
+
+// 提交注册：成功后把 email/password 填入登录 tab 的 ucForm 并切回登录 tab
+const submitReg = async () => {
+  const email = regForm.value.email.trim()
+  const realName = regForm.value.real_name.trim()
+  const studentId = regForm.value.student_id.trim()
+  const password = regForm.value.password
+  const password2 = regForm.value.password2
+  if (!EMAIL_RE.test(email)) { ElMessage.warning('请输入正确的邮箱'); return }
+  if (!NAME_RE.test(realName)) { ElMessage.warning('真实姓名须为纯中文'); return }
+  if (!STUDENT_RE.test(studentId)) { ElMessage.warning('学号须为8位数字'); return }
+  if (!password || password.length < 8) { ElMessage.warning('密码至少8位'); return }
+  if (password !== password2) { ElMessage.warning('两次输入的密码不一致'); return }
+
+  regLoading.value = true
+  try {
+    const res: any = await registerUc({ email, real_name: realName, password, student_id: studentId })
+    if ((res?.status || 0) >= 400) {
+      if (res?.status === 429) ElMessage.error('注册过于频繁，请24小时后再试')
+      else ElMessage.error(res?.data?.message || '注册失败')
+      return
+    }
+    ElMessage.success(res?.data?.message || '注册成功')
+    // 填入登录 tab 并切换，方便直接登录
+    ucForm.value = { username: email, password }
+    ucTab.value = 'login'
+    regForm.value = { email: '', real_name: '', student_id: '', password: '', password2: '' }
+  } catch (e: any) {
+    if (e?.status === 429) ElMessage.error('注册过于频繁，请24小时后再试')
+    else ElMessage.error(e?.data?.message || e?.message || '注册失败')
+  } finally {
+    regLoading.value = false
+  }
 }
 
 const submitUcLogin = async () => {
