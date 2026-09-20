@@ -81,7 +81,7 @@
         <el-page-header content="个人资料" @back="formProfileVisible = false" />
       </div>
       <div style="padding: 0 20px">
-        <FormProfile @success="profileSuccess" />
+        <FormUserinfo />
       </div>
     </el-drawer>
   </el-container>
@@ -128,9 +128,6 @@ export default {
     ...mapActions(useUserStore, ['logout', 'logoutWithSso', 'getUserPermissions']),
     isEpIcon(name: string) {
       return name && !name.startsWith('fa ')
-    },
-    profileSuccess() {
-      this.formProfileVisible = false
     },
     async command(cmd: string) {
       switch (cmd) {

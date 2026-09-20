@@ -10,7 +10,7 @@
     <div class="user-layout">
       <aside class="user-layout__sidebar">
         <el-card class="user-panel user-panel--profile" shadow="never">
-          <user-card2 :user="user" />
+          <user-card :user="user" :hide-latest="true" />
         </el-card>
       </aside>
       <section class="user-layout__content">
