@@ -364,38 +364,49 @@
     <el-dialog
       v-model="loginDialogVisible"
       :show-close="true"
-      width="720px"
+      width="780px"
       :close-on-click-modal="true"
       :close-on-press-escape="true"
-      class="oauth-login-dialog"
+      class="oauth-login-dialog uc-login-dialog"
     >
-      <div class="oauth-login-body">
-        <h3 class="uc-dialog-title">山河大学统一认证中心</h3>
-        <el-tabs v-model="ucTab" class="uc-tabs" stretch>
-          <el-tab-pane label="登录" name="login">
-            <div class="uc-acct-login">
-              <div class="uc-acct-form">
-                <el-input v-model="ucForm.username" placeholder="学号 / 手机号 / 邮箱" clearable @keyup.enter="submitUcLogin" />
-                <el-input v-model="ucForm.password" type="password" show-password placeholder="密码" @keyup.enter="submitUcLogin" />
-                <el-button type="primary" class="uc-acct-submit" :loading="ucLoginLoading" @click="submitUcLogin">登录</el-button>
+      <div class="oauth-login-body uc-login-body">
+        <div class="uc-login-left">
+          <div class="uc-login-logo">山河大学</div>
+          <div class="uc-login-title">统一认证中心</div>
+          <div class="uc-login-desc">
+            单账号登录图书馆、学籍系统等山河大学各服务，安全便捷。
+          </div>
+          <div class="uc-login-left-foot">学号 · 手机号 · 邮箱均可登录</div>
+        </div>
+        <div class="uc-login-right">
+          <h3 class="uc-dialog-title">山河大学统一认证中心</h3>
+          <el-tabs v-model="ucTab" class="uc-tabs" stretch>
+            <el-tab-pane label="登录" name="login">
+              <div class="uc-acct-login">
+                <div class="uc-acct-form">
+                  <el-input v-model="ucForm.username" placeholder="学号 / 手机号 / 邮箱" clearable @keyup.enter="submitUcLogin" />
+                  <el-input v-model="ucForm.password" type="password" show-password placeholder="密码" @keyup.enter="submitUcLogin" />
+                  <el-button type="primary" class="uc-acct-submit" :loading="ucLoginLoading" @click="submitUcLogin">登录</el-button>
+                </div>
               </div>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="注册" name="register">
-            <div class="uc-reg-form">
-              <el-input v-model="regForm.email" placeholder="邮箱" clearable />
-              <el-input v-model="regForm.real_name" placeholder="真实姓名（纯中文）" clearable />
-              <div class="uc-reg-stud">
-                <span class="uc-reg-head">{{ ucStudHead }}</span>
-                <el-input v-model="regForm.student_tail" placeholder="后4位" maxlength="4" clearable @keyup.enter="submitReg" />
-                <el-button class="uc-reg-random" :loading="randLoading" @click="randomStudentId">随机学号</el-button>
+            </el-tab-pane>
+            <el-tab-pane label="注册" name="register">
+              <div class="uc-reg-form">
+                <div v-if="regError" class="uc-reg-error">{{ regError }}</div>
+                <el-input v-model="regForm.email" placeholder="邮箱" clearable />
+                <el-input v-model="regForm.real_name" placeholder="真实姓名（纯中文）" clearable />
+                <div class="uc-reg-stud">
+                  <span class="uc-reg-head">{{ ucStudHead }}</span>
+                  <el-input v-model="regForm.student_tail" placeholder="后4位" maxlength="4" clearable @keyup.enter="submitReg" />
+                  <el-button class="uc-reg-random" :loading="randLoading" @click="randomStudentId">随机学号</el-button>
+                </div>
+                <el-input v-model="regForm.password" type="password" show-password placeholder="密码（至少8位）" />
+                <el-input v-model="regForm.password2" type="password" show-password placeholder="确认密码" @keyup.enter="submitReg" />
+                <el-button type="primary" class="uc-reg-submit" :loading="regLoading" @click="submitReg">注册</el-button>
               </div>
-              <el-input v-model="regForm.password" type="password" show-password placeholder="密码（至少8位）" />
-              <el-input v-model="regForm.password2" type="password" show-password placeholder="确认密码" @keyup.enter="submitReg" />
-              <el-button type="primary" class="uc-reg-submit" :loading="regLoading" @click="submitReg">注册</el-button>
-            </div>
-          </el-tab-pane>
-        </el-tabs>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
       </div>
     </el-dialog>
 
@@ -610,6 +621,8 @@ const regForm = ref<{
   password2: string
 }>({ email: '', real_name: '', student_tail: '', password: '', password2: '' })
 const regLoading = ref(false)
+// 注册失败原因：在注册表单内展示（后端返回的 message 或前端校验提示），替代仅顶部 toast
+const regError = ref('')
 // 学号前四位（年份）固定不可编辑（遵循 user 注册逻辑），仅后四位可改
 const ucStudHead = '2027'
 const randLoading = ref(false)
@@ -641,22 +654,23 @@ const submitReg = async () => {
   const email = regForm.value.email.trim()
   const realName = regForm.value.real_name.trim()
   const studentTail = regForm.value.student_tail.trim()
-  if (!/^\d{4}$/.test(studentTail)) { ElMessage.warning('学号后4位必须为数字'); return }
+  regError.value = ''
+  if (!/^\d{4}$/.test(studentTail)) { regError.value = '学号后4位必须为数字'; return }
   const studentId = ucStudHead + studentTail
   const password = regForm.value.password
   const password2 = regForm.value.password2
-  if (!EMAIL_RE.test(email)) { ElMessage.warning('请输入正确的邮箱'); return }
-  if (!NAME_RE.test(realName)) { ElMessage.warning('真实姓名须为纯中文'); return }
-  if (!STUDENT_RE.test(studentId)) { ElMessage.warning('学号须为8位数字'); return }
-  if (!password || password.length < 8) { ElMessage.warning('密码至少8位'); return }
-  if (password !== password2) { ElMessage.warning('两次输入的密码不一致'); return }
+  if (!EMAIL_RE.test(email)) { regError.value = '请输入正确的邮箱'; return }
+  if (!NAME_RE.test(realName)) { regError.value = '真实姓名须为纯中文'; return }
+  if (!STUDENT_RE.test(studentId)) { regError.value = '学号须为8位数字'; return }
+  if (!password || password.length < 8) { regError.value = '密码至少8位'; return }
+  if (password !== password2) { regError.value = '两次输入的密码不一致'; return }
 
   regLoading.value = true
   try {
     const res: any = await registerUc({ email, real_name: realName, password, student_id: studentId })
     if ((res?.status || 0) >= 400) {
-      if (res?.status === 429) ElMessage.error('注册过于频繁，请24小时后再试')
-      else ElMessage.error(res?.data?.message || '注册失败')
+      if (res?.status === 429) regError.value = '注册过于频繁，请24小时后再试'
+      else regError.value = res?.data?.message || '注册失败'
       return
     }
     ElMessage.success(res?.data?.message || '注册成功')
@@ -665,8 +679,8 @@ const submitReg = async () => {
     ucTab.value = 'login'
     regForm.value = { email: '', real_name: '', student_tail: '', password: '', password2: '' }
   } catch (e: any) {
-    if (e?.status === 429) ElMessage.error('注册过于频繁，请24小时后再试')
-    else ElMessage.error(e?.data?.message || e?.message || '注册失败')
+    if (e?.status === 429) regError.value = '注册过于频繁，请24小时后再试'
+    else regError.value = e?.data?.message || e?.message || '注册失败，请稍后重试'
   } finally {
     regLoading.value = false
   }
