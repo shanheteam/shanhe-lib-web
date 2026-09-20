@@ -2,13 +2,11 @@
   <div class="com-form-userinfo">
     <el-row>
       <el-col :span="10" class="text-center">
-        <upload-image
-          :error-image="'/static/images/avatar.png'"
-          :width="'64px'"
-          :action="'/api/v1/upload/avatar'"
-          :image="assetUrl(user.avatar)"
-          @success="getUser"
-          class="edit-avatar"
+        <img
+          class="profile-avatar"
+          :src="assetUrl(user.avatar)"
+          alt="avatar"
+          @error="onAvatarError"
         />
         <!-- 上传成功之后，重新获取用户资料 -->
         <div>
@@ -41,9 +39,7 @@
         </el-descriptions>
       </el-col>
     </el-row>
-    <el-tabs v-model="activeTab">
-      <el-tab-pane label="个人资料" name="profile">
-        <el-form label-width="80px">
+    <el-form label-width="80px">
           <el-form-item label="真实姓名">
             <div class="field-with-edit">
               <el-input v-model="user.realname" disabled></el-input>
@@ -66,25 +62,32 @@
             </div>
           </el-form-item>
           <el-form-item label="联系地址">
-            <el-input
-              v-model="user.address"
-              type="textarea"
-              disabled
-            ></el-input>
+            <div class="field-with-edit">
+              <el-input
+                v-model="user.address"
+                type="textarea"
+                :disabled="editing !== 'address'"
+                :autosize="{ minRows: 2 }"
+              ></el-input>
+              <el-button link type="primary" @click="toggleEdit('address')">
+                {{ editing === 'address' ? '保存' : '修改' }}
+              </el-button>
+            </div>
           </el-form-item>
           <el-form-item label="个性签名">
-            <el-input
-              v-model="user.signature"
-              type="textarea"
-              disabled
-            ></el-input>
+            <div class="field-with-edit">
+              <el-input
+                v-model="user.signature"
+                type="textarea"
+                :disabled="editing !== 'signature'"
+                :autosize="{ minRows: 2 }"
+              ></el-input>
+              <el-button link type="primary" @click="toggleEdit('signature')">
+                {{ editing === 'signature' ? '保存' : '修改' }}
+              </el-button>
+            </div>
           </el-form-item>
         </el-form>
-      </el-tab-pane>
-      <el-tab-pane label="修改资料" name="updateprofile">
-        <FormProfile />
-      </el-tab-pane>
-    </el-tabs>
   </div>
 </template>
 
@@ -98,9 +101,26 @@ defineOptions({ name: 'FormUserinfo' })
 
 const userStore = useUserStore()
 const user = computed(() => userStore.user)
-const activeTab = ref('profile')
+// 联系地址/个性签名 的就地编辑状态：'address' | 'signature' | ''
+const editing = ref<'address' | 'signature' | ''>('')
 
-const getUser = () => {
-  userStore.getUser()
+const onAvatarError = (e: Event) => {
+  const img = e.target as HTMLImageElement
+  img.src = '/static/images/avatar.png'
+}
+
+const saveField = async () => {
+  const field = editing.value
+  if (!field) return
+  editing.value = ''
+  await userStore.updateUserProfile({ [field]: user.value[field] })
+}
+
+const toggleEdit = (field: 'address' | 'signature') => {
+  if (editing.value === field) {
+    saveField()
+  } else {
+    editing.value = field
+  }
 }
 </script>

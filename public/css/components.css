@@ -1240,15 +1240,11 @@
 .com-form-userinfo .el-descriptions__body .el-descriptions__table {
   color: var(--app-text-faint);
 }
-.com-form-userinfo .edit-avatar {
-  position: relative;
-}
-.com-form-userinfo .edit-avatar::after {
-  font-family: element-icons !important;
-  content: "\e78c";
-  position: absolute;
-  top: 7px;
-  margin-left: 10px;
+.com-form-userinfo .profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  object-fit: cover;
 }
 
 .com-form-userinfo .field-with-edit {
