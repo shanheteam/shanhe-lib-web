@@ -378,25 +378,6 @@
             <el-button type="primary" class="uc-acct-submit" :loading="ucLoginLoading" @click="submitUcLogin">登录</el-button>
           </div>
         </div>
-        <div v-if="oauths.length > 0" class="oauth-login-main">
-          <el-divider>其他登录方式</el-divider>
-          <div class="oauth-list">
-            <el-button
-              v-for="oauth in oauths"
-              :key="oauth.type"
-              size="large"
-              class="oauth-btn"
-              :class="`oauth-btn-${oauth.type}`"
-              :loading="oauthLoading === oauth.type"
-              @click="handleOAuthLogin(oauth)"
-            >
-              <!-- 自定义 OAuth（type=6）为本站学籍登录，文案单独处理 -->
-              <span class="oauth-btn-text">{{
-                oauth.type === OAUTH_TYPE_CUSTOM ? '使用' + oauth.name + '登录' : oauth.name
-              }}</span>
-            </el-button>
-          </div>
-        </div>
       </div>
     </el-dialog>
 
