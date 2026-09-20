@@ -13,6 +13,9 @@ import { OAUTH_TYPE_CUSTOM, SSO_LOGOUT_RETURN_KEY } from '@/utils/oauth'
 import { STORAGE_KEYS, clearSiteStorage } from '@/utils/storage'
 
 let ssoSilentLastCheck = 0
+// 主动退出后短时抑制 SSO 静默自动登录，避免 user 未真正登出、共享 cookie 被续期回填时"刚退出又自动回来"
+const SSO_SUPPRESS_KEY = 'uc_sso_suppress_until'
+const SSO_SUPPRESS_MS = 10 * 60 * 1000
 
 interface UserState {
   user: Record<string, any>
@@ -136,6 +139,7 @@ export const useUserStore = defineStore('user', {
      * 同域共享 .shanhe.co cookie，IdP 清 cookie 后全子域同时登出。
      */
     async logoutWithSso() {
+      try { sessionStorage.setItem(SSO_SUPPRESS_KEY, String(Date.now())) } catch { void 0 }
       await this.logout()
       // 先经 lib 后端清除 .shanhe.co 共享 cookie，再做 IdP 端会话登出。
       // 若先跳 IdP /logout 而该端点未清共享 cookie（端点异常/参数不符），
@@ -190,6 +194,11 @@ export const useUserStore = defineStore('user', {
       // 因 sessionStorage 跨刷新保留，会导致"刷新首页不再探测、user 登录后 lib 无法自动登录"。
       if (this.token) return // 已本地登录
       const now = Date.now()
+      // 主动退出后一段窗口内不自动登录（user 未真正登出时共享 cookie 会被续期回填，导致"刚退出又回来"）
+      try {
+        const until = Number(sessionStorage.getItem(SSO_SUPPRESS_KEY) || 0)
+        if (until && now - until < SSO_SUPPRESS_MS) return
+      } catch { void 0 }
       if (now - ssoSilentLastCheck < 5000) return
       ssoSilentLastCheck = now
       try {
