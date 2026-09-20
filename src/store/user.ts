@@ -223,8 +223,18 @@ export const useUserStore = defineStore('user', {
       if (!this.token) return
       try {
         const res: any = await ssoSession()
-        if (res?.status === 200 && res?.data?.valid === false) {
-          this.clearState()
+        if (res?.status === 200) {
+          if (res?.data?.valid === false) {
+            // 同一账号在 user-center 已登出/被禁：本地退出
+            this.clearState()
+          } else if (res?.data?.user) {
+            // 共享 cookie 已切换为另一账号：本地旧账号会话失效，登出释放（稍后 silentSsoCheck 用新 cookie 登入）
+            const ucUserId = String(res.data.user.id ?? '')
+            const localUserId = String(this.user?.id ?? '')
+            if (ucUserId && localUserId && ucUserId !== localUserId) {
+              this.clearState()
+            }
+          }
         }
       } catch (e) {
         // 网络异常不登出，避免误踢
