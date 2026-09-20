@@ -371,7 +371,7 @@
     >
       <div class="oauth-login-body uc-login-body">
         <div class="uc-login-left">
-          <div class="uc-login-logo">山河大学</div>
+          <div class="uc-login-logo"><span class="uc-login-badge">山</span>山河大学</div>
           <div class="uc-login-title">统一认证中心</div>
           <div class="uc-login-desc">
             单账号登录图书馆、学籍系统等山河大学各服务，安全便捷。
@@ -387,6 +387,10 @@
                   <el-input v-model="ucForm.username" placeholder="学号 / 手机号 / 邮箱" clearable @keyup.enter="submitUcLogin" />
                   <el-input v-model="ucForm.password" type="password" show-password placeholder="密码" @keyup.enter="submitUcLogin" />
                   <el-button type="primary" class="uc-acct-submit" :loading="ucLoginLoading" @click="submitUcLogin">登录</el-button>
+                </div>
+                <div class="uc-acct-reglink">
+                  <span>还没有账号？</span>
+                  <el-link type="primary" :underline="false" @click="ucTab = 'register'">立即注册</el-link>
                 </div>
               </div>
             </el-tab-pane>
@@ -668,9 +672,17 @@ const submitReg = async () => {
   regLoading.value = true
   try {
     const res: any = await registerUc({ email, real_name: realName, password, student_id: studentId })
-    if ((res?.status || 0) >= 400) {
-      if (res?.status === 429) regError.value = '注册过于频繁，请24小时后再试'
-      else regError.value = res?.data?.message || '注册失败'
+    // 成功仅当 2xx（拦截器会把 4xx/5xx 与网络错误转为 { status, data }，status=0 表示网络层失败）
+    const ok = res?.status && res.status < 400
+    if (!ok) {
+      const detail =
+        res?.data?.message ||
+        res?.data?.msg ||
+        res?.data?.error ||
+        res?.message ||
+        (res?.status === 0 ? '网络错误，请检查网络后重试' : '注册失败，请稍后重试')
+      regError.value = res?.status === 429 ? '注册过于频繁，请24小时后再试' : detail
+      console.error('[OAuth] register failed:', res)
       return
     }
     ElMessage.success(res?.data?.message || '注册成功')
@@ -679,8 +691,14 @@ const submitReg = async () => {
     ucTab.value = 'login'
     regForm.value = { email: '', real_name: '', student_tail: '', password: '', password2: '' }
   } catch (e: any) {
-    if (e?.status === 429) regError.value = '注册过于频繁，请24小时后再试'
-    else regError.value = e?.data?.message || e?.message || '注册失败，请稍后重试'
+    const detail =
+      e?.data?.message ||
+      e?.data?.msg ||
+      e?.data?.error ||
+      e?.message ||
+      (e?.status === 0 ? '网络错误，请检查网络后重试' : '注册失败，请稍后重试')
+    regError.value = e?.status === 429 ? '注册过于频繁，请24小时后再试' : detail
+    console.error('[OAuth] register error:', e)
   } finally {
     regLoading.value = false
   }

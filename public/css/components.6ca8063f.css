@@ -6418,6 +6418,8 @@
   align-items: stretch;
 }
 .uc-login-left {
+  position: relative;
+  overflow: hidden;
   width: 300px;
   flex-shrink: 0;
   display: flex;
@@ -6426,18 +6428,67 @@
   padding: 44px 32px;
   color: #fff;
   background:
-    linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.25)),
-    linear-gradient(135deg, #1a5cff, #4f7bff 55%, #7aa0ff);
+    radial-gradient(ellipse at 18% 0%, rgba(255, 255, 255, 0.22), transparent 55%),
+    radial-gradient(ellipse at 95% 95%, rgba(125, 165, 255, 0.4), transparent 50%),
+    linear-gradient(135deg, #123f9e, #2b6aff 45%, #4f8bff 75%, #7aa0ff);
   border-radius: 8px 0 0 8px;
   box-sizing: border-box;
 }
+/* 装饰：右上角同心圆环 */
+.uc-login-left::before {
+  content: '';
+  position: absolute;
+  right: -70px;
+  top: -70px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 0 0 32px rgba(255, 255, 255, 0.05),
+    0 0 0 64px rgba(255, 255, 255, 0.03);
+  pointer-events: none;
+}
+/* 装饰：底部网点 */
+.uc-login-left::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 84px;
+  background: radial-gradient(circle at 8px 8px, rgba(255, 255, 255, 0.28) 2px, transparent 2.5px);
+  background-size: 16px 16px;
+  opacity: 0.25;
+  pointer-events: none;
+}
 .uc-login-logo {
-  font-size: 26px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  font-size: 24px;
   font-weight: 700;
-  letter-spacing: 4px;
-  margin-bottom: 10px;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+.uc-login-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-right: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  font-size: 22px;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }
 .uc-login-title {
+  position: relative;
+  z-index: 1;
   font-size: 18px;
   font-weight: 600;
   letter-spacing: 2px;
@@ -6445,11 +6496,15 @@
   opacity: 0.95;
 }
 .uc-login-desc {
+  position: relative;
+  z-index: 1;
   font-size: 13px;
   line-height: 1.8;
   opacity: 0.85;
 }
 .uc-login-left-foot {
+  position: relative;
+  z-index: 1;
   margin-top: 28px;
   font-size: 12px;
   opacity: 0.7;
@@ -6459,6 +6514,19 @@
   min-width: 0;
   padding: 30px 40px 36px;
   box-sizing: border-box;
+}
+/* 登录 tab 下方：前往注册链接 */
+.uc-acct-reglink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--app-text-muted);
+}
+.uc-acct-reglink .el-link {
+  font-size: 13px;
 }
 /* 注册失败原因提示（展示于注册表单顶部） */
 .uc-reg-error {
