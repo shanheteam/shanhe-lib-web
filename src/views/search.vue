@@ -50,7 +50,7 @@
             class="el-link el-link--default"
             ><el-icon><User /></el-icon>&nbsp;会员中心</router-link
           >
-          <span v-else class="el-link el-link--default" @click="openLoginDialog()"
+          <span v-else class="el-link el-link--default" @click="openLoginDialog('login')"
             ><el-icon><User /></el-icon>&nbsp;登录账户</span
           >
         </span>

@@ -63,7 +63,7 @@
             </div>
           </div>
           <div class="guest-actions">
-            <el-button type="primary" class="login-btn" @click="openLoginDialog()">登录</el-button>
+            <el-button type="primary" class="login-btn" @click="openLoginDialog('login')">登录</el-button>
             <el-button class="register-btn" @click="openLoginDialog('register')">注册</el-button>
           </div>
         </template>

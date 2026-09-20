@@ -177,7 +177,7 @@
             </el-dropdown>
           </template>
           <div v-else class="header-login-btn">
-            <el-button type="primary" round @click="showLoginDialog">
+            <el-button type="primary" round @click="showLoginDialog('login')">
               <el-icon style="color: var(--el-color-white); font-size: 1.2em"><User /></el-icon>
               登录
             </el-button>
@@ -208,7 +208,7 @@
         <li>
           <div
             class="el-link el-link--default login-link"
-            @click="openLoginDialog()"
+            @click="openLoginDialog('login')"
           >
             <UserAvatar :size="38" :user="user" class="user-avatar" />
             <span v-if="user.id > 0">{{ user.realname || '未命名用户' }}</span>
@@ -591,11 +591,17 @@ const showMenuDrawer = () => {
   menuDrawerVisible.value = true
 }
 
-const showLoginDialog = (e?: Event) => {
+const showLoginDialog = (tabOrEvent?: string | Event) => {
   loginDialogVisible.value = true
-  // 支持 openLoginDialog('register') 等入口指定默认 tab
-  const tab = (e as CustomEvent)?.detail?.tab
-  if (tab === 'register') ucTab.value = 'register'
+  // 显式 tab 优先（'login'/'register'）；未指定时保持当前 tab，避免已注册用户点登录停在注册页
+  let tab: string | undefined
+  if (typeof tabOrEvent === 'string') {
+    tab = tabOrEvent
+  } else if (tabOrEvent instanceof CustomEvent) {
+    tab = (tabOrEvent as CustomEvent).detail?.tab
+  }
+  if (tab === 'login') ucTab.value = 'login'
+  else if (tab === 'register') ucTab.value = 'register'
   // 并行加载 OAuth 列表；无 OAuth 时不影响邮箱登录
   getOauths()
     .then((res: any) => {
