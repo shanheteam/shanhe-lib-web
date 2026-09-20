@@ -4,7 +4,7 @@
 
 export const OPEN_LOGIN_EVENT = 'global:open-login'
 
-/** 派发全局登录弹窗打开事件。 */
-export function openLoginDialog(): void {
-  window.dispatchEvent(new CustomEvent(OPEN_LOGIN_EVENT))
+/** 派发全局登录弹窗打开事件；tab 传 'register' 时弹窗默认选中注册页。 */
+export function openLoginDialog(tab?: 'login' | 'register'): void {
+  window.dispatchEvent(new CustomEvent(OPEN_LOGIN_EVENT, { detail: { tab } }))
 }

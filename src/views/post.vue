@@ -44,7 +44,7 @@
         </template>
         <p>请先登录账号，或联系管理员开通文章发布权限。</p>
         <div style="margin-top: 12px">
-          <el-button type="primary" size="small" @click="openLoginDialog">
+          <el-button type="primary" size="small" @click="openLoginDialog()">
             前往登录
           </el-button>
           <el-button type="default" size="small" @click="router.push('/')">

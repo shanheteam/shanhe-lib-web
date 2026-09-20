@@ -591,8 +591,11 @@ const showMenuDrawer = () => {
   menuDrawerVisible.value = true
 }
 
-const showLoginDialog = () => {
+const showLoginDialog = (e?: Event) => {
   loginDialogVisible.value = true
+  // 支持 openLoginDialog('register') 等入口指定默认 tab
+  const tab = (e as CustomEvent)?.detail?.tab
+  if (tab === 'register') ucTab.value = 'register'
   // 并行加载 OAuth 列表；无 OAuth 时不影响邮箱登录
   getOauths()
     .then((res: any) => {
