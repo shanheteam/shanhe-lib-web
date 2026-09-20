@@ -69,18 +69,6 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '登录', noindex: true },
   },
   {
-    path: '/register',
-    name: 'register',
-    component: () => import('@/views/register.vue'),
-    meta: { title: '注册', noindex: true },
-  },
-  {
-    path: '/findpassword',
-    name: 'findpassword',
-    component: () => import('@/views/findpassword.vue'),
-    meta: { title: '找回密码', noindex: true },
-  },
-  {
     path: '/oauth/callback',
     name: 'oauth-callback',
     component: () => import('@/views/oauth.vue'),
@@ -146,7 +134,6 @@ const routes: RouteRecordRaw[] = [
       { path: 'document', name: 'me-document', component: () => import('@/views/me/document.vue') },
       { path: 'download', name: 'me-download', component: () => import('@/views/me/download.vue') },
       { path: 'favorite', name: 'me-favorite', component: () => import('@/views/me/favorite.vue') },
-      { path: 'password', name: 'me-password', component: () => import('@/views/me/password.vue') },
       { path: 'profile', name: 'me-profile', component: () => import('@/views/me/profile.vue') },
     ],
   },

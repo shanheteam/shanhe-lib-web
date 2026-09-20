@@ -67,7 +67,6 @@
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item command="profile"> 个人资料 </el-dropdown-item>
-              <el-dropdown-item command="password"> 修改密码 </el-dropdown-item>
               <el-dropdown-item command="logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -85,14 +84,6 @@
         <FormProfile @success="profileSuccess" />
       </div>
     </el-drawer>
-    <el-drawer v-model="formPasswordVisible" direction="rtl" :size="isMobile ? '90%' : '50%'" :with-header="false">
-      <div class="drawer-head">
-        <el-page-header content="修改密码" @back="formPasswordVisible = false" />
-      </div>
-      <div style="padding: 0 20px">
-        <FormPassword @success="passwordSuccess" />
-      </div>
-    </el-drawer>
   </el-container>
 </template>
 
@@ -108,7 +99,6 @@ export default {
   data() {
     return {
       formProfileVisible: false,
-      formPasswordVisible: false,
       isCollapse: false,
       activeMenu: (this as any).$route.path,
       menus: adminMenus,
@@ -142,16 +132,10 @@ export default {
     profileSuccess() {
       this.formProfileVisible = false
     },
-    passwordSuccess() {
-      this.formPasswordVisible = false
-    },
     async command(cmd: string) {
       switch (cmd) {
         case 'profile':
           this.formProfileVisible = true
-          break
-        case 'password':
-          this.formPasswordVisible = true
           break
         case 'logout':
           await this.logoutWithSso()

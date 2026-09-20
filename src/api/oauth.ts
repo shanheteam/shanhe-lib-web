@@ -9,3 +9,4 @@ export const bindOauth = (data: any) => service({ url: '/api/v1/oauth/bind', met
 const ssoCred = { withCredentials: true } as const
 export const ssoLogin = () => service({ url: '/api/v1/oauth/sso', method: 'post', withCredentials: true })
 export const ssoSession = () => service({ url: '/api/v1/oauth/sso/session', method: 'get', withCredentials: true })
+export const ssoLogout = () => service({ url: '/api/v1/oauth/sso/logout', method: 'post', withCredentials: true })

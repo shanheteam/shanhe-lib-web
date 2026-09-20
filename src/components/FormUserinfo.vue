@@ -75,9 +75,6 @@
       <el-tab-pane label="修改资料" name="updateprofile">
         <FormProfile />
       </el-tab-pane>
-      <el-tab-pane label="修改密码" name="password">
-        <FormPassword />
-      </el-tab-pane>
     </el-tabs>
   </div>
 </template>

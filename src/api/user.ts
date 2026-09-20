@@ -1,12 +1,9 @@
 import service from '@/utils/request'
 
-export const register = (data: any) => service({ url: '/api/v1/user/register', method: 'post', data })
-export const login = (data: any) => service({ url: '/api/v1/user/login', method: 'post', data })
 export const logout = (params?: any) => service({ url: '/api/v1/user/logout', method: 'delete', params })
 export const getUser = (params?: any) => service({ url: '/api/v1/user', method: 'get', params })
 export const canIUploadDocument = () => service({ url: '/api/v1/user/caniuploaddocument', method: 'get' })
 export const canIPublishArticle = () => service({ url: '/api/v1/user/canipublisharticle', method: 'get' })
-export const updateUserPassword = (data: any) => service({ url: '/api/v1/user/password', method: 'put', data })
 export const updateUserProfile = (data: any) => service({ url: '/api/v1/user/profile', method: 'put', data })
 export const deleteUser = (params: any) => service({ url: '/api/v1/user', method: 'delete', params })
 export const addUser = (data: any) => service({ url: '/api/v1/user', method: 'post', data })
@@ -18,7 +15,4 @@ export const getUserDownloads = (params: any) => service({ url: '/api/v1/user/do
 export const getUserPermissions = (params?: any) => service({ url: '/api/v1/user/permission', method: 'get', params })
 export const getSignedToday = () => service({ url: '/api/v1/user/sign', method: 'get' })
 export const signToday = () => service({ url: '/api/v1/user/sign', method: 'put' })
-export const findPasswordStepOne = (data: any) => service({ url: '/api/v1/user/findpassword/stepone', method: 'post', data })
-export const findPasswordStepTwo = (data: any) => service({ url: '/api/v1/user/findpassword/steptwo', method: 'put', data })
-export const sendEmailCode = (data: any) => service({ url: '/api/v1/user/email/code', method: 'post', data })
 export const listUserGroup = (params?: any) => service({ url: '/api/v1/user/group', method: 'get', params })

@@ -370,7 +370,6 @@
       class="oauth-login-dialog"
     >
       <div class="oauth-login-body">
-        <form-login :redirect="loginRedirect"></form-login>
         <div class="uc-acct-login">
           <el-divider>山河大学账号密码登录</el-divider>
           <div class="uc-acct-form">
@@ -510,7 +509,6 @@ const popover1 = ref<any>()
 const loginDialogVisible = ref(false)
 const oauths = ref<any[]>([])
 const oauthLoading = ref<number>(0)
-const loginRedirect = computed(() => route.fullPath || '/')
 const ucLoginLoading = ref(false)
 const ucForm = ref<{ username: string; password: string }>({ username: '', password: '' })
 

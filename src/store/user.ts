@@ -1,15 +1,13 @@
 import { defineStore } from 'pinia'
 import { ElMessage } from 'element-plus'
 import {
-  login,
   getUser,
   updateUserProfile,
   logout,
   getUserPermissions,
-  register,
   listUserGroup,
 } from '@/api/user'
-import { loginOauth, getOauths, passwordLogin, ssoLogin, ssoSession } from '@/api/oauth'
+import { loginOauth, getOauths, passwordLogin, ssoLogin, ssoSession, ssoLogout } from '@/api/oauth'
 import { permissionsToTree } from '@/utils/permission'
 import { OAUTH_TYPE_CUSTOM, SSO_LOGOUT_RETURN_KEY } from '@/utils/oauth'
 import { STORAGE_KEYS, clearSiteStorage } from '@/utils/storage'
@@ -95,28 +93,6 @@ export const useUserStore = defineStore('user', {
       }
       return res
     },
-    async register(registerInfo: any) {
-      const res: any = await register(registerInfo)
-      if (res.status !== 200) {
-        ElMessage({ type: 'error', message: res.data.message || '注册失败' })
-        return res
-      }
-      this.setUser(res.data.user)
-      this.setToken(res.data.token)
-      await Promise.all([this.getUserPermissions(), this.getUserGroups()])
-      return res
-    },
-    async login(loginInfo: any) {
-      const res: any = await login(loginInfo)
-      if (res.status !== 200) {
-        ElMessage({ type: 'error', message: res.data.message || '登录失败' })
-        return res
-      }
-      this.setUser(res.data.user)
-      this.setToken(res.data.token)
-      await Promise.all([this.getUserPermissions(), this.getUserGroups()])
-      return res
-    },
     async loginOauth(loginInfo: any) {
       const res: any = await loginOauth(loginInfo)
       if (res.status !== 200) {
@@ -181,6 +157,13 @@ export const useUserStore = defineStore('user', {
         }
       } catch (e) {
         console.error('[OAuth] SSO logout failed, fallback to local reload:', e)
+      }
+      // 无法跳转 IdP 登出端点时，先经 lib 后端清除 .shanhe.co 共享 cookie 再刷新，
+      // 否则 SSO 静默探测会把已登出的会话"带回来"（表现为退出无效）。
+      try {
+        await ssoLogout()
+      } catch (e) {
+        console.warn('[OAuth] shared cookie clear failed:', (e as Error)?.message)
       }
       window.location.reload()
     },

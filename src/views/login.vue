@@ -24,7 +24,14 @@
           <div v-safe-html="settings.security.close_statement"></div>
         </div>
         <div v-if="!(user.id > 0 && settings.security.is_close)">
-          <form-login :redirect="redirect"></form-login>
+          <div class="uc-acct-login">
+            <el-divider>山河大学账号密码登录</el-divider>
+            <div class="uc-acct-form">
+              <el-input v-model="ucForm.username" placeholder="学号 / 手机号 / 邮箱" clearable @keyup.enter="submitUcLogin" />
+              <el-input v-model="ucForm.password" type="password" show-password placeholder="密码" @keyup.enter="submitUcLogin" />
+              <el-button type="primary" class="uc-acct-submit" :loading="ucLoginLoading" @click="submitUcLogin">登录</el-button>
+            </div>
+          </div>
           <div v-if="oauths.length > 0" class="oauth-login-container">
             <el-divider>其他登录方式</el-divider>
             <div class="oauth-list">
@@ -42,12 +49,6 @@
           </div>
         </div>
         <div style="margin-top: 20px; text-align: center">
-          <router-link
-            to="/findpassword"
-            title="找回密码"
-            class="el-link el-link--default"
-            >找回密码</router-link
-          >
           <el-link
             type="default"
             class="float-right"
@@ -75,10 +76,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { assetUrl } from '@/utils/asset'
 import { generateRandomString, generateCodeChallenge, savePkceParams } from '@/utils/pkce'
+import { passwordLogin } from '@/api/oauth'
 import { OAUTH_TYPE_CUSTOM } from '@/utils/oauth'
 
 const router = useRouter()
@@ -92,33 +95,49 @@ const redirect = computed(() => (route.query.redirect as string) || '/me')
 
 const oauths = ref<any[]>([])
 const showRegDialog = ref(false)
+const ucLoginLoading = ref(false)
+const ucForm = ref<{ username: string; password: string }>({ username: '', password: '' })
 
 const goRegister = () => {
   showRegDialog.value = false
   window.open('https://user.shanhe.co/?libreg', '_blank')
 }
 
-onMounted(async () => {
-  try {
-    const res: any = await userStore.getOauths()
-    if (res.status === 200 && res.data.oauths) {
-      oauths.value = res.data.oauths.filter((o: any) => o.enable)
-    }
-  } catch (e) {
-    console.error('获取OAuth配置失败:', e)
+const submitUcLogin = async () => {
+  const username = ucForm.value.username.trim()
+  const password = ucForm.value.password
+  if (!username || !password) {
+    ElMessage.warning('请输入山河大学账号和密码')
+    return
   }
-})
+  ucLoginLoading.value = true
+  try {
+    const res: any = await passwordLogin({ username, password })
+    if (res?.data?.token && res?.data?.user) {
+      ucForm.value = { username: '', password: '' }
+      ElMessage.success('登录成功')
+      userStore.setUser(res.data.user)
+      userStore.setToken(res.data.token)
+      userStore.getUserPermissions()
+      userStore.getUserGroups()
+      router.push(redirect.value)
+    } else {
+      ElMessage.error(res?.data?.message || res?.message || '登录失败')
+    }
+  } catch (e: any) {
+    console.error('[OAuth] password login error:', e)
+    ElMessage.error(e?.data?.message || e?.message || '登录异常')
+  } finally {
+    ucLoginLoading.value = false
+  }
+}
 
 const handleOAuthLogin = async (oauth: any) => {
-  // 生成 PKCE 参数
   const codeVerifier = generateRandomString(64)
   const codeChallenge = await generateCodeChallenge(codeVerifier)
   const state = generateRandomString(32)
-
-  // 保存到 sessionStorage，回调时使用
   savePkceParams(codeVerifier, state)
 
-  // 构建授权 URL
   const params = new URLSearchParams({
     response_type: 'code',
     client_id: oauth.client_id,
@@ -132,4 +151,34 @@ const handleOAuthLogin = async (oauth: any) => {
   const authorizeUrl = `${oauth.authorize_url_base}?${params.toString()}`
   window.location.href = authorizeUrl
 }
+
+onMounted(async () => {
+  try {
+    const res: any = await userStore.getOauths()
+    if (res.status === 200 && res.data.oauths) {
+      oauths.value = res.data.oauths.filter((o: any) => o.enable)
+    }
+  } catch (e) {
+    console.error('获取OAuth配置失败:', e)
+  }
+})
 </script>
+
+<style scoped>
+.uc-acct-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.uc-acct-submit {
+  width: 100%;
+}
+.oauth-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.oauth-btn {
+  width: 100%;
+}
+</style>
