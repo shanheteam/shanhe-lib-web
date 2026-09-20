@@ -5,8 +5,8 @@
       <el-form-item label="真实姓名" prop="realname">
         <el-input v-model="profile.realname" clearable></el-input>
       </el-form-item>
-      <el-form-item label="身份证号">
-        <el-input v-model="profile.identity" clearable></el-input>
+      <el-form-item label="学籍号">
+        <el-input v-model="profile.student_id" clearable></el-input>
       </el-form-item>
       <el-form-item
         label="电子邮箱"

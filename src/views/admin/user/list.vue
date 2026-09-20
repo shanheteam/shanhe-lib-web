@@ -344,7 +344,7 @@ function initTableListFields() {
     },
     { prop: 'email', label: '邮箱', width: 200 },
     { prop: 'mobile', label: '电话', width: 200 },
-    { prop: 'identity', label: '身份证', width: 250 },
+    { prop: 'student_id', label: '学籍号', width: 160 },
     { prop: 'address', label: '地址', width: 250 },
     { prop: 'signature', label: '签名', width: 250 },
     { prop: 'created_at', label: '注册时间', width: 170, type: 'datetime' },
