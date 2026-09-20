@@ -135,7 +135,7 @@ export default {
     if (screenWidth < 1000) this.isCollapse = !this.isCollapse
   },
   methods: {
-    ...mapActions(useUserStore, ['logout', 'getUserPermissions']),
+    ...mapActions(useUserStore, ['logout', 'logoutWithSso', 'getUserPermissions']),
     isEpIcon(name: string) {
       return name && !name.startsWith('fa ')
     },
@@ -154,9 +154,7 @@ export default {
           this.formPasswordVisible = true
           break
         case 'logout':
-          await this.logout()
-          this.$router.replace({ path: '/' })
-          ElMessage.success('退出成功')
+          await this.logoutWithSso()
           break
       }
     },

@@ -11,6 +11,7 @@ import {
 } from '@/api/user'
 import { loginOauth, getOauths } from '@/api/oauth'
 import { permissionsToTree } from '@/utils/permission'
+import { OAUTH_TYPE_CUSTOM, SSO_LOGOUT_RETURN_KEY } from '@/utils/oauth'
 import { STORAGE_KEYS, clearSiteStorage } from '@/utils/storage'
 
 interface UserState {
@@ -151,6 +152,35 @@ export const useUserStore = defineStore('user', {
       const res: any = await logout()
       this.clearState()
       return res
+    },
+    /**
+     * 登出并做单点登出(SLO)：本地清理后跳转 user-center 的端会话登出端点。
+     * 同域共享 .shanhe.co cookie，IdP 清 cookie 后全子域同时登出。
+     */
+    async logoutWithSso() {
+      await this.logout()
+      try {
+        const res: any = await getOauths()
+        const list: any[] = res?.data?.oauths || []
+        // user-center 对应 custom 类型（type=6）
+        const custom = list.find((o: any) => Number(o.type) === OAUTH_TYPE_CUSTOM)
+        if (custom?.client_id && custom?.redirect_url && custom?.authorize_url_base) {
+          // 授权地址形如 .../api/oauth/authorize，登出端点同基址替换为 /logout
+          const logoutBase = String(custom.authorize_url_base).replace(/\/authorize$/, '/logout')
+          if (logoutBase !== custom.authorize_url_base) {
+            sessionStorage.setItem(SSO_LOGOUT_RETURN_KEY, '1')
+            const params = new URLSearchParams({
+              client_id: custom.client_id,
+              post_logout_redirect_uri: custom.redirect_url,
+            })
+            window.location.href = `${logoutBase}?${params.toString()}`
+            return
+          }
+        }
+      } catch (e) {
+        console.error('[OAuth] SSO logout failed, fallback to local reload:', e)
+      }
+      window.location.reload()
     },
     async getUserPermissions() {
       const res: any = await getUserPermissions()

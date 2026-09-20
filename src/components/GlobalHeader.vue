@@ -707,8 +707,7 @@ const onSearch = () => {
 }
 
 const logout = async () => {
-  await userStore.logout()
-  location.reload()
+  await userStore.logoutWithSso()
 }
 
 const handleDropdown = async (command: string) => {

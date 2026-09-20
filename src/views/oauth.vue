@@ -24,7 +24,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { Loading, CircleClose, SuccessFilled } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/user'
 import { getPkceParams, clearPkceParams } from '@/utils/pkce'
-import { resolveOauthType } from '@/utils/oauth'
+import { resolveOauthType, SSO_LOGOUT_RETURN_KEY } from '@/utils/oauth'
 
 const router = useRouter()
 const route = useRoute()
@@ -44,6 +44,12 @@ onMounted(async () => {
   const state = route.query.state as string
 
   if (!code) {
+    // 单点登出(SLO)后 IdP 跳回本站回调地址（无 code），此时静默回首页
+    if (sessionStorage.getItem(SSO_LOGOUT_RETURN_KEY) === '1') {
+      sessionStorage.removeItem(SSO_LOGOUT_RETURN_KEY)
+      router.replace('/')
+      return
+    }
     error.value = '缺少授权码'
     loading.value = false
     return
