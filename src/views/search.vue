@@ -50,8 +50,8 @@
             class="el-link el-link--default"
             ><el-icon><User /></el-icon>&nbsp;会员中心</router-link
           >
-          <router-link v-else class="el-link el-link--default" to="/login"
-            ><el-icon><User /></el-icon>&nbsp;登录账户</router-link
+          <span v-else class="el-link el-link--default" @click="openLoginDialog"
+            ><el-icon><User /></el-icon>&nbsp;登录账户</span
           >
         </span>
       </el-col>
@@ -398,6 +398,7 @@ import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
 import { isMobile } from '@/utils/responsive'
+import { openLoginDialog } from '@/utils/login'
 
 const router = useRouter()
 const route = useRoute()

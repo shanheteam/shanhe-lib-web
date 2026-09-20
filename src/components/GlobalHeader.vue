@@ -208,7 +208,7 @@
         <li>
           <div
             class="el-link el-link--default login-link"
-            @click="goToLink('/login')"
+            @click="openLoginDialog()"
           >
             <UserAvatar :size="38" :user="user" class="user-avatar" />
             <span v-if="user.id > 0">{{ user.realname || '未命名用户' }}</span>
@@ -469,6 +469,7 @@ import { useCategoryStore } from '@/store/category'
 import { getOauths } from '@/api/oauth'
 import { passwordLogin } from '@/api/oauth'
 import { OAUTH_TYPE_CUSTOM } from '@/utils/oauth'
+import { OPEN_LOGIN_EVENT, openLoginDialog } from '@/utils/login'
 
 defineOptions({ name: 'GlobalHeader' })
 
@@ -841,6 +842,7 @@ onMounted(() => {
   window.addEventListener('focus', handleWindowFocus)
   window.addEventListener('scroll', handleScroll, { passive: true })
   window.addEventListener('message', handleOAuthMessage)
+  window.addEventListener(OPEN_LOGIN_EVENT, showLoginDialog)
   handleScroll()
 })
 
@@ -848,6 +850,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('focus', handleWindowFocus)
   window.removeEventListener('scroll', handleScroll)
   window.removeEventListener('message', handleOAuthMessage)
+  window.removeEventListener(OPEN_LOGIN_EVENT, showLoginDialog)
 })
 
 init()

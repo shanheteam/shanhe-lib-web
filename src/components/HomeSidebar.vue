@@ -63,9 +63,7 @@
             </div>
           </div>
           <div class="guest-actions">
-            <router-link class="guest-action-item" to="/login">
-              <el-button type="primary" class="login-btn">登录</el-button>
-            </router-link>
+            <el-button type="primary" class="login-btn" @click="openLoginDialog">登录</el-button>
             <el-button class="register-btn" @click="showRegDialog = true">注册</el-button>
           </div>
         </template>
@@ -175,6 +173,7 @@ import { useSettingStore } from '@/store/setting'
 import { getSignedToday, signToday } from '@/api/user'
 import UserAvatar from '@/components/UserAvatar.vue'
 import QuickLinks from '@/components/QuickLinks.vue'
+import { openLoginDialog } from '@/utils/login'
 
 defineOptions({ name: 'HomeSidebar' })
 
