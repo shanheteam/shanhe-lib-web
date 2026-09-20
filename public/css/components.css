@@ -6456,3 +6456,6 @@
   font-weight: 500;
   margin-top: 4px;
 }
+/* 登录弹窗标题（上移）与学号前四位只读 */
+.uc-dialog-title { text-align:center; margin:0 0 14px; font-size:18px; font-weight:600; color:#1f2329; }
+.uc-reg-head { display:inline-flex; align-items:center; justify-content:center; min-width:72px; height:40px; padding:0 10px; border:1px solid #dcdfe6; border-radius:8px; background:#f5f6f7; color:#303133; font-weight:600; letter-spacing:1px; box-sizing:border-box; }

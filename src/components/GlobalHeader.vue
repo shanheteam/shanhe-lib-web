@@ -370,10 +370,10 @@
       class="oauth-login-dialog"
     >
       <div class="oauth-login-body">
+        <h3 class="uc-dialog-title">山河大学统一认证中心</h3>
         <el-tabs v-model="ucTab" class="uc-tabs" stretch>
           <el-tab-pane label="登录" name="login">
             <div class="uc-acct-login">
-              <el-divider>山河大学统一认证中心</el-divider>
               <div class="uc-acct-form">
                 <el-input v-model="ucForm.username" placeholder="学号 / 手机号 / 邮箱" clearable @keyup.enter="submitUcLogin" />
                 <el-input v-model="ucForm.password" type="password" show-password placeholder="密码" @keyup.enter="submitUcLogin" />
@@ -383,11 +383,11 @@
           </el-tab-pane>
           <el-tab-pane label="注册" name="register">
             <div class="uc-reg-form">
-              <el-divider>山河大学统一认证中心注册</el-divider>
               <el-input v-model="regForm.email" placeholder="邮箱" clearable />
               <el-input v-model="regForm.real_name" placeholder="真实姓名（纯中文）" clearable />
               <div class="uc-reg-stud">
-                <el-input v-model="regForm.student_id" placeholder="学号（8位数字）" clearable />
+                <span class="uc-reg-head">{{ ucStudHead }}</span>
+                <el-input v-model="regForm.student_tail" placeholder="后4位" maxlength="4" clearable @keyup.enter="submitReg" />
                 <el-button class="uc-reg-random" :loading="randLoading" @click="randomStudentId">随机学号</el-button>
               </div>
               <el-input v-model="regForm.password" type="password" show-password placeholder="密码（至少8位）" />
@@ -605,11 +605,13 @@ const ucTab: any = ref('login')
 const regForm = ref<{
   email: string
   real_name: string
-  student_id: string
+  student_tail: string
   password: string
   password2: string
-}>({ email: '', real_name: '', student_id: '', password: '', password2: '' })
+}>({ email: '', real_name: '', student_tail: '', password: '', password2: '' })
 const regLoading = ref(false)
+// 学号前四位（年份）固定不可编辑（遵循 user 注册逻辑），仅后四位可改
+const ucStudHead = '2027'
 const randLoading = ref(false)
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const STUDENT_RE = /^\d{8}$/
@@ -623,7 +625,7 @@ const randomStudentId = async () => {
     const res: any = await getAvailableStudentId()
     const sid = res?.data?.student_id
     if (sid) {
-      regForm.value.student_id = String(sid)
+      regForm.value.student_tail = String(sid).slice(-4)
     } else {
       ElMessage.error(res?.data?.message || '获取随机学号失败')
     }
@@ -638,7 +640,9 @@ const randomStudentId = async () => {
 const submitReg = async () => {
   const email = regForm.value.email.trim()
   const realName = regForm.value.real_name.trim()
-  const studentId = regForm.value.student_id.trim()
+  const studentTail = regForm.value.student_tail.trim()
+  if (!/^\d{4}$/.test(studentTail)) { ElMessage.warning('学号后4位必须为数字'); return }
+  const studentId = ucStudHead + studentTail
   const password = regForm.value.password
   const password2 = regForm.value.password2
   if (!EMAIL_RE.test(email)) { ElMessage.warning('请输入正确的邮箱'); return }
@@ -659,7 +663,7 @@ const submitReg = async () => {
     // 填入登录 tab 并切换，方便直接登录
     ucForm.value = { username: email, password }
     ucTab.value = 'login'
-    regForm.value = { email: '', real_name: '', student_id: '', password: '', password2: '' }
+    regForm.value = { email: '', real_name: '', student_tail: '', password: '', password2: '' }
   } catch (e: any) {
     if (e?.status === 429) ElMessage.error('注册过于频繁，请24小时后再试')
     else ElMessage.error(e?.data?.message || e?.message || '注册失败')
