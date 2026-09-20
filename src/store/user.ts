@@ -154,16 +154,18 @@ export const useUserStore = defineStore('user', {
         const list: any[] = res?.data?.oauths || []
         // user-center 对应 custom 类型（type=6）
         const custom = list.find((o: any) => Number(o.type) === OAUTH_TYPE_CUSTOM)
-        if (custom?.client_id && custom?.redirect_url && custom?.authorize_url_base) {
-          // 授权地址形如 .../api/oauth/authorize，登出端点同基址替换为 /logout
-          const logoutBase = String(custom.authorize_url_base).replace(/\/authorize$/, '/logout')
-          if (logoutBase !== custom.authorize_url_base) {
+        if (custom?.client_id && custom?.redirect_url) {
+          // 优先用后端给出的登出地址（ucBase 推导），缺失时兜底按 authorize 基址改写
+          const logoutUrl =
+            String(custom?.logout_url || '') ||
+            String(custom.authorize_url_base || '').replace(/\/authorize$/, '/logout')
+          if (logoutUrl && /^https?:/.test(logoutUrl)) {
             sessionStorage.setItem(SSO_LOGOUT_RETURN_KEY, '1')
             const params = new URLSearchParams({
               client_id: custom.client_id,
               post_logout_redirect_uri: custom.redirect_url,
             })
-            window.location.href = `${logoutBase}?${params.toString()}`
+            window.location.href = `${logoutUrl}?${params.toString()}`
             return
           }
         }
