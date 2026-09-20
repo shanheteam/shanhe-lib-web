@@ -14,6 +14,8 @@ import { permissionsToTree } from '@/utils/permission'
 import { OAUTH_TYPE_CUSTOM, SSO_LOGOUT_RETURN_KEY } from '@/utils/oauth'
 import { STORAGE_KEYS, clearSiteStorage } from '@/utils/storage'
 
+let ssoSilentLastCheck = 0
+
 interface UserState {
   user: Record<string, any>
   token: string
@@ -200,11 +202,13 @@ export const useUserStore = defineStore('user', {
      * 仅在本地未登录时执行，用 sessionStorage 标记去抖，避免每次路由重复请求。
      */
     async silentSsoCheck() {
-      const ssoCheckedKey = 'uc_sso_silent_checked'
+      // 内存短时间去抖（5s），避免 focus/定时频繁触发重复请求；不依赖 sessionStorage，
+      // 因 sessionStorage 跨刷新保留，会导致"刷新首页不再探测、user 登录后 lib 无法自动登录"。
+      if (this.token) return // 已本地登录
+      const now = Date.now()
+      if (now - ssoSilentLastCheck < 5000) return
+      ssoSilentLastCheck = now
       try {
-        if (this.token) return // 已本地登录
-        if (sessionStorage.getItem(ssoCheckedKey)) return // 本次会话已探测过
-        sessionStorage.setItem(ssoCheckedKey, '1')
         const res: any = await ssoLogin()
         if (res?.status === 200 && res?.data?.valid && res?.data?.token && res?.data?.user) {
           this.setUser(res.data.user)

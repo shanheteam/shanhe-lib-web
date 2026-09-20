@@ -841,14 +841,16 @@ const init = async () => {
 // SSO：user-center 登出后 lib 后台静默退出（焦点/可见时探测共享 cookie，60s 定时兜底）
 let ssoProbeTimer: ReturnType<typeof setInterval> | undefined
 let ssoLastProbe = 0
-const ssoFocusedProbe = () => {
+const ssoProbe = () => {
   const now = Date.now()
   if (now - ssoLastProbe < 5000) return // 去抖 5s
   ssoLastProbe = now
-  void userStore.ssoSessionProbe()
+  // 未登录 → 尝试静默建会话（user 登录 → lib 自动登录）；已登录 → 探测共享 cookie 是否已失效（lib 静默登出）
+  if (userStore.token) void userStore.ssoSessionProbe()
+  else void userStore.silentSsoCheck()
 }
 const handleVisibility = () => {
-  if (!document.hidden) ssoFocusedProbe()
+  if (!document.hidden) ssoProbe()
 }
 
 onMounted(() => {
@@ -856,18 +858,18 @@ onMounted(() => {
   window.addEventListener('scroll', handleScroll, { passive: true })
   window.addEventListener('message', handleOAuthMessage)
   window.addEventListener(OPEN_LOGIN_EVENT, showLoginDialog)
-  window.addEventListener('focus', ssoFocusedProbe)
+  window.addEventListener('focus', ssoProbe)
   window.addEventListener('visibilitychange', handleVisibility)
   ssoProbeTimer = setInterval(() => {
-    void userStore.ssoSessionProbe()
+    ssoProbe()
   }, 60000)
-  void userStore.silentSsoCheck() // user-center 已登录时静默建 lib 会话
+  ssoProbe() // user 已登录时静默建 lib 会话；本机已登录时探测共享 cookie
   handleScroll()
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('focus', handleWindowFocus)
-  window.removeEventListener('focus', ssoFocusedProbe)
+  window.removeEventListener('focus', ssoProbe)
   window.removeEventListener('scroll', handleScroll)
   window.removeEventListener('message', handleOAuthMessage)
   window.removeEventListener(OPEN_LOGIN_EVENT, showLoginDialog)
