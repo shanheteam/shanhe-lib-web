@@ -110,7 +110,15 @@ if (componentCss) {
   emitCss('components', componentCss.trimStart())
   console.log(`[build-css] components.css：抽取 ${extracted} 个 .vue 的 <style>，已生成并删除组件内样式块`)
 } else {
-  console.log('[build-css] components.css：无待抽取的 <style>（保留现有产物与 index.html 引用）')
+  // 无新抽取时也把现有基础名产物转为 hash 文件并同步 link：
+  // 基础名 URL 会被 /css/* 的长缓存（immutable 一年）固定，浏览器复用旧缓存导致样式错乱（踩过坑）；
+  // 转为带 hash 的文件名后 URL 随内容变化，强制浏览器拉新。
+  try {
+    emitCss('components', readFileSync(join(OUT_CSS, 'components.css'), 'utf8').trimStart())
+  } catch {
+    // 基础名不存在（全新环境且从未生成过组件样式）则跳过，link 保持基础名
+  }
+  console.log('[build-css] components.css：无待抽取的 <style>（现有产物已转 hash 文件）')
 }
 
 // ===== 2. 公共样式 → app.css（骨架 + tokens + app.scss） =====

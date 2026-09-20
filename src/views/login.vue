@@ -163,22 +163,3 @@ onMounted(async () => {
   }
 })
 </script>
-
-<style scoped>
-.uc-acct-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.uc-acct-submit {
-  width: 100%;
-}
-.oauth-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.oauth-btn {
-  width: 100%;
-}
-</style>
