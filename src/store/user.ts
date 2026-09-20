@@ -137,6 +137,14 @@ export const useUserStore = defineStore('user', {
      */
     async logoutWithSso() {
       await this.logout()
+      // 先经 lib 后端清除 .shanhe.co 共享 cookie，再做 IdP 端会话登出。
+      // 若先跳 IdP /logout 而该端点未清共享 cookie（端点异常/参数不符），
+      // 刷新后 SSO 静默探测会把已登出的会话"带回来"（表现为退出后立即自动登录）。
+      try {
+        await ssoLogout()
+      } catch (e) {
+        console.warn('[OAuth] shared cookie clear failed:', (e as Error)?.message)
+      }
       try {
         const res: any = await getOauths()
         const list: any[] = res?.data?.oauths || []
@@ -157,13 +165,6 @@ export const useUserStore = defineStore('user', {
         }
       } catch (e) {
         console.error('[OAuth] SSO logout failed, fallback to local reload:', e)
-      }
-      // 无法跳转 IdP 登出端点时，先经 lib 后端清除 .shanhe.co 共享 cookie 再刷新，
-      // 否则 SSO 静默探测会把已登出的会话"带回来"（表现为退出无效）。
-      try {
-        await ssoLogout()
-      } catch (e) {
-        console.warn('[OAuth] shared cookie clear failed:', (e as Error)?.message)
       }
       window.location.reload()
     },
