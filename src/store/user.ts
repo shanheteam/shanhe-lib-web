@@ -9,7 +9,7 @@ import {
   register,
   listUserGroup,
 } from '@/api/user'
-import { loginOauth, getOauths, passwordLogin } from '@/api/oauth'
+import { loginOauth, getOauths, passwordLogin, ssoLogin, ssoSession } from '@/api/oauth'
 import { permissionsToTree } from '@/utils/permission'
 import { OAUTH_TYPE_CUSTOM, SSO_LOGOUT_RETURN_KEY } from '@/utils/oauth'
 import { STORAGE_KEYS, clearSiteStorage } from '@/utils/storage'
@@ -194,6 +194,43 @@ export const useUserStore = defineStore('user', {
         await Promise.all([this.getUserPermissions(), this.getUserGroups()])
       }
       return res
+    },
+    /**
+     * 静默 SSO 建会话：user-center 已登录（共享 .shanhe.co cookie 有效）时，自动建立 lib 登录态。
+     * 仅在本地未登录时执行，用 sessionStorage 标记去抖，避免每次路由重复请求。
+     */
+    async silentSsoCheck() {
+      const ssoCheckedKey = 'uc_sso_silent_checked'
+      try {
+        if (this.token) return // 已本地登录
+        if (sessionStorage.getItem(ssoCheckedKey)) return // 本次会话已探测过
+        sessionStorage.setItem(ssoCheckedKey, '1')
+        const res: any = await ssoLogin()
+        if (res?.status === 200 && res?.data?.valid && res?.data?.token && res?.data?.user) {
+          this.setUser(res.data.user)
+          this.setToken(res.data.token)
+          await Promise.all([this.getUserPermissions(), this.getUserGroups()])
+        }
+      } catch (e) {
+        // 静默：无 cookie / 校验失败 / 未绑定均不打扰
+        console.warn('[SSO] silent login skipped:', (e as Error)?.message)
+      }
+    },
+    /**
+     * SSO 会话探测：本地上有登录态时，周期/焦点时探测共享 cookie 是否仍有效；
+     * user-center 已登出（cookie 失效）则后台静默退出，不跳转不提示。
+     */
+    async ssoSessionProbe() {
+      if (!this.token) return
+      try {
+        const res: any = await ssoSession()
+        if (res?.status === 200 && res?.data?.valid === false) {
+          this.clearState()
+        }
+      } catch (e) {
+        // 网络异常不登出，避免误踢
+        console.warn('[SSO] session probe failed:', (e as Error)?.message)
+      }
     },
     async getUserPermissions() {
       const res: any = await getUserPermissions()
