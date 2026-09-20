@@ -370,25 +370,25 @@
       class="oauth-login-dialog"
     >
       <div class="oauth-login-body">
-        <div class="uc-acct-login">
-          <el-divider>山河大学账号密码登录</el-divider>
-          <div class="uc-acct-form">
-            <el-input v-model="ucForm.username" placeholder="学号 / 手机号 / 邮箱" clearable @keyup.enter="submitUcLogin" />
-            <el-input v-model="ucForm.password" type="password" show-password placeholder="密码" @keyup.enter="submitUcLogin" />
-            <el-button type="primary" class="uc-acct-submit" :loading="ucLoginLoading" @click="submitUcLogin">登录</el-button>
-          </div>
-        </div>
-        <div v-if="regMode" class="uc-reg-wrap">
-          <el-divider>山河大学账号注册</el-divider>
-          <iframe :src="ucRegisterUrl" class="uc-reg-iframe" title="山河大学账号注册" />
-          <div class="uc-reg-row">
-            <el-button class="uc-reg-back" size="small" @click="backToLogin">返回登录</el-button>
-          </div>
-        </div>
-        <div v-else class="uc-reg-switch">
-          <span>还没有山河大学账号？</span>
-          <el-button type="primary" link @click="switchToRegister">立即注册</el-button>
-        </div>
+        <el-tabs v-model="ucTab" class="uc-tabs" stretch>
+          <el-tab-pane label="登录" name="login">
+            <div class="uc-acct-login">
+              <el-divider>山河大学统一认证中心</el-divider>
+              <div class="uc-acct-form">
+                <el-input v-model="ucForm.username" placeholder="学号 / 手机号 / 邮箱" clearable @keyup.enter="submitUcLogin" />
+                <el-input v-model="ucForm.password" type="password" show-password placeholder="密码" @keyup.enter="submitUcLogin" />
+                <el-button type="primary" class="uc-acct-submit" :loading="ucLoginLoading" @click="submitUcLogin">登录</el-button>
+              </div>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="注册" name="register">
+            <div class="uc-reg-ssopro">
+              <el-icon class="uc-reg-ico"><User /></el-icon>
+              <p class="uc-reg-tip">还没有山河大学统一认证账号？前往统一认证中心注册，注册成功后会自动登录本站。</p>
+              <el-button type="primary" class="uc-reg-go" @click="switchToRegister">前往统一认证中心</el-button>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
       </div>
     </el-dialog>
 
@@ -590,30 +590,13 @@ watch(
 )
 
 // 山河大学（user-center）账号密码直接登录：调用 lib 后端 password-login，不经过授权页
-// 弹窗内嵌入 user-center 注册页（同框转 user 注册）。注册成功会写入 .shanhe.co 共享 cookie，
-// 由 ssoProbe 探测到后自动登录并关闭弹窗。
+// 单点注册：整页跳转到 user-center 注册页（不使用 iframe）。注册成功后 user 会写入 .shanhe.co
+// 共享 cookie，回到 lib 时由 ssoProbe（0432 入口）探测到并自动登录。
+const ucTab: any = ref('login')
 const ucRegisterUrl = 'https://user.shanhe.co/register'
-const regMode = ref(false)
-let regTimer: any = null
 const switchToRegister = () => {
-  regMode.value = true
-  if (regTimer) clearInterval(regTimer)
-  regTimer = setInterval(() => {
-    ssoProbe()
-    const logged = (userStore as any).getToken || (userStore as any).token
-    if (logged) {
-      if (regTimer) clearInterval(regTimer)
-      regTimer = null
-      regMode.value = false
-      loginDialogVisible.value = false
-      ElMessage.success('注册成功，已自动登录')
-    }
-  }, 2000)
-}
-const backToLogin = () => {
-  regMode.value = false
-  if (regTimer) clearInterval(regTimer)
-  regTimer = null
+  window.location.href = ucRegisterUrl
+  return
 }
 
 const submitUcLogin = async () => {
@@ -891,7 +874,6 @@ onBeforeUnmount(() => {
   window.removeEventListener(OPEN_LOGIN_EVENT, showLoginDialog)
   window.removeEventListener('visibilitychange', handleVisibility)
   if (ssoProbeTimer) clearInterval(ssoProbeTimer)
-  if (regTimer) clearInterval(regTimer)
 })
 
 init()
