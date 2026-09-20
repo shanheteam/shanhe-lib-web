@@ -371,6 +371,14 @@
     >
       <div class="oauth-login-body">
         <form-login :redirect="loginRedirect"></form-login>
+        <div class="uc-acct-login">
+          <el-divider>山河大学账号密码登录</el-divider>
+          <div class="uc-acct-form">
+            <el-input v-model="ucForm.username" placeholder="学号 / 手机号 / 邮箱" clearable @keyup.enter="submitUcLogin" />
+            <el-input v-model="ucForm.password" type="password" show-password placeholder="密码" @keyup.enter="submitUcLogin" />
+            <el-button type="primary" class="uc-acct-submit" :loading="ucLoginLoading" @click="submitUcLogin">登录</el-button>
+          </div>
+        </div>
         <div v-if="oauths.length > 0" class="oauth-login-main">
           <el-divider>其他登录方式</el-divider>
           <div class="oauth-list">
@@ -459,6 +467,7 @@ import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
 import { getOauths } from '@/api/oauth'
+import { passwordLogin } from '@/api/oauth'
 import { OAUTH_TYPE_CUSTOM } from '@/utils/oauth'
 
 defineOptions({ name: 'GlobalHeader' })
@@ -501,6 +510,8 @@ const loginDialogVisible = ref(false)
 const oauths = ref<any[]>([])
 const oauthLoading = ref<number>(0)
 const loginRedirect = computed(() => route.fullPath || '/')
+const ucLoginLoading = ref(false)
+const ucForm = ref<{ username: string; password: string }>({ username: '', password: '' })
 
 const searchPlaceholder = computed(() =>
   search.value.type === 1 ? '搜索文章...' : '搜索文档...',
@@ -586,6 +597,36 @@ watch(
     if (id > 0) loginDialogVisible.value = false
   },
 )
+
+// 山河大学（user-center）账号密码直接登录：调用 lib 后端 password-login，不经过授权页
+const submitUcLogin = async () => {
+  const username = ucForm.value.username.trim()
+  const password = ucForm.value.password
+  if (!username || !password) {
+    ElMessage.warning('请输入山河大学账号和密码')
+    return
+  }
+  ucLoginLoading.value = true
+  try {
+    const res: any = await passwordLogin({ username, password })
+    if (res?.data?.token && res?.data?.user) {
+      ucForm.value = { username: '', password: '' }
+      loginDialogVisible.value = false
+      ElMessage.success('登录成功')
+      userStore.setUser(res.data.user)
+      userStore.setToken(res.data.token)
+      userStore.getUserPermissions()
+      userStore.getUserGroups()
+    } else {
+      ElMessage.error(res?.data?.message || res?.message || '登录失败')
+    }
+  } catch (e: any) {
+    console.error('[OAuth] password login error:', e)
+    ElMessage.error(e?.data?.message || e?.message || '登录异常')
+  } finally {
+    ucLoginLoading.value = false
+  }
+}
 
 // 授权码 + PKCE：打开弹窗到 provider 授权页，回调后由 lib 换 token
 const handleOAuthLogin = async (oauth: any) => {
@@ -811,3 +852,38 @@ onBeforeUnmount(() => {
 
 init()
 </script>
+<style>
+/* 山河大学账号密码登录表单 */
+.oauth-login-body .uc-acct-login {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 8px;
+}
+.uc-acct-login .el-divider {
+  width: 100%;
+  margin: 20px 0;
+}
+.uc-acct-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.uc-acct-form .el-input__wrapper {
+  border-radius: 24px;
+}
+.uc-acct-submit {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 4px;
+}
+</style>
+
+

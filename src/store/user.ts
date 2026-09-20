@@ -9,7 +9,7 @@ import {
   register,
   listUserGroup,
 } from '@/api/user'
-import { loginOauth, getOauths } from '@/api/oauth'
+import { loginOauth, getOauths, passwordLogin } from '@/api/oauth'
 import { permissionsToTree } from '@/utils/permission'
 import { OAUTH_TYPE_CUSTOM, SSO_LOGOUT_RETURN_KEY } from '@/utils/oauth'
 import { STORAGE_KEYS, clearSiteStorage } from '@/utils/storage'
@@ -181,6 +181,19 @@ export const useUserStore = defineStore('user', {
         console.error('[OAuth] SSO logout failed, fallback to local reload:', e)
       }
       window.location.reload()
+    },
+    async loginByPassword(loginInfo: any) {
+      const res: any = await passwordLogin(loginInfo)
+      if (res.status !== 200) {
+        ElMessage({ type: 'error', message: res.data?.message || res.message || '登录失败' })
+        return res
+      }
+      if (res.data.token && res.data.user) {
+        this.setUser(res.data.user)
+        this.setToken(res.data.token)
+        await Promise.all([this.getUserPermissions(), this.getUserGroups()])
+      }
+      return res
     },
     async getUserPermissions() {
       const res: any = await getUserPermissions()
