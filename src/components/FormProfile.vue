@@ -2,25 +2,6 @@
   <!-- 更新当前用户自身资料 -->
   <div class="com-form-profile">
     <el-form ref="profileForm" label-width="80px" :model="profile">
-      <el-form-item label="真实姓名" prop="realname">
-        <el-input v-model="profile.realname" clearable></el-input>
-      </el-form-item>
-      <el-form-item label="身份证号">
-        <el-input v-model="profile.identity" clearable></el-input>
-      </el-form-item>
-      <el-form-item
-        label="联系邮箱"
-        prop="email"
-        :rules="[
-          { required: true, message: '请输入电子邮箱', trigger: 'blur' },
-          { type: 'email', message: '请输入正确的电子邮箱', trigger: 'blur' },
-        ]"
-      >
-        <el-input v-model="profile.email" clearable></el-input>
-      </el-form-item>
-      <el-form-item label="联系电话">
-        <el-input v-model="profile.mobile" clearable></el-input>
-      </el-form-item>
       <el-form-item label="联系地址">
         <el-input
           v-model="profile.address"
@@ -65,7 +46,11 @@ const profile = ref<Record<string, any>>({ ...user.value })
 const setProfile = () => {
   profileForm.value.validate(async (valid: boolean) => {
     if (valid) {
-      const res: any = await userStore.updateUserProfile(profile.value)
+      // 修改资料仅允许修改联系地址与个性签名
+      const res: any = await userStore.updateUserProfile({
+        address: profile.value.address,
+        signature: profile.value.signature,
+      })
       if (res.status === 200) {
         emit('success', res)
       }
