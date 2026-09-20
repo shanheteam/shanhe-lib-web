@@ -1251,6 +1251,16 @@
   margin-left: 10px;
 }
 
+.com-form-userinfo .field-with-edit {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+.com-form-userinfo .field-with-edit .el-input {
+  flex: 1;
+}
+
 @media screen and (max-width: 768px) {
   .com-form-userinfo .el-descriptions-item__container {
     display: block;

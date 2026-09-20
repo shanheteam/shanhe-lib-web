@@ -45,16 +45,25 @@
       <el-tab-pane label="个人资料" name="profile">
         <el-form label-width="80px">
           <el-form-item label="真实姓名">
-            <el-input v-model="user.realname" disabled></el-input>
+            <div class="field-with-edit">
+              <el-input v-model="user.realname" disabled></el-input>
+              <el-button link type="primary" tag="a" href="https://user.shanhe.co/profile" target="_blank">修改</el-button>
+            </div>
           </el-form-item>
-          <el-form-item label="身份证号">
-            <el-input v-model="user.identity" disabled></el-input>
+          <el-form-item label="学号">
+            <el-input :model-value="user.student_id || '-'" disabled></el-input>
           </el-form-item>
           <el-form-item label="联系邮箱">
-            <el-input v-model="user.email" disabled></el-input>
+            <div class="field-with-edit">
+              <el-input v-model="user.email" disabled></el-input>
+              <el-button link type="primary" tag="a" href="https://user.shanhe.co/profile" target="_blank">修改</el-button>
+            </div>
           </el-form-item>
           <el-form-item label="联系电话">
-            <el-input v-model="user.mobile" disabled></el-input>
+            <div class="field-with-edit">
+              <el-input v-model="user.mobile" disabled></el-input>
+              <el-button link type="primary" tag="a" href="https://user.shanhe.co/profile" target="_blank">修改</el-button>
+            </div>
           </el-form-item>
           <el-form-item label="联系地址">
             <el-input
