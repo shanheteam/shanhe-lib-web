@@ -70,6 +70,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useSettingStore } from '@/store/setting'
+import { DEFAULT_CREDIT_NAME } from '@/utils/credit'
 import { formatBytes, getIcon } from '@/utils/utils'
 
 defineOptions({ name: 'DocumentCard' })
@@ -84,7 +85,7 @@ const settingStore = useSettingStore()
 const settings = computed(() => settingStore.settings)
 
 const creditName = computed(() => {
-  return (settings.value.system && settings.value.system.credit_name) || '魔豆'
+  return (settings.value.system && settings.value.system.credit_name) || DEFAULT_CREDIT_NAME
 })
 const pageCount = computed(() => {
   return props.document.pages || '-'

@@ -21,7 +21,7 @@
         <div class="doc-desc">{{ doc.description }}</div>
         <div class="doc-info">
           <span
-            >{{ doc.price || 0 }} {{ settings.system.credit_name || '魔豆' }} |
+            >{{ doc.price || 0 }} {{ creditName(settings) }} |
             {{ doc.pages || '-' }} 页 |
             {{ formatBytes(doc.size) }}
             <span class="hidden-xs-only"
@@ -47,6 +47,7 @@ import { computed } from 'vue'
 import type { PropType } from 'vue'
 import { formatBytes, formatRelativeTime } from '@/utils/utils'
 import { useSettingStore } from '@/store/setting'
+import { creditName } from '@/utils/credit'
 
 defineOptions({ name: 'SearchResultDocument' })
 defineProps({

@@ -165,6 +165,7 @@ import { getSignedToday, signToday } from '@/api/user'
 import UserAvatar from '@/components/UserAvatar.vue'
 import QuickLinks from '@/components/QuickLinks.vue'
 import { openLoginDialog } from '@/utils/login'
+import { DEFAULT_CREDIT_NAME } from '@/utils/credit'
 
 defineOptions({ name: 'HomeSidebar' })
 
@@ -186,7 +187,7 @@ const settingStore = useSettingStore()
 
 const user = computed(() => userStore.currentUser)
 const creditName = computed(
-  () => settingStore.settings.system?.credit_name || '积分'
+  () => settingStore.settings.system?.credit_name || DEFAULT_CREDIT_NAME
 )
 const siteName = computed(
   () => settingStore.settings.system?.sitename || settingStore.settings.system?.title || ''

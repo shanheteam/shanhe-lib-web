@@ -31,7 +31,7 @@
               <span class="el-link el-link--danger">{{
                 settings.download.max_price || 0
               }}</span>
-              {{ settings.system.credit_name || '魔豆' }}的文档
+              {{ creditName(settings) }}的文档
             </div>
             <div v-else v-safe-html="settings.download.code_tip"></div>
           </template>
@@ -56,7 +56,7 @@
               <span class="el-link el-link--danger">{{
                 document.price || 0
               }}</span>
-              {{ settings.system.credit_name || '魔豆' }}
+              {{ creditName(settings) }}
             </div>
           </div>
         </div>
@@ -99,6 +99,7 @@ import { ElMessage, type FormInstance } from 'element-plus'
 import { Download } from '@element-plus/icons-vue'
 import * as documentApi from '@/api/document'
 import { useSettingStore } from '@/store/setting'
+import { creditName } from '@/utils/credit'
 
 const props = defineProps<{
   document: { id: number; title?: string; price?: number }

@@ -92,7 +92,7 @@
                   <el-form-item prop="price">
                     <template #label>
                       <span>{{
-                        `默认售价（${settings.system.credit_name || '魔豆'}）`
+                        `默认售价（${creditName(settings)}）`
                       }}</span>
                       <ToolTip
                         content="如果您不想为每个文档单独设置售价，可以在此处设置默认售价"
@@ -331,7 +331,7 @@
                 </el-table-column>
 
                 <el-table-column
-                  :label="`💰 售价(${settings.system.credit_name || '魔豆'})`"
+                  :label="`💰 售价(${creditName(settings)})`"
                   width="130"
                 >
                   <template #default="{ row }">
@@ -519,6 +519,7 @@ import { useUserStore } from '@/store/user'
 import { useCategoryStore } from '@/store/category'
 import { useSettingStore } from '@/store/setting'
 import { formatBytes } from '@/utils/utils'
+import { creditName } from '@/utils/credit'
 import { createDocument as createDocumentApi } from '@/api/document'
 import {
   uploadDocument as uploadDocumentApi,

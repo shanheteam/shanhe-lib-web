@@ -44,7 +44,7 @@
         </el-col>
         <el-col :span="12" :xs="24">
           <el-form-item
-            :label="`价格(${settings.system.credit_name || '魔豆'})`"
+            :label="`价格(${creditName(settings)})`"
             prop="price"
           >
             <el-input-number
@@ -163,6 +163,7 @@ import { ElMessage } from 'element-plus'
 import { updateDocument } from '@/api/document'
 import { documentStatusOptions } from '@/utils/enum'
 import { useSettingStore } from '@/store/setting'
+import { creditName } from '@/utils/credit'
 
 defineOptions({ name: 'FormUpdateDocument' })
 const props = defineProps({

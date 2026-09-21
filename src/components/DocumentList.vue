@@ -36,7 +36,7 @@
             <div class="doc-info">
               <span>
                 {{ doc.price || 0 }}
-                {{ settings.system.credit_name || '魔豆' }}
+                {{ creditName(settings) }}
                 <span class="line">|</span> {{ doc.pages || '-' }} 页
                 <span class="line">|</span>
                 {{ formatBytes(doc.size) || '-' }}
@@ -68,6 +68,7 @@
 import { computed } from 'vue'
 import type { PropType } from 'vue'
 import { useSettingStore } from '@/store/setting'
+import { creditName } from '@/utils/credit'
 import { formatBytes, formatRelativeTime, getIcon } from '@/utils/utils'
 
 defineOptions({ name: 'DocumentList' })

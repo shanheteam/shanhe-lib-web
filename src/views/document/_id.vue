@@ -534,7 +534,7 @@
             <el-button-group class="float-right">
               <el-button type="primary" class="btn-coin">
                 {{ document.price || 0 }}
-                <span>{{ settings.system.credit_name || '魔豆' }}</span>
+                <span>{{ creditName(settings) }}</span>
               </el-button>
               <el-button
                 type="primary"
@@ -628,6 +628,7 @@ import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
 import { assetUrl } from '@/utils/asset'
 import { setPageMeta } from '@/router'
+import { creditName } from '@/utils/credit'
 import FormDownload from '@/components/FormDownload.vue'
 import CommentList from '@/components/CommentList.vue'
 

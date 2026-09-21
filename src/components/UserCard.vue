@@ -27,7 +27,7 @@
           >
         </el-col>
         <el-col :span="8"
-          ><div>{{ settings.system.credit_name || '魔豆' }}</div>
+          ><div>{{ creditName(settings) }}</div>
           <router-link
             class="el-link el-link--primary"
             :to="'/user/' + user.id"
@@ -73,6 +73,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useSettingStore } from '@/store/setting'
+import { creditName } from '@/utils/credit'
 import { listArticle } from '@/api/article'
 import { listDocument } from '@/api/document'
 

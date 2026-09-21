@@ -475,6 +475,7 @@ import { getSignedToday as getSignedTodayApi, signToday as signTodayApi } from '
 import { getAdvertisementByPosition } from '@/api/advertisement'
 import { advertisementPositions } from '@/utils/enum'
 import { categoryToTrees, requireLogin } from '@/utils/utils'
+import { creditName } from '@/utils/credit'
 import { generateRandomString, generateCodeChallenge, savePkceParams } from '@/utils/pkce'
 import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
@@ -838,7 +839,7 @@ const signToday = async () => {
     userStore.getUser()
     ElMessage.success(
       `签到成功，获得 ${newSign.award || 0} ${
-        settings.value.system.credit_name || '魔豆'
+        creditName(settings.value)
       }奖励`,
     )
   } else {
