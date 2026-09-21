@@ -290,7 +290,7 @@ import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
 import { useUserStore } from '@/store/user'
 import { isMobile } from '@/utils/responsive'
-import { setPageMeta } from '@/router'
+import { setPageMeta, toCanonicalUrl, toAbsoluteUrl, upsertJsonLd } from '@/router'
 import CommentList from '@/components/CommentList.vue'
 
 const route = useRoute()
@@ -394,12 +394,35 @@ async function getArticle() {
   }
   breadcrumbs.value = crumbs
   article.value = articleData
-  // SEURL：文章标题与描述
+  // SEO：设置文章标题、描述、规范化 URL，并输出 NewsArticle 结构化数据
   const sitename = settingStore.settings?.system?.sitename || '图书馆 - 山河大学'
+  const canonicalUrl = toCanonicalUrl(`/article/${articleData.identifier}`)
   setPageMeta(
     `${articleData.title} - ${sitename}`,
     articleData.description || articleData.summary || '',
+    articleData.keywords,
+    undefined,
+    canonicalUrl,
   )
+  // NewsArticle 结构化数据（文章无独立封面，分享图复用站点 logo 绝对 URL）
+  upsertJsonLd(`article:${articleData.identifier}`, {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: articleData.title,
+    description: articleData.description || articleData.summary || undefined,
+    datePublished: articleData.created_at || undefined,
+    dateModified: articleData.updated_at || articleData.created_at || undefined,
+    author: {
+      '@type': 'Person',
+      name:
+        (articleData.user && (articleData.user.realname || articleData.user.nickname)) ||
+        sitename,
+    },
+    image: toAbsoluteUrl(settingStore.settings?.system?.logo || '/static/images/logo.png'),
+    url: canonicalUrl,
+    mainEntityOfPage: canonicalUrl,
+    publisher: { '@type': 'Organization', name: sitename },
+  })
   getRelatedArticles()
 
   nextTick(() => {

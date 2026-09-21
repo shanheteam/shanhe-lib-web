@@ -1,5 +1,15 @@
 User-agent: *
 Allow: /
 
+# 后台/登录/个人中心等页面禁止收录（前端路由 meta 已设 noindex，这里作兜底）
+Disallow: /admin
+Disallow: /login
+Disallow: /oauth
+Disallow: /me
+Disallow: /user
+Disallow: /search
+Disallow: /upload
+Disallow: /post
+
 # sitemap 已迁移至 OSS（后台"更新站点地图"自动上传，详见 config.controller updateSitemap）
 Sitemap: https://att-lib.shanhe.co/sitemap/sitemap.xml

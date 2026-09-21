@@ -4,7 +4,7 @@ import { useSettingStore } from '@/store/setting'
 import { requireLogin } from '@/utils/utils'
 
 // 相对资源路径转绝对 URL（社交平台抓取 Open Graph 图片要求绝对地址）
-function toAbsoluteUrl(p?: string | null): string {
+export function toAbsoluteUrl(p?: string | null): string {
   if (!p) return ''
   if (/^(https?:|data:|blob:)/i.test(p)) return p
   return window.location.origin + (p.startsWith('/') ? p : '/' + p)
@@ -17,6 +17,7 @@ export function setPageMeta(
   description?: string,
   keywords?: string,
   ogImage?: string,
+  ogUrl?: string,
 ) {
   if (typeof document === 'undefined') return
   document.title = title
@@ -60,6 +61,59 @@ export function setPageMeta(
     setProp('og:image', ogImage)
     setMeta('twitter:image', ogImage)
   }
+  if (ogUrl) setProp('og:url', ogUrl)
+}
+
+// 生成规范 URL（canonical）：origin + path，去掉 query/hash 与多余尾斜杠（首页保留根 "/"）
+export function toCanonicalUrl(path: string): string {
+  const clean = path.replace(/[?#].*$/, '')
+  return window.location.origin + (clean === '/' ? '/' : clean.replace(/\/+$/, ''))
+}
+
+// upsert <link rel="canonical">；url 为空时移除该标签（用于 noindex 页清空残留）
+export function setCanonical(url?: string) {
+  if (typeof document === 'undefined') return
+  const href = url || ''
+  let el = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
+  if (!href) {
+    if (el) el.remove()
+    return
+  }
+  if (!el) {
+    el = document.createElement('link')
+    el.rel = 'canonical'
+    document.head.appendChild(el)
+  }
+  el.setAttribute('href', href)
+}
+
+// 按 key 前缀移除已注入的 JSON-LD 节点（data-type="ldjson"）
+export function removeJsonLd(keyPrefix: string) {
+  if (typeof document === 'undefined') return
+  document
+    .querySelectorAll<HTMLScriptElement>('script[data-type="ldjson"]')
+    .forEach((el) => {
+      if ((el.getAttribute('data-key') || '').startsWith(keyPrefix)) el.remove()
+    })
+}
+
+// 注入 JSON-LD 结构化数据（按 data-key 去重）；data 为 null 时移除该 key
+export function upsertJsonLd(key: string, data: object | null) {
+  if (typeof document === 'undefined') return
+  const selector = `script[data-type="ldjson"][data-key="${key}"]`
+  let el = document.querySelector<HTMLScriptElement>(selector)
+  if (!data) {
+    if (el) el.remove()
+    return
+  }
+  if (!el) {
+    el = document.createElement('script')
+    el.setAttribute('type', 'application/ld+json')
+    el.setAttribute('data-type', 'ldjson')
+    el.setAttribute('data-key', key)
+    document.head.appendChild(el)
+  }
+  el.textContent = JSON.stringify(data)
 }
 
 const routes: RouteRecordRaw[] = [
@@ -93,13 +147,13 @@ const routes: RouteRecordRaw[] = [
     path: '/upload',
     name: 'upload',
     component: () => import('@/views/upload.vue'),
-    meta: { title: '上传文档' },
+    meta: { title: '上传文档', noindex: true },
   },
   {
     path: '/post',
     name: 'post',
     component: () => import('@/views/post.vue'),
-    meta: { title: '发布文章' },
+    meta: { title: '发布文章', noindex: true },
   },
   {
     path: '/search',
@@ -208,7 +262,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'user/vip', name: 'admin-user-vip', component: () => import('@/views/admin/user/vip.vue') },
     ],
   },
-  { path: '/:pathMatch(.*)*', name: '404', component: () => import('@/views/404.vue') },
+  { path: '/:pathMatch(.*)*', name: '404', component: () => import('@/views/404.vue'), meta: { noindex: true } },
 ]
 
 const router = createRouter({
@@ -304,7 +358,31 @@ router.afterEach((to) => {
   }
   ogSiteName.setAttribute('content', sitename)
   const logo = settings?.system?.logo || '/static/images/logo.png'
-  setPageMeta(title, meta.description || sitename, undefined, toAbsoluteUrl(logo))
+  // canonical 与 JSON-LD：可索引页注入规范 URL，noindex 页清空残留触发下一路由再建
+  const canonicalUrl = meta.noindex ? '' : toCanonicalUrl(to.path)
+  setCanonical(canonicalUrl)
+  // 文章详情 schema 由组件注入，这里统一清空（避免文章间跳转残留旧 article:* 节点）
+  removeJsonLd('article')
+  // 首页注入站点 WebSite + SearchAction 结构化数据
+  if (to.path === '/') {
+    upsertJsonLd('site', {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: sitename,
+      url: window.location.origin,
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${window.location.origin}/search?wd={search_term_string}`,
+        },
+        'query-input': 'required name=search_term_string',
+      },
+    })
+  } else {
+    removeJsonLd('site')
+  }
+  setPageMeta(title, meta.description || sitename, undefined, toAbsoluteUrl(logo), canonicalUrl)
 })
 
 export default router
