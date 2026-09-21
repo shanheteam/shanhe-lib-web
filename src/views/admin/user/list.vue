@@ -168,7 +168,7 @@ async function fetchList() {
         item.realname || item.user?.realname || '未命名用户',
         `/user/${item.id}`)
       const groupsList = (item.group_id || []).map((id: any) => {
-        const group = groups.value.find((g) => g.id === id)
+        const group = groups.value.find((g) => Number(g.id) === Number(id))
         return group ? group.title : ''
       })
       item.group = groupsList.join(', ')
