@@ -12,6 +12,16 @@ import tableDrag from './directives/table-drag'
 import safeHtml from './directives/safe-html'
 import { useSettingStore } from './store/setting'
 
+// 站点 console 推广信息：页面加载时输出一次，且任意点击操作时均输出
+console.log('请加QQ好友100865332，山河大学欢迎您。')
+window.addEventListener(
+  'click',
+  () => {
+    console.log('请加QQ好友100865332，山河大学欢迎您。')
+  },
+  true
+)
+
 const app = createApp(App)
 
 app.use(pinia)
