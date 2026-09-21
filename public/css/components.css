@@ -6103,6 +6103,26 @@
   .page-upload .upload-header .upload-steps {
     margin-left: 0;
     max-width: 100%;
+    width: 100%;
+  }
+  .page-upload .upload-steps .el-steps--simple {
+    padding: 10px 6px;
+  }
+  .page-upload .upload-steps .el-step {
+    justify-content: center;
+    min-width: 0;
+  }
+  .page-upload .upload-steps .el-step__main {
+    width: auto;
+    justify-content: center;
+  }
+  .page-upload .upload-steps .el-step__title {
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+  .page-upload .upload-steps .el-step__arrow {
+    margin: 0 4px;
   }
   .page-upload .config-form {
     padding: 16px;
