@@ -10,7 +10,8 @@ function toAbsoluteUrl(p?: string | null): string {
   return window.location.origin + (p.startsWith('/') ? p : '/' + p)
 }
 
-// 全局 SEURL meta 工具：设置页面标题与 description（供路由守卫及各详情页复用）
+// 全局 SEO meta 工具：设置页面标题、描述、关键词及社交分享标签（供路由守卫及各详情页复用）
+// 全动态：SEO 元信息不再写死在 index.html，这里负责保证 name/property 标签"不存在则创建"，避免依赖静态初始标签
 export function setPageMeta(
   title: string,
   description?: string,
@@ -28,9 +29,6 @@ export function setPageMeta(
     }
     el.setAttribute('content', content)
   }
-  if (description) setMeta('description', description)
-  if (keywords) setMeta('keywords', keywords)
-  // 同步 Open Graph / Twitter 标题与描述
   const setProp = (property: string, content: string) => {
     let el = document.querySelector<HTMLMetaElement>(`meta[property="${property}"]`)
     if (!el) {
@@ -40,18 +38,27 @@ export function setPageMeta(
     }
     el.setAttribute('content', content)
   }
+
+  // 固定社交身份标签（og 用 property、twitter 用 name），随每次 setPageMeta 保证存在
+  setProp('og:locale', 'zh_CN')
+  setProp('og:type', 'website')
+  setMeta('twitter:card', 'summary')
+
+  // 常规 SEO 标签
+  if (description) setMeta('description', description)
+  if (keywords) setMeta('keywords', keywords)
+
+  // 标题/描述同步到 Open Graph 与 Twitter
   setProp('og:title', title)
-  setProp('twitter:title', title)
+  setMeta('twitter:title', title)
   if (description) {
     setProp('og:description', description)
-    const tw = document.querySelector<HTMLMetaElement>('meta[name="twitter:description"]')
-    if (tw) tw.setAttribute('content', description)
+    setMeta('twitter:description', description)
   }
-  // 详情页未传 ogImage 时保持路由守卫已设置的站点 logo，避免回退为相对路径
+  // 分享图：统一绝对 URL（由调用方经 toAbsoluteUrl 转换）
   if (ogImage) {
     setProp('og:image', ogImage)
-    const twImg = document.querySelector<HTMLMetaElement>('meta[name="twitter:image"]')
-    if (twImg) twImg.setAttribute('content', ogImage)
+    setMeta('twitter:image', ogImage)
   }
 }
 
@@ -287,9 +294,15 @@ router.afterEach((to) => {
   }
 
   const title = meta.title ? `${meta.title} - ${sitename}` : sitename
-  // Open Graph 站点名与分享图：站点名来自后台配置，分享图统一为绝对 URL
-  const ogSiteName = document.querySelector<HTMLMetaElement>('meta[property="og:site_name"]')
-  if (ogSiteName) ogSiteName.setAttribute('content', sitename)
+  // Open Graph 站点名与分享图：站点名来自后台配置，分享图统一为绝对 URL。
+  // index.html 已不再静态写入 og:site_name，故"不存在则创建"
+  let ogSiteName = document.querySelector<HTMLMetaElement>('meta[property="og:site_name"]')
+  if (!ogSiteName) {
+    ogSiteName = document.createElement('meta')
+    ogSiteName.setAttribute('property', 'og:site_name')
+    document.head.appendChild(ogSiteName)
+  }
+  ogSiteName.setAttribute('content', sitename)
   const logo = settings?.system?.logo || '/static/images/logo.png'
   setPageMeta(title, meta.description || sitename, undefined, toAbsoluteUrl(logo))
 })

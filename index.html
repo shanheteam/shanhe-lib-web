@@ -8,23 +8,9 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
     />
     <meta name="format-detection" content="telephone=no" />
-    <meta name="description" content="图书馆 - 山河大学：提供文库资料、文章资讯的在线阅读与下载服务。" />
-    <!-- Open Graph -->
-    <meta property="og:site_name" content="图书馆 - 山河大学" />
-    <meta property="og:locale" content="zh_CN" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="图书馆 - 山河大学" />
-    <meta property="og:description" content="图书馆 - 山河大学：提供文库资料、文章资讯的在线阅读与下载服务。" />
-    <meta
-      property="og:image"
-      content="/static/images/logo.png"
-    />
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="图书馆 - 山河大学" />
-    <meta name="twitter:description" content="图书馆 - 山河大学：提供文库资料、文章资讯的在线阅读与下载服务。" />
-    <meta name="twitter:image" content="/static/images/logo.png" />
-    <title>图书馆 - 山河大学</title>
+    <!-- SEO 元信息全动态化：title/description/keywords/robots/canonical 及 Open Graph、Twitter 等标签均由
+         router/index.ts 的 afterEach 守卫与 setPageMeta 在运行时统一注入，不再在此写死，避免与后台站点
+         配置（sitename/logo 等）不一致；也保证社交分享图使用后台配置的绝对 URL -->
     <!-- 提前建立与 API 域名的连接，省去 settings 等首屏请求的 DNS/TCP/TLS 往返 -->
     <link rel="preconnect" href="https://apilib.shanhe.co" crossorigin />
     <!-- 全局样式（已从 src/assets 抽取合并，文件名带内容 hash；顺序：图标字体 → 依赖/外部样式 → 令牌+全局 → 组件样式） -->
