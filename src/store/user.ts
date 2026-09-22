@@ -7,7 +7,7 @@ import {
   getUserPermissions,
   listUserGroup,
 } from '@/api/user'
-import { loginOauth, getOauths, passwordLogin, ssoLogin, ssoSession, ssoLogout } from '@/api/oauth'
+import { loginOauth, getOauths, ssoLogin, ssoSession, ssoLogout } from '@/api/oauth'
 import { permissionsToTree } from '@/utils/permission'
 import { OAUTH_TYPE_CUSTOM, SSO_LOGOUT_RETURN_KEY } from '@/utils/oauth'
 import { STORAGE_KEYS, clearSiteStorage } from '@/utils/storage'
@@ -191,19 +191,6 @@ export const useUserStore = defineStore('user', {
         console.error('[OAuth] SSO logout failed, fallback to local reload:', e)
       }
       window.location.reload()
-    },
-    async loginByPassword(loginInfo: any) {
-      const res: any = await passwordLogin(loginInfo)
-      if (res.status !== 200) {
-        ElMessage({ type: 'error', message: res.data?.message || res.message || '登录失败' })
-        return res
-      }
-      if (res.data.token && res.data.user) {
-        this.setUser(res.data.user)
-        this.setToken(res.data.token)
-        await Promise.all([this.getUserPermissions(), this.getUserGroups()])
-      }
-      return res
     },
     /**
      * 静默 SSO 建会话：user-center 已登录（共享 .shanhe.co cookie 有效）时，自动建立 lib 登录态。

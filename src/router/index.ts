@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { requireLogin } from '@/utils/utils'
+import { ssoRedirectToUc } from '@/utils/ssoRedirect'
 
 // 相对资源路径转绝对 URL（社交平台抓取 Open Graph 图片要求绝对地址）
 export function toAbsoluteUrl(p?: string | null): string {
@@ -122,12 +123,6 @@ const routes: RouteRecordRaw[] = [
     name: 'index',
     component: () => import('@/views/index.vue'),
     meta: { title: '首页' },
-  },
-  {
-    path: '/login',
-    name: 'login',
-    component: () => import('@/views/login.vue'),
-    meta: { title: '登录', noindex: true },
   },
   {
     path: '/oauth/callback',
@@ -277,16 +272,6 @@ router.beforeEach(async (to, from) => {
   const userStore = useUserStore()
   const settingStore = useSettingStore()
 
-  // 对应原 middleware/checkFront.js
-  if (
-    (to.name === 'login' || to.name === 'register') &&
-    !(from.name === 'login' || from.name === 'register')
-  ) {
-    if (!to.query.redirect) {
-      return { ...to, query: { ...to.query, redirect: from.fullPath } }
-    }
-  }
-
   // 加载站点配置（已有配置或刚失败过则跳过，避免配置接口异常时每次跳转都被超时请求阻塞）
   if (settingStore.needFetchSettings()) {
     await settingStore.getSettings()
@@ -296,13 +281,20 @@ router.beforeEach(async (to, from) => {
   const user = userStore.user || { id: 0 }
   const permissions = userStore.permissions || []
 
+  // 需要登录：先尝试 SSO 静默建会话，仍无登录态则整页跳转 user-center 登录页
+  const ensureSso = async () => {
+    if (userStore.token) return true
+    await ssoRedirectToUc({ redirect: `${window.location.origin}${to.fullPath}` })
+    return !!userStore.token
+  }
+
   if (requireLogin(settings, user, to, permissions)) {
-    return { path: '/login' }
+    return ensureSso()
   }
 
   // /me 路由需要登录
   if (to.path.startsWith('/me') && !user.id) {
-    return { path: '/login' }
+    return ensureSso()
   }
 
   // 对应原 middleware/auth.js（管理后台）

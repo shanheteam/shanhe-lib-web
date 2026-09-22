@@ -44,7 +44,7 @@
         </template>
         <p>请先登录账号，或联系管理员开通文章发布权限。</p>
         <div style="margin-top: 12px">
-          <el-button type="primary" size="small" @click="openLoginDialog('login')">
+          <el-button type="primary" size="small" @click="ssoRedirectToUc()">
             前往登录
           </el-button>
           <el-button type="default" size="small" @click="router.push('/')">
@@ -75,7 +75,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user'
-import { openLoginDialog } from '@/utils/login'
+import { ssoRedirectToUc } from '@/utils/ssoRedirect'
 import { useCategoryStore } from '@/store/category'
 import { getArticle } from '@/api/article'
 

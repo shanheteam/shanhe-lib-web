@@ -63,8 +63,8 @@
             </div>
           </div>
           <div class="guest-actions">
-            <el-button type="primary" class="login-btn" @click="openLoginDialog('login')">登录</el-button>
-            <el-button class="register-btn" @click="openLoginDialog('register')">注册</el-button>
+            <el-button type="primary" class="login-btn" @click="ssoRedirectToUc()">登录</el-button>
+            <el-button class="register-btn" @click="ssoRedirectToUc({ register: true })">注册</el-button>
           </div>
         </template>
       </el-card>
@@ -164,7 +164,7 @@ import { useSettingStore } from '@/store/setting'
 import { getSignedToday, signToday } from '@/api/user'
 import UserAvatar from '@/components/UserAvatar.vue'
 import QuickLinks from '@/components/QuickLinks.vue'
-import { openLoginDialog } from '@/utils/login'
+import { ssoRedirectToUc } from '@/utils/ssoRedirect'
 import { DEFAULT_CREDIT_NAME } from '@/utils/credit'
 
 defineOptions({ name: 'HomeSidebar' })

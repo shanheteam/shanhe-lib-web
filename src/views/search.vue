@@ -50,7 +50,7 @@
             class="el-link el-link--default"
             ><el-icon><User /></el-icon>&nbsp;会员中心</router-link
           >
-          <span v-else class="el-link el-link--default" @click="openLoginDialog('login')"
+          <span v-else class="el-link el-link--default" @click="ssoRedirectToUc()"
             ><el-icon><User /></el-icon>&nbsp;登录账户</span
           >
         </span>
@@ -398,7 +398,7 @@ import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
 import { isMobile } from '@/utils/responsive'
-import { openLoginDialog } from '@/utils/login'
+import { ssoRedirectToUc } from '@/utils/ssoRedirect'
 
 const router = useRouter()
 const route = useRoute()
