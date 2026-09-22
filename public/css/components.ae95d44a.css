@@ -1,0 +1,108 @@
+/* ===== src/views/login.vue ===== */
+.uc-page-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #eef1f6 100%);
+}
+
+.uc-card {
+  width: 420px;
+  max-width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px 36px 32px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.uc-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.uc-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.uc-name {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.uc-sub {
+  font-size: 13px;
+  color: #909399;
+}
+
+.uc-form .el-button.uc-submit {
+  width: 100%;
+}
+
+.uc-alt {
+  text-align: center;
+  margin-top: 4px;
+}
+
+.uc-divider {
+  display: flex;
+  align-items: center;
+  color: #c0c4cc;
+  font-size: 13px;
+  margin: 18px 0 12px;
+}
+
+.uc-divider::before,
+.uc-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #ebeeF5;
+}
+
+.uc-divider span {
+  padding: 0 12px;
+}
+
+.uc-oauth-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.uc-oauth-btn {
+  flex: 1;
+  min-width: 120px;
+}
+
+.uc-reg-error {
+  color: #f56c6c;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.uc-reg-stud {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.uc-reg-head {
+  background: #f2f3f5;
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: #606266;
+  white-space: nowrap;
+}
+
+.uc-reg-random {
+  white-space: nowrap;
+}
