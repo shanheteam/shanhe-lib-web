@@ -33,10 +33,11 @@ async function handleAuthExpired() {
   handlingAuthExpired = true
   try {
     userStore.clearState()
+    const { default: router } = await import('@/router')
+    const current = router.currentRoute.value
+    if (current.name === 'login') return
     ElMessage({ type: 'warning', message: '登录已过期，请重新登录' })
-    // 动态引入避免 request -> ssoRedirect -> store -> api -> request 的循环依赖
-    const { ssoRedirectToUc } = await import('@/utils/ssoRedirect')
-    await ssoRedirectToUc()
+    router.push({ path: '/login', query: { redirect: current.fullPath } })
   } finally {
     // 保留一个短窗口合并并发的 401，之后恢复处理能力
     setTimeout(() => {

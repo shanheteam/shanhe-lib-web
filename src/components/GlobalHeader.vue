@@ -177,7 +177,7 @@
             </el-dropdown>
           </template>
           <div v-else class="header-login-btn">
-            <el-button type="primary" round @click="ssoRedirectToUc()">
+            <el-button type="primary" round @click="showLoginDialog('login')">
               <el-icon style="color: var(--el-color-white); font-size: 1.2em"><User /></el-icon>
               登录
             </el-button>
@@ -208,11 +208,11 @@
         <li>
           <div
             class="el-link el-link--default login-link"
-            @click="ssoRedirectToUc()"
+            @click="openLoginDialog('login')"
           >
             <UserAvatar :size="38" :user="user" class="user-avatar" />
             <span v-if="user.id > 0">{{ user.realname || '未命名用户' }}</span>
-            <span v-else>去登录</span>
+            <span v-else>登录注册</span>
           </div>
         </li>
         <template v-if="user.id > 0">
@@ -360,6 +360,60 @@
       </el-menu>
     </el-drawer>
 
+    <!-- OAuth 登录对话框 -->
+    <el-dialog
+      v-model="loginDialogVisible"
+      :show-close="true"
+      width="780px"
+      :close-on-click-modal="true"
+      :close-on-press-escape="true"
+      class="oauth-login-dialog uc-login-dialog"
+    >
+      <div class="oauth-login-body uc-login-body">
+        <div class="uc-login-left">
+          <div class="uc-login-logo"><span class="uc-login-badge">山</span>山河大学</div>
+          <div class="uc-login-title">统一认证中心</div>
+          <div class="uc-login-desc">
+            单账号登录图书馆、学籍系统等山河大学各服务，安全便捷。
+          </div>
+          <div class="uc-login-left-foot">学号 · 手机号 · 邮箱均可登录</div>
+        </div>
+        <div class="uc-login-right">
+          <h3 class="uc-dialog-title">山河大学统一认证中心</h3>
+          <el-tabs v-model="ucTab" class="uc-tabs" stretch>
+            <el-tab-pane label="登录" name="login">
+              <div class="uc-acct-login">
+                <div class="uc-acct-form">
+                  <el-input v-model="ucForm.username" placeholder="学号 / 手机号 / 邮箱" clearable @keyup.enter="submitUcLogin" />
+                  <el-input v-model="ucForm.password" type="password" show-password placeholder="密码" @keyup.enter="submitUcLogin" />
+                  <el-button type="primary" class="uc-acct-submit" :loading="ucLoginLoading" @click="submitUcLogin">登录</el-button>
+                </div>
+                <div class="uc-acct-reglink">
+                  <span>还没有账号？</span>
+                  <el-link type="primary" :underline="false" @click="ucTab = 'register'">立即注册</el-link>
+                </div>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="注册" name="register">
+              <div class="uc-reg-form">
+                <div v-if="regError" class="uc-reg-error">{{ regError }}</div>
+                <el-input v-model="regForm.email" placeholder="邮箱" clearable />
+                <el-input v-model="regForm.real_name" placeholder="真实姓名（纯中文）" clearable />
+                <div class="uc-reg-stud">
+                  <span class="uc-reg-head">{{ ucStudHead }}</span>
+                  <el-input v-model="regForm.student_tail" placeholder="后4位" maxlength="4" clearable @keyup.enter="submitReg" />
+                  <el-button class="uc-reg-random" :loading="randLoading" @click="randomStudentId">随机学号</el-button>
+                </div>
+                <el-input v-model="regForm.password" type="password" show-password placeholder="密码（至少8位）" />
+                <el-input v-model="regForm.password2" type="password" show-password placeholder="确认密码" @keyup.enter="submitReg" />
+                <el-button type="primary" class="uc-reg-submit" :loading="regLoading" @click="submitReg">注册</el-button>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
+      </div>
+    </el-dialog>
+
     <div
       class="search-modal-overlay"
       :class="{ show: searchModalVisible }"
@@ -422,10 +476,14 @@ import { getAdvertisementByPosition } from '@/api/advertisement'
 import { advertisementPositions } from '@/utils/enum'
 import { categoryToTrees, requireLogin } from '@/utils/utils'
 import { creditName } from '@/utils/credit'
+import { generateRandomString, generateCodeChallenge, savePkceParams } from '@/utils/pkce'
 import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
-import { ssoRedirectToUc } from '@/utils/ssoRedirect'
+import { getOauths } from '@/api/oauth'
+import { passwordLogin, registerUc, getAvailableStudentId } from '@/api/oauth'
+import { OAUTH_TYPE_CUSTOM } from '@/utils/oauth'
+import { OPEN_LOGIN_EVENT, openLoginDialog } from '@/utils/login'
 
 defineOptions({ name: 'GlobalHeader' })
 
@@ -461,6 +519,13 @@ const advertisements = ref<any[]>([])
 const searchModalInput = ref<any>()
 const popover0 = ref<any>()
 const popover1 = ref<any>()
+
+// OAuth 登录弹窗
+const loginDialogVisible = ref(false)
+const oauths = ref<any[]>([])
+const oauthLoading = ref<number>(0)
+const ucLoginLoading = ref(false)
+const ucForm = ref<{ username: string; password: string }>({ username: '', password: '' })
 
 const searchPlaceholder = computed(() =>
   search.value.type === 1 ? '搜索文章...' : '搜索文档...',
@@ -525,6 +590,204 @@ const closeSearchModal = () => {
 const showMenuDrawer = () => {
   getSignedToday()
   menuDrawerVisible.value = true
+}
+
+const showLoginDialog = (tabOrEvent?: string | Event) => {
+  loginDialogVisible.value = true
+  // 显式 tab 优先（'login'/'register'）；未指定时保持当前 tab，避免已注册用户点登录停在注册页
+  let tab: string | undefined
+  if (typeof tabOrEvent === 'string') {
+    tab = tabOrEvent
+  } else if (tabOrEvent instanceof CustomEvent) {
+    tab = (tabOrEvent as CustomEvent).detail?.tab
+  }
+  if (tab === 'login') ucTab.value = 'login'
+  else if (tab === 'register') ucTab.value = 'register'
+  // 并行加载 OAuth 列表；无 OAuth 时不影响邮箱登录
+  getOauths()
+    .then((res: any) => {
+      if (res.status === 200 && res.data.oauths) {
+        oauths.value = res.data.oauths.filter((o: any) => o.enable)
+      }
+    })
+    .catch(() => {})
+}
+
+// 登录成功后自动关闭弹窗
+watch(
+  () => Number(userStore.user.id) || 0,
+  (id) => {
+    if (id > 0) loginDialogVisible.value = false
+  },
+)
+
+// 山河大学（user-center）账号密码直接登录：调用 lib 后端 password-login，不经过授权页
+// 单点注册：整页跳转到 user-center 注册页（不使用 iframe）。注册成功后 user 会写入 .shanhe.co
+// 共享 cookie，回到 lib 时由 ssoProbe（0432 入口）探测到并自动登录。
+const ucTab: any = ref('login')
+
+// 内联注册表单 state/校验（经 lib 后端转发到 user 统一认证中心注册）
+const regForm = ref<{
+  email: string
+  real_name: string
+  student_tail: string
+  password: string
+  password2: string
+}>({ email: '', real_name: '', student_tail: '', password: '', password2: '' })
+const regLoading = ref(false)
+// 注册失败原因：在注册表单内展示（后端返回的 message 或前端校验提示），替代仅顶部 toast
+const regError = ref('')
+// 学号前四位（年份）固定不可编辑（遵循 user 注册逻辑），仅后四位可改
+const ucStudHead = '2027'
+const randLoading = ref(false)
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const STUDENT_RE = /^\d{8}$/
+const NAME_RE = /^[\u4e00-\u9fa5]+$/
+
+// 获取随机学号并填入（允许手改，提交仍以 8 位校验为准）
+const randomStudentId = async () => {
+  if (randLoading.value) return
+  randLoading.value = true
+  try {
+    const res: any = await getAvailableStudentId()
+    const sid = res?.data?.student_id
+    if (sid) {
+      regForm.value.student_tail = String(sid).slice(-4)
+    } else {
+      ElMessage.error(res?.data?.message || '获取随机学号失败')
+    }
+  } catch (e: any) {
+    ElMessage.error(e?.data?.message || e?.message || '获取随机学号失败')
+  } finally {
+    randLoading.value = false
+  }
+}
+
+// 提交注册：成功后把 email/password 填入登录 tab 的 ucForm 并切回登录 tab
+const submitReg = async () => {
+  const email = regForm.value.email.trim()
+  const realName = regForm.value.real_name.trim()
+  const studentTail = regForm.value.student_tail.trim()
+  regError.value = ''
+  if (!/^\d{4}$/.test(studentTail)) { regError.value = '学号后4位必须为数字'; return }
+  const studentId = ucStudHead + studentTail
+  const password = regForm.value.password
+  const password2 = regForm.value.password2
+  if (!EMAIL_RE.test(email)) { regError.value = '请输入正确的邮箱'; return }
+  if (!NAME_RE.test(realName)) { regError.value = '真实姓名须为纯中文'; return }
+  if (!STUDENT_RE.test(studentId)) { regError.value = '学号须为8位数字'; return }
+  if (!password || password.length < 8) { regError.value = '密码至少8位'; return }
+  if (password !== password2) { regError.value = '两次输入的密码不一致'; return }
+
+  regLoading.value = true
+  try {
+    const res: any = await registerUc({ email, real_name: realName, password, student_id: studentId })
+    // 成功仅当 2xx（拦截器会把 4xx/5xx 与网络错误转为 { status, data }，status=0 表示网络层失败）
+    const ok = res?.status && res.status < 400
+    if (!ok) {
+      const detail =
+        res?.data?.message ||
+        res?.data?.msg ||
+        res?.data?.error ||
+        res?.message ||
+        (res?.status === 0 ? '网络错误，请检查网络后重试' : '注册失败，请稍后重试')
+      regError.value = res?.status === 429 ? '注册过于频繁，请24小时后再试' : detail
+      console.error('[OAuth] register failed:', res)
+      return
+    }
+    ElMessage.success(res?.data?.message || '注册成功')
+    // 填入登录 tab 并切换，方便直接登录
+    ucForm.value = { username: email, password }
+    ucTab.value = 'login'
+    regForm.value = { email: '', real_name: '', student_tail: '', password: '', password2: '' }
+  } catch (e: any) {
+    const detail =
+      e?.data?.message ||
+      e?.data?.msg ||
+      e?.data?.error ||
+      e?.message ||
+      (e?.status === 0 ? '网络错误，请检查网络后重试' : '注册失败，请稍后重试')
+    regError.value = e?.status === 429 ? '注册过于频繁，请24小时后再试' : detail
+    console.error('[OAuth] register error:', e)
+  } finally {
+    regLoading.value = false
+  }
+}
+
+const submitUcLogin = async () => {
+  const username = ucForm.value.username.trim()
+  const password = ucForm.value.password
+  if (!username || !password) {
+    ElMessage.warning('请输入山河大学账号和密码')
+    return
+  }
+  ucLoginLoading.value = true
+  try {
+    const res: any = await passwordLogin({ username, password })
+    if (res?.data?.token && res?.data?.user) {
+      ucForm.value = { username: '', password: '' }
+      loginDialogVisible.value = false
+      ElMessage.success('登录成功')
+      userStore.setUser(res.data.user)
+      userStore.setToken(res.data.token)
+      userStore.getUserPermissions()
+      userStore.getUserGroups()
+    } else {
+      ElMessage.error(res?.data?.message || res?.message || '登录失败')
+    }
+  } catch (e: any) {
+    console.error('[OAuth] password login error:', e)
+    ElMessage.error(e?.data?.message || e?.message || '登录异常')
+  } finally {
+    ucLoginLoading.value = false
+  }
+}
+
+// 授权码 + PKCE：打开弹窗到 provider 授权页，回调后由 lib 换 token
+const handleOAuthLogin = async (oauth: any) => {
+  if (!oauth.authorize_url_base) {
+    ElMessage.error('该登录方式配置不完整')
+    return
+  }
+  if (oauthLoading.value) return
+  oauthLoading.value = oauth.type
+  try {
+    const codeVerifier = generateRandomString(64)
+    const codeChallenge = await generateCodeChallenge(codeVerifier)
+    const state = generateRandomString(32)
+    savePkceParams(codeVerifier, state)
+
+    const params = new URLSearchParams({
+      response_type: 'code',
+      client_id: oauth.client_id,
+      redirect_uri: oauth.redirect_url,
+      scope: oauth.scope || 'openid profile email',
+      state: state,
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256',
+    })
+
+    const authorizeUrl = `${oauth.authorize_url_base}?${params.toString()}`
+    window.open(authorizeUrl, '_blank', 'width=520,height=640')
+    // 短暂展示加载后还原，成功与否由回调消息通知
+    setTimeout(() => {
+      oauthLoading.value = 0
+    }, 1500)
+  } catch (e) {
+    console.error('启动OAuth登录失败:', e)
+    ElMessage.error('启动登录失败')
+    oauthLoading.value = 0
+  }
+}
+
+const handleOAuthMessage = (event: MessageEvent) => {
+  if (event.data?.type === 'oauth-login-success') {
+    ElMessage.success('登录成功')
+    // 先从 localStorage 恢复 token 到内存 store，再刷新用户信息与用户组
+    userStore.checkAndRefreshUser()
+    userStore.getUser()
+    userStore.getUserGroups()
+  }
 }
 
 const resetActivePath = () => {
@@ -685,7 +948,7 @@ const init = async () => {
   })
 
   if (requireLogin(settings.value, user.value, route, permissions.value)) {
-    await ssoRedirectToUc()
+    router.push('/login')
   }
 }
 
@@ -707,6 +970,8 @@ const handleVisibility = () => {
 onMounted(() => {
   window.addEventListener('focus', handleWindowFocus)
   window.addEventListener('scroll', handleScroll, { passive: true })
+  window.addEventListener('message', handleOAuthMessage)
+  window.addEventListener(OPEN_LOGIN_EVENT, showLoginDialog)
   window.addEventListener('focus', ssoProbe)
   window.addEventListener('visibilitychange', handleVisibility)
   ssoProbeTimer = setInterval(() => {
@@ -720,6 +985,8 @@ onBeforeUnmount(() => {
   window.removeEventListener('focus', handleWindowFocus)
   window.removeEventListener('focus', ssoProbe)
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('message', handleOAuthMessage)
+  window.removeEventListener(OPEN_LOGIN_EVENT, showLoginDialog)
   window.removeEventListener('visibilitychange', handleVisibility)
   if (ssoProbeTimer) clearInterval(ssoProbeTimer)
 })
