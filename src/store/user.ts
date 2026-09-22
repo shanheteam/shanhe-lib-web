@@ -20,6 +20,10 @@ let ssoSilentLastCheck = 0
 const SSO_SUPPRESS_KEY = 'uc_sso_suppress_until' // 抑制窗口起点时间戳
 const SSO_SUPPRESSED_USER_KEY = 'uc_sso_suppressed_user' // 被登出的 lib 用户 id，用于"同账号回弹 vs 换账号登录"判别
 const SSO_SUPPRESS_MS = 10 * 60 * 1000
+// SSO 降级窗口：IdP(user-center) 短时不可达（网络故障/JWKS 拉不到）时的保留会话时长，默认 15 分钟。
+// 窗口内沿用上一有效登录态不误踢；连续超窗仍未恢复则视为 IdP 会话失效，强制本地退出。
+const SSO_PROBE_DEGRADE_MS = 15 * 60 * 1000
+let ssoDegradeStart = 0 // 降级窗口起点（ms）；0 表示当前不在降级态
 
 interface UserState {
   user: Record<string, any>
@@ -252,24 +256,34 @@ export const useUserStore = defineStore('user', {
      */
     async ssoSessionProbe() {
       if (!this.token) return
+      const now = Date.now()
       try {
         const res: any = await ssoSession()
-        if (res?.status === 200) {
-          if (res?.data?.valid === false) {
-            // 同一账号在 user-center 已登出/被禁：本地退出
+        if (res?.status !== 200) return
+        const data = res?.data || {}
+        if (data.valid === false) {
+          // 同一账号在 user-center 已登出/被禁（确证失效）：立即退出，解除降级计时
+          ssoDegradeStart = 0
+          this.clearState()
+        } else if (data.degraded === true) {
+          // user-center 不可达：进入/延续 15 分钟降级窗口，超窗仍未恢复才退出，
+          // 避免 IdP 短暂故障（网络抖动/重启）误踢在线用户。
+          if (!ssoDegradeStart) ssoDegradeStart = now
+          else if (now - ssoDegradeStart > SSO_PROBE_DEGRADE_MS) this.clearState()
+        } else if (data.user) {
+          // 探到有效会话：解除降级计时；共享 cookie 已切换为另一账号时释放本地旧会话
+          ssoDegradeStart = 0
+          const ucUserId = String(data.user.id ?? '')
+          const localUserId = String(this.user?.id ?? '')
+          if (ucUserId && localUserId && ucUserId !== localUserId) {
             this.clearState()
-          } else if (res?.data?.user) {
-            // 共享 cookie 已切换为另一账号：本地旧账号会话失效，登出释放（稍后 silentSsoCheck 用新 cookie 登入）
-            const ucUserId = String(res.data.user.id ?? '')
-            const localUserId = String(this.user?.id ?? '')
-            if (ucUserId && localUserId && ucUserId !== localUserId) {
-              this.clearState()
-            }
           }
         }
       } catch (e) {
-        // 网络异常不登出，避免误踢
+        // 请求失败（lib 后端不可达等）同样视为无法确证：走 15 分钟降级窗口，不立即误踢
         console.warn('[SSO] session probe failed:', (e as Error)?.message)
+        if (!ssoDegradeStart) ssoDegradeStart = now
+        else if (now - ssoDegradeStart > SSO_PROBE_DEGRADE_MS) this.clearState()
       }
     },
     async getUserPermissions() {
