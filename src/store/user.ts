@@ -262,16 +262,11 @@ export const useUserStore = defineStore('user', {
         if (res?.status !== 200) return
         const data = res?.data || {}
         if (data.valid === false) {
-          // 共享 access_token cookie 缺失（no-cookie）无法确证 IdP 已登出——缺 cookie 可能是
-          // cookie 尚未落地 / 被环境拦截 / 跨域转发差异，并非 user-center 明确吊销会话。故 no-cookie
-          // 一律走 15 分钟降级窗口而非硬登出，避免"一切换标签页就退出 / 登录即退"。
-          // 其余 valid=false 原因（invalid-token / no-refresh / user-inactive 等）为 IdP 确证失效，仍立即登出。
-          if (data.reason === 'no-cookie') {
-            if (!ssoDegradeStart) ssoDegradeStart = now
-          } else {
-            ssoDegradeStart = 0
-            this.clearState()
-          }
+          // 服务端 ssoSession 仅在 user-center 明确确认无会话/令牌确证失效时才返回 valid:false
+          //（含正向探测 session-state=has_session:false 的 SLO），其余不确证情形为 degraded。
+          // 故此处可安全立即退出，恢复 user 登出 → lib 立即登出，同时不误杀保留场景。
+          ssoDegradeStart = 0
+          this.clearState()
         } else if (data.degraded === true) {
           // user-center 不可达：进入/延续 15 分钟降级窗口，超窗仍未恢复才退出，
           // 避免 IdP 短暂故障（网络抖动/重启）误踢在线用户。
