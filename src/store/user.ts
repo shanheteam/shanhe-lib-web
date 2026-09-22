@@ -24,12 +24,6 @@ const SSO_SUPPRESS_MS = 10 * 60 * 1000
 // 窗口内沿用上一有效登录态不误踢；连续超窗仍未恢复则视为 IdP 会话失效，强制本地退出。
 const SSO_PROBE_DEGRADE_MS = 15 * 60 * 1000
 let ssoDegradeStart = 0 // 降级窗口起点（ms）；0 表示当前不在降级态
-// 直接密码登录（lib 自身认证）后短时宽限：登录响应的 .shanhe.co access_token cookie 落地到
-// 浏览器有一瞬间，GlobalHeader 的 watcher 会在 setToken 后立刻触发 SSO 探测，容易抢在 cookie
-// 可用之前读到 no-cookie，进而把自己刚建立的会话误清（"登录即退"）。窗口内 no-cookie 视为
-// 竞态走降级而非硬登出；窗口外仍按原有语义硬登出（idp 确证失效）。
-const SSO_DIRECT_LOGIN_GRACE_MS = 60 * 1000
-let ssoDirectLoginAt = 0
 
 interface UserState {
   user: Record<string, any>
@@ -205,9 +199,6 @@ export const useUserStore = defineStore('user', {
         return res
       }
       if (res.data.token && res.data.user) {
-        // 登录响应已为浏览器写入 .shanhe.co 共享 access_token cookie；记录时间，供
-        // ssoSessionProbe 在宽限窗口内不至于读到 nothing 就误清掉刚建立的本地会话。
-        ssoDirectLoginAt = Date.now()
         this.setUser(res.data.user)
         this.setToken(res.data.token)
         await Promise.all([this.getUserPermissions(), this.getUserGroups()])
@@ -271,10 +262,11 @@ export const useUserStore = defineStore('user', {
         if (res?.status !== 200) return
         const data = res?.data || {}
         if (data.valid === false) {
-          // 同一账号在 user-center 已登出/被禁（确证失效）：立即退出，解除降级计时
-          // 直接密码登录后宽限窗口内读到 no-cookie 属「登录响应的共享 cookie 尚未落地」竞态，
-          // 非 IdP 确证失效：转入降级窗口而非硬登出，避免"登录即退"。
-          if (data.reason === 'no-cookie' && now - ssoDirectLoginAt < SSO_DIRECT_LOGIN_GRACE_MS) {
+          // 共享 access_token cookie 缺失（no-cookie）无法确证 IdP 已登出——缺 cookie 可能是
+          // cookie 尚未落地 / 被环境拦截 / 跨域转发差异，并非 user-center 明确吊销会话。故 no-cookie
+          // 一律走 15 分钟降级窗口而非硬登出，避免"一切换标签页就退出 / 登录即退"。
+          // 其余 valid=false 原因（invalid-token / no-refresh / user-inactive 等）为 IdP 确证失效，仍立即登出。
+          if (data.reason === 'no-cookie') {
             if (!ssoDegradeStart) ssoDegradeStart = now
           } else {
             ssoDegradeStart = 0
