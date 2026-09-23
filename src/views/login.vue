@@ -216,13 +216,15 @@ const handleOAuthLogin = async (oauth: any) => {
     const codeVerifier = generateRandomString(64)
     const codeChallenge = await generateCodeChallenge(codeVerifier)
     const state = generateRandomString(32)
-    savePkceParams(codeVerifier, state)
+    const nonce = generateRandomString(32)
+    savePkceParams(codeVerifier, state, nonce)
     const params = new URLSearchParams({
       response_type: 'code',
       client_id: oauth.client_id,
       redirect_uri: oauth.redirect_url,
       scope: oauth.scope || 'openid profile email',
       state,
+      nonce,
       code_challenge: codeChallenge,
       code_challenge_method: 'S256',
     })

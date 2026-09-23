@@ -40,27 +40,30 @@ function base64UrlEncode(buffer: ArrayBuffer): string {
 }
 
 /**
- * 保存 PKCE 参数到 localStorage（跨窗口共享，支持 window.open 弹窗场景）
+ * 保存 OAuth/OIDC 参数到 localStorage（跨窗口共享，支持 window.open 弹窗场景）
  */
-export function savePkceParams(codeVerifier: string, state: string): void {
+export function savePkceParams(codeVerifier: string, state: string, nonce: string = ''): void {
   localStorage.setItem(STORAGE_KEYS.OAUTH_CODE_VERIFIER, codeVerifier)
   localStorage.setItem(STORAGE_KEYS.OAUTH_STATE, state)
+  if (nonce) localStorage.setItem(STORAGE_KEYS.OAUTH_NONCE, nonce)
 }
 
 /**
- * 从 localStorage 获取 PKCE 参数
+ * 从 localStorage 获取 OAuth/OIDC 参数
  */
-export function getPkceParams(): { codeVerifier: string; state: string } | null {
+export function getPkceParams(): { codeVerifier: string; state: string; nonce?: string } | null {
   const codeVerifier = localStorage.getItem(STORAGE_KEYS.OAUTH_CODE_VERIFIER)
   const state = localStorage.getItem(STORAGE_KEYS.OAUTH_STATE)
   if (!codeVerifier || !state) return null
-  return { codeVerifier, state }
+  const nonce = localStorage.getItem(STORAGE_KEYS.OAUTH_NONCE) || undefined
+  return { codeVerifier, state, nonce }
 }
 
 /**
- * 清除 PKCE 参数
+ * 清除 OAuth/OIDC 参数
  */
 export function clearPkceParams(): void {
   localStorage.removeItem(STORAGE_KEYS.OAUTH_CODE_VERIFIER)
   localStorage.removeItem(STORAGE_KEYS.OAUTH_STATE)
+  localStorage.removeItem(STORAGE_KEYS.OAUTH_NONCE)
 }

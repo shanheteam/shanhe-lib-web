@@ -10,6 +10,8 @@ export const STORAGE_KEYS = {
   // OAuth PKCE 参数（window.open 跨窗口共享，与登录态无关）
   OAUTH_CODE_VERIFIER: 'oauth_code_verifier',
   OAUTH_STATE: 'oauth_state',
+  // OIDC nonce，与 PKCE 同窗口共享、同生命周期
+  OAUTH_NONCE: 'oauth_nonce',
 } as const
 
 export function getLocal(key: string): string | null {
@@ -32,7 +34,12 @@ export function removeLocal(key: string): void {
 export function clearSiteStorage(): void {
   ;(Object.keys(STORAGE_KEYS) as Array<keyof typeof STORAGE_KEYS>).forEach((key) => {
     const value = STORAGE_KEYS[key]
-    if (value === STORAGE_KEYS.OAUTH_CODE_VERIFIER || value === STORAGE_KEYS.OAUTH_STATE) return
+    if (
+      value === STORAGE_KEYS.OAUTH_CODE_VERIFIER ||
+      value === STORAGE_KEYS.OAUTH_STATE ||
+      value === STORAGE_KEYS.OAUTH_NONCE
+    )
+      return
     localStorage.removeItem(value)
   })
 }

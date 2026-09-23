@@ -77,6 +77,7 @@ onMounted(async () => {
       code,
       oauth_type: oauthType,
       code_verifier: pkceParams.codeVerifier,
+      nonce: pkceParams.nonce,
     })
     clearPkceParams()
     
