@@ -9,7 +9,7 @@ import {
 } from '@/api/user'
 import { loginOauth, getOauths, passwordLogin, ssoLogin, ssoSession, ssoLogout } from '@/api/oauth'
 import { permissionsToTree } from '@/utils/permission'
-import { OAUTH_TYPE_CUSTOM, SSO_LOGOUT_RETURN_KEY } from '@/utils/oauth'
+import { OAUTH_TYPE_CUSTOM, SSO_LOGOUT_RETURN_KEY, SSO_LOGOUT_RETURN_PATH_KEY } from '@/utils/oauth'
 import { STORAGE_KEYS, clearSiteStorage } from '@/utils/storage'
 
 let ssoSilentLastCheck = 0
@@ -179,6 +179,13 @@ export const useUserStore = defineStore('user', {
             // 同一账号"续期回填"回弹风险消除，提前解除 10 分钟抑制，不再阻塞换账号时的即时同步。
             try { sessionStorage.removeItem(SSO_SUPPRESS_KEY) } catch { void 0 }
             sessionStorage.setItem(SSO_LOGOUT_RETURN_KEY, '1')
+            // 记录登出前所在页面，登出回调后恢复到原页面，而不是回首页
+            try {
+              sessionStorage.setItem(
+                SSO_LOGOUT_RETURN_PATH_KEY,
+                window.location.pathname + window.location.search + window.location.hash,
+              )
+            } catch { void 0 }
             const params = new URLSearchParams({
               client_id: custom.client_id,
               post_logout_redirect_uri: custom.redirect_url,
