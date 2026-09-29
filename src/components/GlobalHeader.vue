@@ -360,7 +360,9 @@
       </el-menu>
     </el-drawer>
 
-    <!-- 统一认证弹层：无外层对话框框架，只呈现 iframe 内的用户中心登录卡片 -->
+    <!-- 统一认证弹层：无外层对话框框架，只呈现 iframe 内的用户中心登录卡片。
+         通过覆盖 Element Plus 的 dialog CSS 变量就地去掉白底/阴影/圆角与四周内边距，
+         避免写全局样式影响其他对话框。 -->
     <el-dialog
       v-model="ucDialogVisible"
       width="430px"
@@ -368,7 +370,12 @@
       :close-on-click-modal="true"
       :close-on-press-escape="true"
       destroy-on-close
-      class="uc-sso-dialog"
+      style="
+        --el-dialog-padding-primary: 0;
+        --el-dialog-bg-color: transparent;
+        --el-dialog-box-shadow: none;
+        --el-dialog-border-radius: 0;
+      "
     >
       <iframe
         v-if="ucDialogVisible && ucFrameSrc"
@@ -847,31 +854,3 @@ onBeforeUnmount(() => {
 
 init()
 </script>
-
-<style>
-/* 统一认证弹层：去掉对话框外层白底、标题栏与内边距，只呈现 iframe 内的登录卡片；
-   关闭按钮浮到卡片右上方外侧，视觉上归属遮罩层而非外层框架。 */
-.uc-sso-dialog {
-  background: transparent;
-  box-shadow: none;
-  border-radius: 0;
-  overflow: visible;
-}
-.uc-sso-dialog .el-dialog__header {
-  padding: 0;
-  margin: 0;
-}
-.uc-sso-dialog .el-dialog__body {
-  padding: 0;
-}
-.uc-sso-dialog .el-dialog__headerbtn {
-  top: -36px;
-  right: 0;
-  width: 28px;
-  height: 28px;
-}
-.uc-sso-dialog .el-dialog__headerbtn .el-dialog__close {
-  color: var(--el-color-white);
-  font-size: 20px;
-}
-</style>
