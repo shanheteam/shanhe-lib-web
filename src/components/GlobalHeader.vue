@@ -360,7 +360,7 @@
       </el-menu>
     </el-drawer>
 
-    <!-- 统一认证弹层：页内 lightbox 内嵌用户中心登录 / 注册页（不打开独立窗口） -->
+    <!-- 统一认证弹层：无外层对话框框架，只呈现 iframe 内的用户中心登录卡片 -->
     <el-dialog
       v-model="ucDialogVisible"
       width="430px"
@@ -370,41 +370,12 @@
       destroy-on-close
       class="uc-sso-dialog"
     >
-      <template #header>
-        <div style="display: flex; align-items: center; gap: 8px; font-size: 16px">
-          <span
-            style="
-              display: inline-flex;
-              width: 26px;
-              height: 26px;
-              border-radius: 6px;
-              align-items: center;
-              justify-content: center;
-              background: var(--el-color-primary);
-              color: var(--el-color-white);
-              font-size: 15px;
-            "
-            >山</span
-          >
-          山河大学统一认证中心
-        </div>
-      </template>
       <iframe
         v-if="ucDialogVisible && ucFrameSrc"
         :src="ucFrameSrc"
         title="山河大学统一认证中心"
-        style="display: block; width: 100%; height: 520px; border: 0"
+        style="display: block; width: 100%; height: 600px; border: 0"
       ></iframe>
-      <div
-        style="
-          margin-top: 8px;
-          text-align: center;
-          font-size: 12px;
-          color: var(--el-text-color-secondary);
-        "
-      >
-        登录成功后本窗口将自动关闭
-      </div>
     </el-dialog>
 
     <div
@@ -876,3 +847,31 @@ onBeforeUnmount(() => {
 
 init()
 </script>
+
+<style>
+/* 统一认证弹层：去掉对话框外层白底、标题栏与内边距，只呈现 iframe 内的登录卡片；
+   关闭按钮浮到卡片右上方外侧，视觉上归属遮罩层而非外层框架。 */
+.uc-sso-dialog {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: visible;
+}
+.uc-sso-dialog .el-dialog__header {
+  padding: 0;
+  margin: 0;
+}
+.uc-sso-dialog .el-dialog__body {
+  padding: 0;
+}
+.uc-sso-dialog .el-dialog__headerbtn {
+  top: -36px;
+  right: 0;
+  width: 28px;
+  height: 28px;
+}
+.uc-sso-dialog .el-dialog__headerbtn .el-dialog__close {
+  color: var(--el-color-white);
+  font-size: 20px;
+}
+</style>
