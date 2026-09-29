@@ -361,12 +361,14 @@
     </el-drawer>
 
     <!-- 统一认证弹层：无外层对话框框架，只呈现 iframe 内的用户中心登录卡片。
-         通过覆盖 Element Plus 的 dialog CSS 变量就地去掉白底/阴影/圆角与四周内边距，
-         避免写全局样式影响其他对话框。 -->
+         通过覆盖 Element Plus 的 dialog CSS 变量就地去掉白底/阴影/圆角与四周内边距；
+         关闭按钮也用卡片自带的（user 端回传 close 消息后由此处关闭弹层），
+         故这里 show-close=false，避免出现两个关闭符号。 -->
     <el-dialog
       v-model="ucDialogVisible"
       width="430px"
       top="8vh"
+      :show-close="false"
       :close-on-click-modal="true"
       :close-on-press-escape="true"
       destroy-on-close
@@ -381,7 +383,7 @@
         v-if="ucDialogVisible && ucFrameSrc"
         :src="ucFrameSrc"
         title="山河大学统一认证中心"
-        style="display: block; width: 100%; height: 600px; border: 0"
+        style="display: block; width: 100%; height: 680px; border: 0"
       ></iframe>
     </el-dialog>
 
