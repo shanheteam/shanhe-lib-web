@@ -360,6 +360,53 @@
       </el-menu>
     </el-drawer>
 
+    <!-- 统一认证弹层：页内 lightbox 内嵌用户中心登录 / 注册页（不打开独立窗口） -->
+    <el-dialog
+      v-model="ucDialogVisible"
+      width="430px"
+      top="8vh"
+      :close-on-click-modal="true"
+      :close-on-press-escape="true"
+      destroy-on-close
+      class="uc-sso-dialog"
+    >
+      <template #header>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 16px">
+          <span
+            style="
+              display: inline-flex;
+              width: 26px;
+              height: 26px;
+              border-radius: 6px;
+              align-items: center;
+              justify-content: center;
+              background: var(--el-color-primary);
+              color: var(--el-color-white);
+              font-size: 15px;
+            "
+            >山</span
+          >
+          山河大学统一认证中心
+        </div>
+      </template>
+      <iframe
+        v-if="ucDialogVisible"
+        :src="ucFrameSrc"
+        title="山河大学统一认证中心"
+        style="display: block; width: 100%; height: 520px; border: 0"
+      ></iframe>
+      <div
+        style="
+          margin-top: 8px;
+          text-align: center;
+          font-size: 12px;
+          color: var(--el-text-color-secondary);
+        "
+      >
+        登录成功后本窗口将自动关闭
+      </div>
+    </el-dialog>
+
     <div
       class="search-modal-overlay"
       :class="{ show: searchModalVisible }"
@@ -422,18 +469,9 @@ import { getAdvertisementByPosition } from '@/api/advertisement'
 import { advertisementPositions } from '@/utils/enum'
 import { categoryToTrees, requireLogin } from '@/utils/utils'
 import { creditName } from '@/utils/credit'
-import {
-  generateRandomString,
-  generateCodeChallenge,
-  savePkceParams,
-  getPkceParams,
-  clearPkceParams,
-} from '@/utils/pkce'
 import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
-import { getOauths } from '@/api/oauth'
-import { OAUTH_TYPE_CUSTOM } from '@/utils/oauth'
 import { OPEN_LOGIN_EVENT, openLoginDialog } from '@/utils/login'
 
 defineOptions({ name: 'GlobalHeader' })
@@ -471,15 +509,13 @@ const searchModalInput = ref<any>()
 const popover0 = ref<any>()
 const popover1 = ref<any>()
 
-// 统一认证弹窗：window.open 打开用户中心 /v1 弹窗认证页，授权码经 postMessage 回传
-const oauths = ref<any[]>([])
-const UC_POPUP_AUTH_URL = 'https://user.shanhe.co/v1'
-const UC_POPUP_REDIRECT_URI = 'https://user.shanhe.co/v1/callback'
-const UC_POPUP_ORIGIN = 'https://user.shanhe.co'
-const UC_POPUP_MESSAGE_TYPE = 'shanhe_popup_auth'
-const UC_POPUP_WINDOW_NAME = 'shanhe_uc_popup_auth'
-// 持有弹窗引用：换 token 成功后主动关闭，避免个别浏览器未自动关闭
-let ucPopupWindow: Window | null = null
+// 纯 SSO 静默登录：登录 / 注册页均由用户中心承载，在本页弹层内以 iframe 呈现；
+// 用户中心写入 .shanhe.co 共享 cookie 后，本页轮询静默换取 lib 会话并自动关闭弹层。
+const UC_LOGIN_URL = 'https://user.shanhe.co/login'
+const UC_REGISTER_URL = 'https://user.shanhe.co/register'
+const ucDialogVisible = ref(false)
+const ucFrameSrc = ref('')
+let ucProbeTimer: number | undefined
 
 const searchPlaceholder = computed(() =>
   search.value.type === 1 ? '搜索文章...' : '搜索文档...',
@@ -554,121 +590,54 @@ const showLoginDialog = (tabOrEvent?: string | Event) => {
   } else if (tabOrEvent instanceof CustomEvent) {
     tab = (tabOrEvent as CustomEvent).detail?.tab
   }
-  void openUcPopupAuth(tab === 'register' ? 'register' : 'login')
-}
-
-/** 取自定义 OAuth（山河大学统一认证）配置，未缓存时拉取一次 */
-const resolveCustomOauth = async (): Promise<any | undefined> => {
-  if (!oauths.value.length) {
-    try {
-      const res: any = await getOauths()
-      if (res.status === 200 && res.data.oauths) {
-        oauths.value = res.data.oauths.filter((o: any) => o.enable)
-      }
-    } catch {
-      // 拉取失败按未配置处理
-    }
-  }
-  return oauths.value.find((o: any) => o.type === OAUTH_TYPE_CUSTOM)
+  openUcLogin(tab === 'register' ? 'register' : 'login')
 }
 
 /**
- * 打开用户中心统一认证弹窗（/v1）。
- * 登录 / 注册 UI 与账号体系全部由用户中心承载，lib 只发起 popup 并接收授权码。
+ * 打开统一认证弹层（页内 lightbox 内嵌用户中心登录 / 注册页），不涉及 OAuth 授权。
+ * 用户在弹层内登录后，用户中心写入 .shanhe.co 共享 cookie，
+ * 本页轮询 silentSsoCheck 用该 cookie 静默换取 lib 会话，成功后自动关闭弹层。
  */
-const openUcPopupAuth = async (mode: 'login' | 'register') => {
-  // 先同步打开一个空白窗口以保留用户手势（window.open 必须在点击的同一任务内调用），
-  // 异步取配置 / 算 PKCE 之后再写入真实地址。
-  const popup = window.open('', UC_POPUP_WINDOW_NAME, 'width=520,height=680')
-  if (!popup) {
-    ElMessage.warning('登录窗口被浏览器拦截，请允许本站弹出窗口后重试')
-    return
-  }
-  ucPopupWindow = popup
+const openUcLogin = (mode: 'login' | 'register') => {
+  // 主动登录属新的登录意图：清掉"刚登出同一账号"的抑制标记，否则静默换会话会被跳过
   try {
-    const oauth = await resolveCustomOauth()
-    if (!oauth?.client_id) {
-      popup.close()
-      ElMessage.error('统一认证登录未配置')
-      return
-    }
-    const codeVerifier = generateRandomString(64)
-    const codeChallenge = await generateCodeChallenge(codeVerifier)
-    const state = generateRandomString(32)
-    const nonce = generateRandomString(32)
-    savePkceParams(codeVerifier, state, nonce)
+    sessionStorage.removeItem('uc_sso_suppress_until')
+    sessionStorage.removeItem('uc_sso_suppressed_user')
+  } catch {
+    void 0
+  }
+  ucFrameSrc.value = mode === 'register' ? UC_REGISTER_URL : UC_LOGIN_URL
+  ucDialogVisible.value = true
+}
 
-    const params = new URLSearchParams({
-      client_id: oauth.client_id,
-      redirect_uri: UC_POPUP_REDIRECT_URI,
-      scope: oauth.scope || 'openid profile',
-      state,
-      code_challenge: codeChallenge,
-      code_challenge_method: 'S256',
-      nonce,
-      mode,
-      opener_origin: window.location.origin,
-    })
-    popup.location.href = `${UC_POPUP_AUTH_URL}?${params.toString()}`
-  } catch (e) {
-    console.error('[OAuth] 启动统一认证弹窗失败:', e)
-    popup.close()
-    ElMessage.error('启动登录失败')
+const stopUcProbe = () => {
+  if (ucProbeTimer) {
+    window.clearInterval(ucProbeTimer)
+    ucProbeTimer = undefined
   }
 }
 
-/** 接收用户中心弹窗（postMessage）回传的授权结果，换取 lib 会话 */
-const handleOAuthMessage = async (event: MessageEvent) => {
-  if (event.origin !== UC_POPUP_ORIGIN) return
-  const payload: any = event.data
-  if (!payload || payload.type !== UC_POPUP_MESSAGE_TYPE) return
+// 弹层开启期间轮询探测：user 端登录成功后 lib 自动建会话
+//（silentSsoCheck 内部有 5s 去抖，故轮询间隔取 3s，实际约每 5s 探测一次）
+watch(ucDialogVisible, (visible) => {
+  stopUcProbe()
+  if (!visible) return
+  void userStore.silentSsoCheck()
+  ucProbeTimer = window.setInterval(() => {
+    void userStore.silentSsoCheck()
+  }, 3000)
+})
 
-  const data = payload.data || {}
-  if (payload.action === 'authorized') {
-    const code = data.code
-    if (!code) return
-    const pkce = getPkceParams()
-    if (!pkce) {
-      ElMessage.error('登录参数已失效，请重新登录')
-      return
+// 登录成功（已换到 lib 会话）后自动关闭弹层
+watch(
+  () => Number(userStore.user.id) || 0,
+  (id) => {
+    if (id > 0 && ucDialogVisible.value) {
+      ucDialogVisible.value = false
+      ElMessage.success('登录成功')
     }
-    if (data.state && data.state !== pkce.state) {
-      clearPkceParams()
-      ElMessage.error('State 验证失败，请重新登录')
-      return
-    }
-    try {
-      const res: any = await userStore.loginOauth({
-        code,
-        oauth_type: OAUTH_TYPE_CUSTOM,
-        code_verifier: pkce.codeVerifier,
-        nonce: pkce.nonce,
-        // 必须与授权请求完全一致，否则换 token 会被拒绝
-        redirect_uri: UC_POPUP_REDIRECT_URI,
-      })
-      clearPkceParams()
-      if (res?.status === 200 && res?.data?.token) {
-        // 登录成功后关闭弹窗（用户中心回调页一般已自行关闭，这里兜底）
-        ucPopupWindow?.close()
-        ucPopupWindow = null
-        ElMessage.success('登录成功')
-      } else {
-        ElMessage.error(res?.data?.message || res?.message || '登录失败')
-      }
-    } catch (e: any) {
-      console.error('[OAuth] 统一认证换 token 失败:', e)
-      ElMessage.error(e?.data?.message || e?.message || '登录异常')
-    }
-    return
-  }
-  if (payload.action === 'denied') {
-    ElMessage.warning('已取消授权')
-    return
-  }
-  if (payload.action === 'error') {
-    ElMessage.error(data.error_description || data.error || '授权失败')
-  }
-}
+  },
+)
 
 const resetActivePath = () => {
   const slice = route.path.split('/').slice(0, 2)
@@ -850,7 +819,6 @@ const handleVisibility = () => {
 onMounted(() => {
   window.addEventListener('focus', handleWindowFocus)
   window.addEventListener('scroll', handleScroll, { passive: true })
-  window.addEventListener('message', handleOAuthMessage)
   window.addEventListener(OPEN_LOGIN_EVENT, showLoginDialog)
   window.addEventListener('focus', ssoProbe)
   window.addEventListener('visibilitychange', handleVisibility)
@@ -865,10 +833,10 @@ onBeforeUnmount(() => {
   window.removeEventListener('focus', handleWindowFocus)
   window.removeEventListener('focus', ssoProbe)
   window.removeEventListener('scroll', handleScroll)
-  window.removeEventListener('message', handleOAuthMessage)
   window.removeEventListener(OPEN_LOGIN_EVENT, showLoginDialog)
   window.removeEventListener('visibilitychange', handleVisibility)
   if (ssoProbeTimer) clearInterval(ssoProbeTimer)
+  stopUcProbe()
 })
 
 init()
