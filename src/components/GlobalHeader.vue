@@ -447,12 +447,9 @@ import { getAdvertisementByPosition } from '@/api/advertisement'
 import { advertisementPositions } from '@/utils/enum'
 import { categoryToTrees, requireLogin } from '@/utils/utils'
 import { creditName } from '@/utils/credit'
-import { generateRandomString } from '@/utils/pkce'
 import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
-import { getOauths } from '@/api/oauth'
-import { OAUTH_TYPE_CUSTOM } from '@/utils/oauth'
 import { OPEN_LOGIN_EVENT, openLoginDialog } from '@/utils/login'
 
 defineOptions({ name: 'GlobalHeader' })
@@ -490,12 +487,12 @@ const searchModalInput = ref<any>()
 const popover0 = ref<any>()
 const popover1 = ref<any>()
 
-// 纯 SSO 静默登录：弹层内嵌用户中心 /v1 弹窗认证页（紧凑卡片 UI，带登录/注册 tab）。
-// 只借用它的登录界面，login 成功后 cookie 落到 .shanhe.co，本页轮询 silentSsoCheck
-// 静默换取 lib 会话并自动关闭弹层——不依赖授权码，也不监听任何 postMessage 回传。
-const oauths = ref<any[]>([])
+// 纯 SSO 静默登录：弹层内嵌用户中心 /v1 弹窗认证页（紧凑卡片 UI，带登录/注册 tab），
+// 传 sso=1 走"仅登录、不授权"模式；登录成功后 cookie 落到 .shanhe.co，
+// 本页用 silentSsoCheck 静默换取 lib 会话并自动关闭弹层。
 const UC_POPUP_AUTH_URL = 'https://user.shanhe.co/v1'
-const UC_POPUP_REDIRECT_URI = 'https://user.shanhe.co/v1/callback'
+const UC_POPUP_ORIGIN = 'https://user.shanhe.co'
+const UC_POPUP_MESSAGE_TYPE = 'shanhe_popup_auth'
 const ucDialogVisible = ref(false)
 const ucFrameSrc = ref('')
 let ucProbeTimer: number | undefined
@@ -577,11 +574,11 @@ const showLoginDialog = (tabOrEvent?: string | Event) => {
 }
 
 /**
- * 打开统一认证弹层：内嵌用户中心 /v1 弹窗认证页的登录 / 注册卡片。
- * 登录成功后 cookie 落到 .shanhe.co，本页轮询 silentSsoCheck 用该 cookie
- * 静默换取 lib 会话并自动关闭弹层（不走授权码换取）。
+ * 打开统一认证弹层：内嵌用户中心 /v1 弹窗认证页的登录 / 注册卡片（sso=1 纯 SSO 模式）。
+ * 该模式下用户中心只做登录、不做授权，登录成功后回传 login_success；
+ * 本页用 .shanhe.co 共享 cookie 调 silentSsoCheck 建立 lib 会话后自动关闭弹层。
  */
-const openUcLogin = async (mode: 'login' | 'register') => {
+const openUcLogin = (mode: 'login' | 'register') => {
   // 主动登录属新的登录意图：清掉"刚登出同一账号"的抑制标记，否则静默换会话会被跳过
   try {
     sessionStorage.removeItem('uc_sso_suppress_until')
@@ -589,18 +586,8 @@ const openUcLogin = async (mode: 'login' | 'register') => {
   } catch {
     void 0
   }
-  // /v1 要求 client_id / redirect_uri / state 必填，缺失会直接进错误态而不是登录卡片，
-  // 故这里必须带上 lib 的 client 参数（仅用于渲染卡片，授权结果本页不消费）。
-  const oauth = await resolveCustomOauth()
-  if (!oauth?.client_id) {
-    ElMessage.error('统一认证登录未配置')
-    return
-  }
   const params = new URLSearchParams({
-    client_id: oauth.client_id,
-    redirect_uri: UC_POPUP_REDIRECT_URI,
-    scope: oauth.scope || 'openid profile',
-    state: generateRandomString(32),
+    sso: '1',
     mode,
     opener_origin: window.location.origin,
   })
@@ -608,19 +595,18 @@ const openUcLogin = async (mode: 'login' | 'register') => {
   ucDialogVisible.value = true
 }
 
-/** 取自定义 OAuth（山河大学统一认证）配置，未缓存时拉取一次 */
-const resolveCustomOauth = async (): Promise<any | undefined> => {
-  if (!oauths.value.length) {
-    try {
-      const res: any = await getOauths()
-      if (res.status === 200 && res.data.oauths) {
-        oauths.value = res.data.oauths.filter((o: any) => o.enable)
-      }
-    } catch {
-      // 拉取失败按未配置处理
-    }
+/** 接收用户中心弹层回传的消息：登录成功即静默换会话（弹层由 user.id 监听自动关闭） */
+const handleUcMessage = (event: MessageEvent) => {
+  if (event.origin !== UC_POPUP_ORIGIN) return
+  const payload: any = event.data
+  if (!payload || payload.type !== UC_POPUP_MESSAGE_TYPE) return
+  if (payload.action === 'login_success') {
+    void userStore.silentSsoCheck()
+    return
   }
-  return oauths.value.find((o: any) => o.type === OAUTH_TYPE_CUSTOM)
+  if (payload.action === 'close') {
+    ucDialogVisible.value = false
+  }
 }
 
 const stopUcProbe = () => {
@@ -832,6 +818,7 @@ const handleVisibility = () => {
 onMounted(() => {
   window.addEventListener('focus', handleWindowFocus)
   window.addEventListener('scroll', handleScroll, { passive: true })
+  window.addEventListener('message', handleUcMessage)
   window.addEventListener(OPEN_LOGIN_EVENT, showLoginDialog)
   window.addEventListener('focus', ssoProbe)
   window.addEventListener('visibilitychange', handleVisibility)
@@ -846,6 +833,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('focus', handleWindowFocus)
   window.removeEventListener('focus', ssoProbe)
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('message', handleUcMessage)
   window.removeEventListener(OPEN_LOGIN_EVENT, showLoginDialog)
   window.removeEventListener('visibilitychange', handleVisibility)
   if (ssoProbeTimer) clearInterval(ssoProbeTimer)
