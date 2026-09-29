@@ -360,6 +360,53 @@
       </el-menu>
     </el-drawer>
 
+    <!-- 统一认证弹层：页内 lightbox 内嵌用户中心登录 / 注册页（不打开独立窗口） -->
+    <el-dialog
+      v-model="ucDialogVisible"
+      width="430px"
+      top="8vh"
+      :close-on-click-modal="true"
+      :close-on-press-escape="true"
+      destroy-on-close
+      class="uc-sso-dialog"
+    >
+      <template #header>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 16px">
+          <span
+            style="
+              display: inline-flex;
+              width: 26px;
+              height: 26px;
+              border-radius: 6px;
+              align-items: center;
+              justify-content: center;
+              background: var(--el-color-primary);
+              color: var(--el-color-white);
+              font-size: 15px;
+            "
+            >山</span
+          >
+          山河大学统一认证中心
+        </div>
+      </template>
+      <iframe
+        v-if="ucDialogVisible"
+        :src="ucFrameSrc"
+        title="山河大学统一认证中心"
+        style="display: block; width: 100%; height: 520px; border: 0"
+      ></iframe>
+      <div
+        style="
+          margin-top: 8px;
+          text-align: center;
+          font-size: 12px;
+          color: var(--el-text-color-secondary);
+        "
+      >
+        登录成功后本窗口将自动关闭
+      </div>
+    </el-dialog>
+
     <div
       class="search-modal-overlay"
       :class="{ show: searchModalVisible }"
@@ -462,12 +509,13 @@ const searchModalInput = ref<any>()
 const popover0 = ref<any>()
 const popover1 = ref<any>()
 
-// 单点登录：登录 / 注册页面均由用户中心承载，本页只负责打开；
-// 用户中心写入 .shanhe.co 共享 cookie 后，本页由 focus / 可见性触发的 ssoProbe
-// 静默建立 lib 会话（无需 OAuth 授权弹窗）。
+// 单点登录：登录 / 注册页均由用户中心承载，在本页弹层内以 iframe 呈现；
+// 用户中心写入 .shanhe.co 共享 cookie 后，本页轮询静默换取 lib 会话并自动关闭弹层。
 const UC_LOGIN_URL = 'https://user.shanhe.co/login'
 const UC_REGISTER_URL = 'https://user.shanhe.co/register'
-const UC_LOGIN_WINDOW_NAME = 'shanhe_uc_sso'
+const ucDialogVisible = ref(false)
+const ucFrameSrc = ref('')
+let ucProbeTimer: number | undefined
 
 const searchPlaceholder = computed(() =>
   search.value.type === 1 ? '搜索文章...' : '搜索文档...',
@@ -546,25 +594,50 @@ const showLoginDialog = (tabOrEvent?: string | Event) => {
 }
 
 /**
- * 打开用户中心登录 / 注册页（单点登录）。
- * 用户在用户中心登录后写入 .shanhe.co 共享 cookie，本页在窗口重新获得焦点时
- * 由 ssoProbe → silentSsoCheck 用该 cookie 静默换取 lib 会话，无需 OAuth 授权流程。
+ * 打开统一认证弹层（页内 lightbox 内嵌用户中心登录 / 注册页）。
+ * 用户在弹层内完成登录后，用户中心写入 .shanhe.co 共享 cookie，
+ * 本页轮询 silentSsoCheck 用该 cookie 静默换取 lib 会话，成功后自动关闭弹层。
  */
 const openUcLogin = (mode: 'login' | 'register') => {
-  const url = mode === 'register' ? UC_REGISTER_URL : UC_LOGIN_URL
-  const popup = window.open(url, UC_LOGIN_WINDOW_NAME, 'width=520,height=680')
-  if (!popup) {
-    ElMessage.warning('登录窗口被浏览器拦截，请允许本站弹出窗口后重试')
-    return
+  // 主动登录属新的登录意图：清掉"刚登出同一账号"的抑制标记，否则静默换会话会被跳过
+  try {
+    sessionStorage.removeItem('uc_sso_suppress_until')
+    sessionStorage.removeItem('uc_sso_suppressed_user')
+  } catch {
+    void 0
   }
-  // 兜底：部分浏览器从外部窗口返回时不触发 focus，主动轮询窗口关闭后立即探测
-  const timer = window.setInterval(() => {
-    if (popup.closed) {
-      window.clearInterval(timer)
-      ssoProbe()
-    }
-  }, 1000)
+  ucFrameSrc.value = mode === 'register' ? UC_REGISTER_URL : UC_LOGIN_URL
+  ucDialogVisible.value = true
 }
+
+const stopUcProbe = () => {
+  if (ucProbeTimer) {
+    window.clearInterval(ucProbeTimer)
+    ucProbeTimer = undefined
+  }
+}
+
+// 弹层开启期间轮询探测：user 端登录成功后 lib 自动建会话
+//（silentSsoCheck 内部有 5s 去抖，故轮询间隔取 3s，实际约每 5s 探测一次）
+watch(ucDialogVisible, (visible) => {
+  stopUcProbe()
+  if (!visible) return
+  void userStore.silentSsoCheck()
+  ucProbeTimer = window.setInterval(() => {
+    void userStore.silentSsoCheck()
+  }, 3000)
+})
+
+// 登录成功（已换到 lib 会话）后自动关闭弹层
+watch(
+  () => Number(userStore.user.id) || 0,
+  (id) => {
+    if (id > 0 && ucDialogVisible.value) {
+      ucDialogVisible.value = false
+      ElMessage.success('登录成功')
+    }
+  },
+)
 
 const resetActivePath = () => {
   const slice = route.path.split('/').slice(0, 2)
@@ -763,6 +836,7 @@ onBeforeUnmount(() => {
   window.removeEventListener(OPEN_LOGIN_EVENT, showLoginDialog)
   window.removeEventListener('visibilitychange', handleVisibility)
   if (ssoProbeTimer) clearInterval(ssoProbeTimer)
+  stopUcProbe()
 })
 
 init()
