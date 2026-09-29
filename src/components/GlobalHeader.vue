@@ -390,7 +390,7 @@
         </div>
       </template>
       <iframe
-        v-if="ucDialogVisible"
+        v-if="ucDialogVisible && ucFrameSrc"
         :src="ucFrameSrc"
         title="山河大学统一认证中心"
         style="display: block; width: 100%; height: 520px; border: 0"
@@ -469,9 +469,12 @@ import { getAdvertisementByPosition } from '@/api/advertisement'
 import { advertisementPositions } from '@/utils/enum'
 import { categoryToTrees, requireLogin } from '@/utils/utils'
 import { creditName } from '@/utils/credit'
+import { generateRandomString } from '@/utils/pkce'
 import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
+import { getOauths } from '@/api/oauth'
+import { OAUTH_TYPE_CUSTOM } from '@/utils/oauth'
 import { OPEN_LOGIN_EVENT, openLoginDialog } from '@/utils/login'
 
 defineOptions({ name: 'GlobalHeader' })
@@ -509,10 +512,12 @@ const searchModalInput = ref<any>()
 const popover0 = ref<any>()
 const popover1 = ref<any>()
 
-// 纯 SSO 静默登录：登录 / 注册页均由用户中心承载，在本页弹层内以 iframe 呈现；
-// 用户中心写入 .shanhe.co 共享 cookie 后，本页轮询静默换取 lib 会话并自动关闭弹层。
-const UC_LOGIN_URL = 'https://user.shanhe.co/login'
-const UC_REGISTER_URL = 'https://user.shanhe.co/register'
+// 纯 SSO 静默登录：弹层内嵌用户中心 /v1 弹窗认证页（紧凑卡片 UI，带登录/注册 tab）。
+// 只借用它的登录界面，login 成功后 cookie 落到 .shanhe.co，本页轮询 silentSsoCheck
+// 静默换取 lib 会话并自动关闭弹层——不依赖授权码，也不监听任何 postMessage 回传。
+const oauths = ref<any[]>([])
+const UC_POPUP_AUTH_URL = 'https://user.shanhe.co/v1'
+const UC_POPUP_REDIRECT_URI = 'https://user.shanhe.co/v1/callback'
 const ucDialogVisible = ref(false)
 const ucFrameSrc = ref('')
 let ucProbeTimer: number | undefined
@@ -594,11 +599,11 @@ const showLoginDialog = (tabOrEvent?: string | Event) => {
 }
 
 /**
- * 打开统一认证弹层（页内 lightbox 内嵌用户中心登录 / 注册页），不涉及 OAuth 授权。
- * 用户在弹层内登录后，用户中心写入 .shanhe.co 共享 cookie，
- * 本页轮询 silentSsoCheck 用该 cookie 静默换取 lib 会话，成功后自动关闭弹层。
+ * 打开统一认证弹层：内嵌用户中心 /v1 弹窗认证页的登录 / 注册卡片。
+ * 登录成功后 cookie 落到 .shanhe.co，本页轮询 silentSsoCheck 用该 cookie
+ * 静默换取 lib 会话并自动关闭弹层（不走授权码换取）。
  */
-const openUcLogin = (mode: 'login' | 'register') => {
+const openUcLogin = async (mode: 'login' | 'register') => {
   // 主动登录属新的登录意图：清掉"刚登出同一账号"的抑制标记，否则静默换会话会被跳过
   try {
     sessionStorage.removeItem('uc_sso_suppress_until')
@@ -606,8 +611,38 @@ const openUcLogin = (mode: 'login' | 'register') => {
   } catch {
     void 0
   }
-  ucFrameSrc.value = mode === 'register' ? UC_REGISTER_URL : UC_LOGIN_URL
+  // /v1 要求 client_id / redirect_uri / state 必填，缺失会直接进错误态而不是登录卡片，
+  // 故这里必须带上 lib 的 client 参数（仅用于渲染卡片，授权结果本页不消费）。
+  const oauth = await resolveCustomOauth()
+  if (!oauth?.client_id) {
+    ElMessage.error('统一认证登录未配置')
+    return
+  }
+  const params = new URLSearchParams({
+    client_id: oauth.client_id,
+    redirect_uri: UC_POPUP_REDIRECT_URI,
+    scope: oauth.scope || 'openid profile',
+    state: generateRandomString(32),
+    mode,
+    opener_origin: window.location.origin,
+  })
+  ucFrameSrc.value = `${UC_POPUP_AUTH_URL}?${params.toString()}`
   ucDialogVisible.value = true
+}
+
+/** 取自定义 OAuth（山河大学统一认证）配置，未缓存时拉取一次 */
+const resolveCustomOauth = async (): Promise<any | undefined> => {
+  if (!oauths.value.length) {
+    try {
+      const res: any = await getOauths()
+      if (res.status === 200 && res.data.oauths) {
+        oauths.value = res.data.oauths.filter((o: any) => o.enable)
+      }
+    } catch {
+      // 拉取失败按未配置处理
+    }
+  }
+  return oauths.value.find((o: any) => o.type === OAUTH_TYPE_CUSTOM)
 }
 
 const stopUcProbe = () => {
