@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
-// 样式已全部抽取至 public/css（index.html 以 <link> 引入）：
+// 样式源已全部集中到 public/assets/css（index.html 以 <link> 引入其构建产物）：
 //   /assets/font-awesome-4.7.0/css/font-awesome.min.css → vendor.css（含 EP/vxe/wangeditor/markdown）
-//   /css/app.css（骨架 + 设计令牌 + 全局样式） → /css/components.css（组件样式）
+//   /css/app.css（骨架 + 设计令牌 + 全局样式） → /css/components.css（组件样式，源为 components.scss）
 // 此处不再 import 任何样式文件。
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import App from './App.vue'

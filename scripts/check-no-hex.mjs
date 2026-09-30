@@ -1,8 +1,9 @@
-// 防回潮检查（样式集中到 public/css 后的不变式）：
-// 1. src/**/*.vue 中禁止出现 <style> 块 —— 样式必须写在 public/css 下（components.css 等），
-//    防止组件样式回流到 .vue 内。
+// 防回潮检查（样式源头集中后的不变式）：
+// 1. src/**/*.vue 中禁止出现 <style> 块 —— 组件样式必须写入 public/assets/css/components.scss，
+//    防止组件样式回流到 .vue 内（回流同时会触发 build-css.mjs 步骤 1 中止构建）。
 // 2. public/assets/css/*.scss 中，除 tokens.scss（设计令牌）外不允许出现裸 hex；
-//    public/css/*.css 为构建产物（scripts/build-css.mjs 生成），源头受控，不在此检查。
+//    该目录包含组件样式源 components.scss，故组件样式同样受此约束。
+//    public/css/*.css 为构建产物（由上述源经 scripts/build-css.mjs 生成），源头已受检，不重复检查。
 // 用法：node scripts/check-no-hex.mjs
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, extname, resolve } from 'node:path'
@@ -60,4 +61,4 @@ if (violations.length) {
   for (const v of violations) console.error(`  ${v}`)
   process.exit(1)
 }
-console.log('[check-no-hex] 通过：.vue 无内联样式；hex 仅允许出现在 tokens.scss（样式集中于 public/css）')
+console.log('[check-no-hex] 通过：.vue 无内联样式；hex 仅允许出现在 tokens.scss（组件样式源 components.scss 已受检）')

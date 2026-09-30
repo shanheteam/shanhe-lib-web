@@ -126,6 +126,14 @@
   --app-ext-doc: #6095f7;
   --app-ext-txt: #34495e;
 
+  /* ===== 山河大学账号密码登录表单（GlobalHeader，SSO 入口）===== */
+  --app-sso-grad-a: #123f9e; /* 渐变起始深蓝 */
+  --app-sso-grad-b: #2b6aff;
+  --app-sso-grad-c: #4f8bff;
+  --app-sso-grad-d: #7aa0ff; /* 渐变收尾亮蓝 */
+  --app-sso-text-strong: #1f2329; /* 弹窗标题 */
+  --app-sso-bg: #f5f6f7; /* 表单浅底/分隔 */
+
   /* ===== 滚动条 ===== */
   --app-scrollbar-thumb: rgba(50, 50, 50, 0.4);
   --app-scrollbar-thumb-hover: #dcdde1;

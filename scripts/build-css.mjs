@@ -1,6 +1,8 @@
-// 样式编译/抽取/合并脚本：
-// 1. 抽取 src/**/*.vue 中的 <style> 块，经 sass 编译（注入 var.scss）合并为 public/css/components.{hash}.css，
-//    并从 .vue 中删除 <style> 块（幂等：无 style 则跳过，保留现有产物与 index.html 引用不变）。
+// 样式编译/合并脚本：
+// 1. 编译 public/assets/css/components.scss（组件样式唯一来源）为 public/css/components.{hash}.css。
+//    .vue 中禁止再写 <style>：历史实现会把抽取结果「覆盖」写入 components.css，一旦 .vue 里重新出现
+//    <style>，产物就只剩那几行、全站组件样式在页面上消失。故此处检测到回流即报错退出，
+//    既不改写 .vue，也不覆盖既有产物。
 // 2. 编译公共样式（骨架样式 + tokens.scss + app.scss）为 public/css/app.{hash}.css（每次重建，内容不变则 hash 不变）。
 // 3. 合并依赖 css（EP/vxe/wangeditor/markdown）为 public/css/vendor.{hash}.css（每次重建，内容不变则 hash 不变）。
 // 输出文件名带内容 hash：配合 edgeone.json 对 /css/* 的一年强缓存，二次访问零重复下载，
@@ -15,17 +17,8 @@ const SRC = join(CLIENT, 'src')
 const CSS_SRC = join(CLIENT, 'public', 'assets', 'css')
 const OUT_CSS = join(CLIENT, 'public', 'css')
 
-const STYLE_RE = /<style\b[^>]*>([\s\S]*?)<\/style>/gi
-// Vue SFC 特有选择器语法：抽取为公共 css 后失去 scoped 语义，改写为纯选择器
-const VUE_SELECTORS = [
-  [/::v-deep\(([^)]+)\)/g, '$1'],
-  [/::v-slotted\(([^)]+)\)/g, '$1'],
-  [/::v-global\(([^)]+)\)/g, '$1'],
-  [/\/deep\/\s*/g, ' '],
-  [/\s*>>>\s*/g, ' '],
-  [/:deep\(([^)]+)\)/g, '$1'],
-  [/:slotted\(([^)]+)\)/g, '$1'],
-]
+// 仅用于回流检测（不再用于抽取）
+const STYLE_RE = /<style\b[^>]*>([\s\S]*?)<\/style>/i
 
 const varScss = readFileSync(join(CSS_SRC, 'var.scss'), 'utf8')
 
@@ -47,12 +40,6 @@ function walk(d) {
     if (s.isDirectory()) out.push(...walk(p))
     else out.push(p)
   }
-  return out
-}
-
-function cook(style) {
-  let out = style
-  for (const [re, rep] of VUE_SELECTORS) out = out.replace(re, rep)
   return out
 }
 
@@ -88,38 +75,20 @@ function updateIndexHtml() {
   if (updated !== html) writeFileSync(indexPath, updated)
 }
 
-// ===== 1. 抽取组件样式 → components.css =====
+// ===== 1. 组件样式 → components.css（源：public/assets/css/components.scss）=====
+// 回流检测：.vue 一旦出现 <style>，历史实现会覆盖产物并导致全站组件样式丢失，这里直接中止构建。
 const vueFiles = walk(SRC)
   .filter((p) => extname(p) === '.vue')
   .sort()
-let componentCss = ''
-let extracted = 0
-for (const file of vueFiles) {
-  const rel = file.replace(CLIENT + '/', '')
-  const src = readFileSync(file, 'utf8')
-  const blocks = [...src.matchAll(STYLE_RE)]
-  if (!blocks.length) continue
-  const chunk = blocks.map((m) => m[1]).join('\n')
-  const css = compileScss(cook(chunk), rel)
-  componentCss += `\n/* ===== ${rel} ===== */\n${css}\n`
-  const cleaned = src.replace(STYLE_RE, '').replace(/\n{3,}/g, '\n\n').trim() + '\n'
-  writeFileSync(file, cleaned)
-  extracted++
+const offenders = vueFiles.filter((p) => STYLE_RE.test(readFileSync(p, 'utf8')))
+if (offenders.length) {
+  console.error('[build-css] 检测到 .vue 中出现 <style> 块（组件样式须写在 public/assets/css/components.scss）：')
+  for (const p of offenders) console.error(`  ${p.replace(CLIENT + '/', '')}`)
+  console.error('[build-css] 本次构建已中止，未写入任何产物。')
+  process.exit(1)
 }
-if (componentCss) {
-  emitCss('components', componentCss.trimStart())
-  console.log(`[build-css] components.css：抽取 ${extracted} 个 .vue 的 <style>，已生成并删除组件内样式块`)
-} else {
-  // 无新抽取时也把现有基础名产物转为 hash 文件并同步 link：
-  // 基础名 URL 会被 /css/* 的长缓存（immutable 一年）固定，浏览器复用旧缓存导致样式错乱（踩过坑）；
-  // 转为带 hash 的文件名后 URL 随内容变化，强制浏览器拉新。
-  try {
-    emitCss('components', readFileSync(join(OUT_CSS, 'components.css'), 'utf8').trimStart())
-  } catch {
-    // 基础名不存在（全新环境且从未生成过组件样式）则跳过，link 保持基础名
-  }
-  console.log('[build-css] components.css：无待抽取的 <style>（现有产物已转 hash 文件）')
-}
+emitCss('components', compileScss(readFileSync(join(CSS_SRC, 'components.scss'), 'utf8'), 'components.scss'))
+console.log('[build-css] components.css：已由 public/assets/css/components.scss 编译生成')
 
 // ===== 2. 公共样式 → app.css（骨架 + tokens + app.scss） =====
 const skeleton = readFileSync(join(CSS_SRC, 'skeleton.css'), 'utf8')
