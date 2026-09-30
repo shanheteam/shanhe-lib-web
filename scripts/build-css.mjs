@@ -4,10 +4,11 @@
 //    <style>，产物就只剩那几行、全站组件样式在页面上消失。故此处检测到回流即报错退出，
 //    既不改写 .vue，也不覆盖既有产物。
 // 2. 编译公共样式（骨架样式 + tokens.scss + app.scss）为 public/css/app.{hash}.css（每次重建，内容不变则 hash 不变）。
-// 3. 合并依赖 css（EP/vxe/wangeditor/markdown）为 public/css/vendor.{hash}.css（每次重建，内容不变则 hash 不变）。
+// 3. 合并依赖 css（EP + markdown）为 public/css/vendor.{hash}.css（每次重建，内容不变则 hash 不变）。
+//    后台专用的 vxe / wangeditor 样式不在其中，由组件按需 import（见步骤 3 注释）。
 // 输出文件名带内容 hash：配合 edgeone.json 对 /css/* 的一年强缓存，二次访问零重复下载，
 // 同时内容变更时文件名变化、浏览器自动拉新，无缓存更新延迟。
-import { readFileSync, writeFileSync, readdirSync, statSync, mkdirSync, copyFileSync, unlinkSync } from 'node:fs'
+import { readFileSync, writeFileSync, readdirSync, statSync, mkdirSync, unlinkSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { join, extname, resolve } from 'node:path'
 import { compileString } from 'sass'
@@ -102,21 +103,15 @@ emitCss('app', appOut)
 console.log('[build-css] app.css：骨架样式 + tokens.scss + app.scss 已生成')
 
 // ===== 3. 依赖样式 → vendor.css =====
+// 仅保留「公开页确实需要」的依赖样式。vxe-table / vxe-pc-ui / wangeditor 只在后台页与 /post 用到，
+// 改由对应组件自行 import（见 TableListV2.vue、RichEditor.vue），由 Vite 切进各自的异步 chunk：
+// 既避免所有公开页首屏渲染阻塞地加载用不到的样式（曾合计 639KB 原始 / 108KB gzip），
+// 也让 vxe-table 样式里的 url("./iconfont.*") 交由 Vite 解析并产出字体（此前手工合并会导致字体 404）。
 const vendorFiles = [
   'node_modules/element-plus/dist/index.css',
   'node_modules/element-plus/theme-chalk/display.css',
-  'node_modules/vxe-table/lib/style.css',
-  'node_modules/vxe-pc-ui/lib/style.css',
-  'node_modules/@wangeditor-next/editor/dist/css/style.css',
   'public/assets/css/markdown.css',
 ]
-// vxe-pc-ui 的图标字体通过相对路径 url("./iconfont.*") 引用：字体与 css 同在 public/css/ 下，
-// 相对路径保持不变即可解析，需把字体文件一并复制过去。
-for (const f of readdirSync(join(CLIENT, 'node_modules', 'vxe-pc-ui', 'lib'))) {
-  if (f.startsWith('iconfont.')) {
-    copyFileSync(join(CLIENT, 'node_modules', 'vxe-pc-ui', 'lib', f), join(OUT_CSS, f))
-  }
-}
 let vendorOut = ''
 for (const vf of vendorFiles) {
   const p = join(CLIENT, vf)
@@ -124,7 +119,7 @@ for (const vf of vendorFiles) {
   vendorOut += `\n/* ===== ${vf} ===== */\n${css}\n`
 }
 emitCss('vendor', vendorOut.trimStart())
-console.log('[build-css] vendor.css：6 个依赖/外部样式已合并')
+console.log(`[build-css] vendor.css：${vendorFiles.length} 个依赖/外部样式已合并`)
 
 // ===== 4. 同步 index.html 的 <link> 到最新 hash 文件 =====
 updateIndexHtml()

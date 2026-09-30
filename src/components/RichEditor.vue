@@ -27,6 +27,9 @@ import {
   type IToolbarConfig,
 } from '@wangeditor-next/editor'
 import { Editor, Toolbar } from '@wangeditor-next/editor-for-vue'
+// 富文本编辑器样式原先由 build-css.mjs 合并进 vendor.css（所有公开页首屏加载）；
+// 改为在此按需引入，由 Vite 切进本组件所在的异步 chunk。
+import '@wangeditor-next/editor/dist/css/style.css'
 import MarkdownIt from 'markdown-it'
 import { useUserStore } from '@/store/user'
 

@@ -214,6 +214,10 @@
 
 <script setup lang="ts">
 import { VxeTable, VxeColumn } from 'vxe-table'
+// vxe 样式原先由 build-css.mjs 合并进 vendor.css，导致所有公开页首屏渲染阻塞地加载；
+// 改为在此按需引入，由 Vite 切进后台异步 chunk（同时让样式内的 iconfont 由 Vite 产出，避免 404）。
+import 'vxe-table/lib/style.css'
+import 'vxe-pc-ui/lib/style.css'
 import UploadImage from './UploadImage.vue'
 import { Link, ArrowRight } from '@element-plus/icons-vue'
 import { formatDatetime, formatBytes } from '@/utils/utils'
