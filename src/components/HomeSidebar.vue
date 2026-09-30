@@ -218,7 +218,7 @@ async function signIn() {
       const award = res.data.award || 0
       await userStore.getUser()
       ElMessage.success(
-        award > 0 ? `签到成功，获得 ${award} 积分奖励` : '签到成功'
+        award > 0 ? `签到成功，获得 ${award} ${creditName.value}奖励` : '签到成功'
       )
     } else {
       ElMessage.error(res.data?.message || '签到失败')

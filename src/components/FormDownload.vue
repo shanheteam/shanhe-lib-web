@@ -10,7 +10,9 @@
       <el-form-item class="download">
         <div>
           <el-radio-group v-model="download.payment_type">
-            <el-radio :value="creditDownload" border>积分下载</el-radio>
+            <el-radio :value="creditDownload" border
+              >{{ creditName(settings) }}下载</el-radio
+            >
             <el-radio
               v-if="settings.download.enable_code_download"
               :value="codeDownload"
