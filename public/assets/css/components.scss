@@ -686,13 +686,37 @@
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 }
 
+.wp-category-section {
+  margin-bottom: 16px;
+}
 
+.wp-header {
+  background: var(--el-color-white);
+  border-bottom: 1px solid var(--el-border-color-light);
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+.wp-header .wp-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 20px;
+}
 .wp-header .wp-title {
   margin: 0;
   font-size: 24px;
   font-weight: 500;
   color: var(--el-text-color-primary);
   line-height: 1.3;
+}
+.wp-header .wp-header-actions {
+  display: flex;
+  gap: 12px;
 }
 .wp-header .wp-publish-btn {
   background: var(--el-color-primary);
@@ -802,6 +826,33 @@
   font-size: 16px;
 }
 
+.wp-excerpt-section {
+  padding: 20px;
+  border-top: 1px solid var(--el-border-color-light);
+  background: var(--app-bg-lighter);
+}
+.wp-excerpt-section .wp-section-title {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--el-text-color-primary);
+}
+.wp-excerpt-section .el-form-item {
+  margin-bottom: 0;
+}
+.wp-excerpt-section .el-textarea__inner {
+  border: 1px solid var(--el-border-color);
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--el-text-color-regular);
+}
+.wp-excerpt-section .el-textarea__inner:focus {
+  border-color: var(--el-color-primary);
+}
+.wp-excerpt-section .el-textarea__inner::placeholder {
+  color: var(--el-text-color-placeholder);
+}
 
 .wp-sidebar {
   width: 280px;
@@ -902,9 +953,18 @@
 }
 
 @media (max-width: 768px) {
+  .wp-header .wp-header-content {
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
   .wp-header .wp-title {
     font-size: 20px;
     text-align: center;
+  }
+  .wp-header .wp-header-actions {
+    justify-content: center;
   }
   .wp-form {
     padding: 16px;
@@ -919,6 +979,9 @@
     font-size: 1.4em;
     padding: 12px 0;
   }
+  .wp-excerpt-section {
+    padding: 16px;
+  }
   .wp-meta-box .wp-meta-title {
     padding: 12px 16px;
     font-size: 14px;
@@ -928,6 +991,9 @@
   }
 }
 @media (max-width: 480px) {
+  .wp-header .wp-header-content {
+    padding: 8px 12px;
+  }
   .wp-header .wp-title {
     font-size: 18px;
   }
@@ -940,6 +1006,9 @@
   .wp-title-section .wp-title-input .el-input__inner {
     font-size: 1.2em;
     padding: 10px 0;
+  }
+  .wp-excerpt-section {
+    padding: 12px;
   }
   .wp-meta-box .wp-meta-title {
     padding: 10px 12px;
@@ -1556,9 +1625,47 @@
     width: 100%;
   }
 }
+.oauth-login-dialog .el-dialog__body {
+  padding: 0;
+}
+.oauth-login-dialog .el-dialog__header {
+  display: none;
+}
 
 .oauth-login-loading,
+.oauth-login-empty {
+  text-align: center;
+  padding: 60px 0;
+}
 
+.oauth-login-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 360px;
+  padding: 36px 0;
+}
+
+.oauth-login-main {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.oauth-login-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--app-text-heading-strong);
+  margin: 0 0 8px;
+}
+
+.oauth-login-subtitle {
+  font-size: 13px;
+  color: var(--app-text-muted-lighter);
+  margin: 0 0 32px;
+}
 
 .oauth-list {
   width: 100%;
@@ -1591,7 +1698,55 @@
   transform: scale(0.98);
 }
 
+.oauth-btn-6 {
+  background: var(--app-color-primary-soft);
+}
 
+.oauth-btn-1 {
+  background: var(--app-brand-blue);
+}
+
+.oauth-btn-2 {
+  background: var(--app-brand-weixin);
+}
+
+.oauth-btn-4 {
+  background: var(--app-text-strong);
+}
+
+.oauth-btn-3 {
+  background: var(--app-brand-gitlab);
+}
+
+.oauth-btn-7 {
+  background: var(--app-brand-google);
+}
+
+.oauth-btn-text {
+  font-size: 16px;
+}
+
+.oauth-login-hint {
+  margin-top: 20px;
+  font-size: 12px;
+  color: var(--app-text-muted-lighter);
+  text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+  .oauth-login-dialog {
+    width: 95% !important;
+  }
+  .oauth-login-dialog .oauth-login-body {
+    flex-direction: column;
+    gap: 24px;
+    min-height: 0;
+    padding: 8px 0 20px;
+  }
+  .oauth-login-dialog .oauth-login-main {
+    max-width: 100%;
+  }
+}
 .com-mobile-nav .mobile-nav-title {
   cursor: pointer;
   display: flex;
@@ -3068,6 +3223,9 @@
 .channel-category.is-active a {
   color: var(--el-color-primary);
 }
+.channel-category a {
+  display: block;
+}
 
 .el-menu--popup {
   min-width: 115px;
@@ -3385,6 +3543,14 @@
 
 
 /* ===== src/views/admin/spider/articledetail.vue ===== */
+.article-preview {
+  min-height: 320px;
+  padding: 16px;
+  background: var(--app-bg-lighter);
+  border: 1px solid var(--el-border-color-lighter);
+  border-radius: 4px;
+  overflow: auto;
+}
 
 /* ===== src/views/admin/spider/document.vue ===== */
 
@@ -3899,6 +4065,9 @@
 }
 
 /* ===== src/views/document/_id.vue ===== */
+.viewer-canvas > img {
+  background-color: var(--el-color-white);
+}
 
 .page-document .doc-main {
   min-height: 90vh;
@@ -4096,6 +4265,9 @@
   .el-image-viewer__wrapper .el-image-viewer__canvas .el-image-viewer__img {
     transform-origin: 0 0 !important;
   }
+  .viewer-canvas > img {
+    transform: scale(1.2) !important;
+  }
   .page-document .doc-left {
     width: 100% !important;
   }
@@ -4139,7 +4311,21 @@
 }
 
 /* ===== src/views/findpassword.vue ===== */
+.page-findpassword .el-card {
+  width: 520px;
+  margin: 100px auto;
+}
+.page-findpassword .el-card__body {
+  padding-bottom: 0;
+  margin-bottom: -20px;
+}
 
+@media screen and (max-width: 768px) {
+  .page-findpassword .el-card {
+    margin: 10px auto;
+    width: 100%;
+  }
+}
 
 /* ===== src/views/index.vue ===== */
 .page-index {
@@ -4300,6 +4486,11 @@
 .recommend-card,
 .latest-panel,
 .category-card,
+.publish-entry {
+  border-radius: 14px;
+  background: var(--el-color-white);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+}
 
 .recommend-card {
   display: flex;
@@ -4434,6 +4625,54 @@
   color: var(--el-color-primary);
 }
 
+.publish-panel {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 16px;
+}
+
+.publish-entry {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+  color: var(--app-text-heading-soft);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.publish-entry:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+}
+.publish-entry .entry-icon {
+  width: 46px;
+  height: 46px;
+  margin-bottom: 14px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+.publish-entry strong {
+  margin-bottom: 6px;
+  font-size: 18px;
+  line-height: 1.2;
+}
+.publish-entry small {
+  color: var(--app-text-muted-soft);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.entry-upload .entry-icon {
+  background: rgba(38, 132, 255, 0.12);
+  color: var(--el-color-primary);
+}
+
+.entry-post .entry-icon {
+  background: rgba(46, 184, 92, 0.12);
+  color: var(--app-color-green);
+}
 
 .latest-grid {
   display: grid;
@@ -4773,6 +5012,17 @@
   .recommend-links {
     gap: 12px;
   }
+  .publish-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+    gap: 12px;
+  }
+  .publish-entry {
+    padding: 16px;
+  }
+  .publish-entry strong {
+    font-size: 16px;
+  }
   .latest-panel {
     padding: 16px 14px 8px;
   }
@@ -4800,6 +5050,37 @@
 }
 
 /* ===== src/views/login.vue ===== */
+.page-login {
+  width: 100%;
+  margin-top: -20px;
+  margin-bottom: -20px;
+  background-size: cover !important;
+}
+.page-login > div {
+  width: 1200px;
+  margin: 0 auto;
+}
+.page-login .el-card {
+  width: 520px;
+  max-width: 100%;
+  margin: 100px auto;
+  margin-right: 0;
+}
+.page-login .el-card.close-box {
+  margin-right: auto;
+  width: 520px;
+}
+.page-login .el-card.close-box .close-tips {
+  margin-bottom: 20px;
+  border: 1px dashed var(--app-color-warning-strong);
+  padding: 20px;
+  border-radius: 4px;
+  line-height: 180%;
+  font-size: 15px;
+}
+.page-login .oauth-login-container {
+  padding: 20px 0;
+}
 .page-login .oauth-list {
   display: flex;
   flex-direction: column;
@@ -4811,6 +5092,19 @@
   font-size: 16px;
 }
 
+@media screen and (max-width: 768px) {
+  .page-login {
+    background: none !important;
+  }
+  .page-login > div {
+    width: 100%;
+    margin: 0 auto;
+  }
+  .page-login .el-card {
+    width: 100%;
+    margin: 20px auto;
+  }
+}
 
 /* ===== src/views/me.vue ===== */
 .page-me .el-menu {
@@ -4986,7 +5280,36 @@
 }
 
 /* ===== src/views/register.vue ===== */
+.page-register {
+  width: 100%;
+  margin-top: -20px;
+  margin-bottom: -20px;
+  background-size: cover !important;
+}
+.page-register > div {
+  width: 1200px;
+  margin: 0 auto;
+}
+.page-register .el-card {
+  width: 520px;
+  max-width: 100%;
+  margin: 100px auto;
+  margin-right: 0;
+}
 
+@media screen and (max-width: 768px) {
+  .page-register {
+    background: none !important;
+  }
+  .page-register > div {
+    width: 100%;
+    margin: 0;
+  }
+  .page-register .el-card {
+    width: 100%;
+    margin: 20px 0;
+  }
+}
 
 /* ===== src/views/search.vue ===== */
 @charset "UTF-8";
@@ -5940,16 +6263,170 @@
 }
 
 /* ===== 山河大学账号密码登录表单 (GlobalHeader) ===== */
+.oauth-login-body .uc-acct-login {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 8px;
+}
+.uc-acct-login .el-divider {
+  width: 100%;
+  margin: 20px 0;
+}
+.uc-acct-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.uc-acct-form .el-input__wrapper {
+  border-radius: 24px;
+}
+.uc-acct-submit {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 4px;
+}
 
 
 /* 登录弹窗：统一认证 tab */
 .uc-tabs .el-tabs__header { margin-bottom: 12px; }
 .uc-tabs .el-tabs__item { font-size: 15px; }
+.uc-reg-ssopro { text-align: center; padding: 12px 0 4px; }
+.uc-reg-ico { font-size: 40px; color: var(--el-text-color-disabled); margin-bottom: 10px; }
+.uc-reg-tip { color: var(--el-text-color-regular); font-size: 13px; line-height: 1.7; margin: 0 0 16px; }
+.uc-reg-go { width: 100%; height: 48px; border: none; border-radius: 24px; font-size: 16px; font-weight: 500; }
 
 /* 登录弹窗：左右分栏（左品牌区固定宽 + 右表单区固定宽），覆盖 .oauth-login-body 的居中布局 */
+.uc-login-body.oauth-login-body {
+  padding: 0;
+  min-height: 0;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+.uc-login-left {
+  position: relative;
+  overflow: hidden;
+  width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 44px 32px;
+  color: var(--el-color-white);
+  background:
+    radial-gradient(ellipse at 18% 0%, rgba(255, 255, 255, 0.22), transparent 55%),
+    radial-gradient(ellipse at 95% 95%, rgba(125, 165, 255, 0.4), transparent 50%),
+    linear-gradient(
+      135deg,
+      var(--app-sso-grad-a),
+      var(--app-sso-grad-b) 45%,
+      var(--app-sso-grad-c) 75%,
+      var(--app-sso-grad-d)
+    );
+  border-radius: 8px 0 0 8px;
+  box-sizing: border-box;
+}
 /* 装饰：右上角同心圆环 */
+.uc-login-left::before {
+  content: '';
+  position: absolute;
+  right: -70px;
+  top: -70px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 0 0 32px rgba(255, 255, 255, 0.05),
+    0 0 0 64px rgba(255, 255, 255, 0.03);
+  pointer-events: none;
+}
 /* 装饰：底部网点 */
+.uc-login-left::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 84px;
+  background: radial-gradient(circle at 8px 8px, rgba(255, 255, 255, 0.28) 2px, transparent 2.5px);
+  background-size: 16px 16px;
+  opacity: 0.25;
+  pointer-events: none;
+}
+.uc-login-logo {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+.uc-login-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-right: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  font-size: 22px;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+.uc-login-title {
+  position: relative;
+  z-index: 1;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  opacity: 0.95;
+}
+.uc-login-desc {
+  position: relative;
+  z-index: 1;
+  font-size: 13px;
+  line-height: 1.8;
+  opacity: 0.85;
+}
+.uc-login-left-foot {
+  position: relative;
+  z-index: 1;
+  margin-top: 28px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+.uc-login-right {
+  flex: 1;
+  min-width: 0;
+  padding: 30px 40px 36px;
+  box-sizing: border-box;
+}
 /* 登录 tab 下方：前往注册链接 */
+.uc-acct-reglink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--app-text-muted);
+}
+.uc-acct-reglink .el-link {
+  font-size: 13px;
+}
 /* 注册失败原因提示（展示于注册表单顶部） */
 .uc-reg-error {
   width: 100%;
@@ -5961,8 +6438,32 @@
   font-size: 13px;
   line-height: 1.5;
 }
+@media screen and (max-width: 768px) {
+  .uc-login-left {
+    display: none;
+  }
+  .uc-login-right {
+    padding: 20px 20px 24px;
+  }
+}
 
 /* 注册 tab：内联注册表单（GlobalHeader），样式务必写在公共 css，勿在 .vue 内加 <style> */
+.uc-reg-form {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding-top: 8px;
+}
+.uc-reg-form .el-divider {
+  width: 100%;
+  margin: 4px 0 12px;
+}
+.uc-reg-form .el-input__wrapper {
+  border-radius: 24px;
+}
 .uc-reg-stud {
   width: 100%;
   display: flex;
@@ -5983,5 +6484,15 @@
   flex-shrink: 0;
   white-space: nowrap;
 }
-/* 登录弹窗学号前四位只读 */
+.uc-reg-submit {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 4px;
+}
+/* 登录弹窗标题（上移）与学号前四位只读 */
+.uc-dialog-title { text-align:center; margin:0 0 14px; font-size:18px; font-weight:600; color:var(--app-sso-text-strong); }
 .uc-reg-head { display:inline-flex; align-items:center; justify-content:center; min-width:72px; height:40px; padding:0 10px; border:1px solid var(--el-border-color); border-radius:8px; background:var(--app-sso-bg); color:var(--el-text-color-primary); font-weight:600; letter-spacing:1px; box-sizing:border-box; }
