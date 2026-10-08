@@ -6,8 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:css && vue-tsc -b && vite build",
+    "build": "npm run check:modes && npm run build:css && vue-tsc -b && vite build",
     "build:css": "node scripts/build-css.mjs",
+    "check:modes": "node scripts/check-file-modes.mjs",
     "lint": "eslint \"src/**/*.{vue,ts,tsx}\" --fix",
     "lint:css": "node scripts/check-no-hex.mjs",
     "preview": "vite preview"
