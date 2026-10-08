@@ -5,27 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
-import * as configApi from '@/api/config'
+import { useConfigForm } from '@/composables/useConfigForm'
 
-const activeName = 'footer'
-const configs = ref<any[]>([])
-const loading = ref(false)
-
-async function loadConfig() {
-  loading.value = true
-  const res: any = await configApi.listConfig({ category: [activeName] })
-  if (res.status === 200) {
-    configs.value = res.data.config || []
-  } else {
-    configs.value = []
-    ElMessage.error(res.data.message)
-  }
-  loading.value = false
-}
-
-onMounted(() => {
-  loadConfig()
-})
+const { configs, loading } = useConfigForm('footer')
 </script>

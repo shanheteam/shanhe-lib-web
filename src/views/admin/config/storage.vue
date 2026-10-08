@@ -11,29 +11,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
-import { listConfig } from '@/api/config'
+import { useConfigForm } from '@/composables/useConfigForm'
 
 defineOptions({ name: 'AdminConfigStorage' })
 
-const activeName = 'storage'
-const configs = ref<any[]>([])
-const loading = ref(false)
-
-async function loadConfig() {
-  loading.value = true
-  const res: any = await listConfig({ category: [activeName] })
-  if (res.status === 200) {
-    configs.value = res.data.config || []
-  } else {
-    configs.value = []
-    ElMessage.error(res.data.message)
-  }
-  loading.value = false
-}
-
-onMounted(() => {
-  loadConfig()
-})
+const { configs, loading } = useConfigForm('storage')
 </script>
