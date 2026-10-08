@@ -1,13 +1,16 @@
 // 样式编译/合并脚本：
-// 1. 编译 public/assets/css/components.scss（组件样式唯一来源）为 public/css/components.{hash}.css。
+// 1. 编译 public/assets/css/components.scss（组件样式唯一来源）为 public/css/components.css。
 //    .vue 中禁止再写 <style>：历史实现会把抽取结果「覆盖」写入 components.css，一旦 .vue 里重新出现
 //    <style>，产物就只剩那几行、全站组件样式在页面上消失。故此处检测到回流即报错退出，
 //    既不改写 .vue，也不覆盖既有产物。
-// 2. 编译公共样式（骨架样式 + tokens.scss + app.scss）为 public/css/app.{hash}.css（每次重建，内容不变则 hash 不变）。
-// 3. 合并依赖 css（EP + markdown）为 public/css/vendor.{hash}.css（每次重建，内容不变则 hash 不变）。
+// 2. 编译公共样式（骨架样式 + tokens.scss + app.scss）为 public/css/app.css（每次重建，内容不变则版本号不变）。
+// 3. 合并依赖 css（EP + markdown）为 public/css/vendor.css（每次重建，内容不变则版本号不变）。
 //    后台专用的 vxe / wangeditor 样式不在其中，由组件按需 import（见步骤 3 注释）。
-// 输出文件名带内容 hash：配合 edgeone.json 对 /css/* 的一年强缓存，二次访问零重复下载，
-// 同时内容变更时文件名变化、浏览器自动拉新，无缓存更新延迟。
+// 产物用「固定文件名 + 内容版本查询串」：
+//   index.html 引用 /css/app.css?v=<内容哈希前 8 位>，edgeone.json 对 /css/* 仍是一年 immutable，
+//   而 EdgeOne 的缓存键包含查询串（已实测：不同 ?v= 各自独立缓存），因此内容一变 URL 就变、
+//   浏览器与 CDN 自动拉新；文件名单一稳定，public/css 下也不会再随构建增删 hash 文件。
+//   （若改回固定名且去掉 ?v=，就必须同时把 /css/* 改成协商缓存，否则老访客一年拿不到新样式。）
 import { readFileSync, writeFileSync, readdirSync, statSync, mkdirSync, unlinkSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { join, extname, resolve } from 'node:path'
@@ -46,31 +49,34 @@ function walk(d) {
 
 mkdirSync(OUT_CSS, { recursive: true })
 
-// 生成的 css 文件名映射：name → /css/name.{hash}.css（末尾据此更新 index.html 的 <link>）
+// 生成的 css 链接映射：name → /css/name.css?v={hash}（末尾据此更新 index.html 的 <link>）
 const cssLinks = {}
 
-/** 写入 {name}.{hash8}.css，清理同名前缀的旧 hash 文件，返回 /css/ 相对 URL。 */
+/**
+ * 以固定文件名写入 public/css/{name}.css，内容哈希只作为 ?v= 版本号，返回 /css/ 相对 URL。
+ * 同时清理历史遗留的 {name}.{hash8}.css 产物（旧方案），避免仓库与产物目录里残留死文件。
+ */
 function emitCss(name, css) {
   const hash = createHash('md5').update(css).digest('hex').slice(0, 8)
-  const file = `${name}.${hash}.css`
-  writeFileSync(join(OUT_CSS, file), css)
-  // 清理同名前缀的旧 hash 文件（保留不带 hash 的基础名，便于回滚/对照）
+  writeFileSync(join(OUT_CSS, `${name}.css`), css)
   for (const f of readdirSync(OUT_CSS)) {
-    if (f !== file && new RegExp(`^${name}\\.[0-9a-f]{8}\\.css$`).test(f)) {
-      unlinkSync(join(OUT_CSS, f))
-    }
+    if (new RegExp(`^${name}\\.[0-9a-f]{8}\\.css$`).test(f)) unlinkSync(join(OUT_CSS, f))
   }
-  const url = `/css/${file}`
+  const url = `/css/${name}.css?v=${hash}`
   cssLinks[name] = url
   return url
 }
 
-/** 把 index.html 中 /css/{vendor|app|components}.css 的引用更新为最新 hash 文件。 */
+/**
+ * 把 index.html 中 /css/{vendor|app|components} 的引用更新为最新版本串。
+ * 正则同时兼容三种历史形态，便于平滑迁移：
+ *   /css/app.css  →  /css/app.abce745b.css（旧 hash 文件名）  →  /css/app.css?v=abce745b（当前）
+ */
 function updateIndexHtml() {
   const indexPath = join(CLIENT, 'index.html')
   const html = readFileSync(indexPath, 'utf8')
   const updated = html.replace(
-    /\/css\/(vendor|app|components)(\.[0-9a-f]{8})?\.css/g,
+    /\/css\/(vendor|app|components)(?:\.[0-9a-f]{8})?\.css(?:\?v=[0-9a-f]{8})?/g,
     (_, name) => cssLinks[name] ?? `/css/${name}.css`,
   )
   if (updated !== html) writeFileSync(indexPath, updated)
