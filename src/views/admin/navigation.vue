@@ -29,21 +29,12 @@
         @deleteRow="deleteRow"
       />
     </el-card>
-    <el-card shadow="never" class="mgt-20px">
-      <div class="text-right">
-        <el-pagination
-          background
-          :current-page="search.page"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="search.size"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handlePageChange"
-        >
-        </el-pagination>
-      </div>
-    </el-card>
+    <TablePagination
+      :search="search"
+      :total="total"
+      @size-change="handleSizeChange"
+      @page-change="handlePageChange"
+    />
     <el-drawer
       v-model="formNavigationVisible"
       direction="rtl"
@@ -72,7 +63,7 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import {
   listNavigation,
   deleteNavigation,
@@ -81,9 +72,10 @@ import {
 import { createLatestGuard } from '@/utils/latest'
 import { genLinkHTML, parseQueryIntArray, categoryToTrees } from '@/utils/utils'
 import { useSearchNav } from '@/composables/useSearchNav'
+import { useTablePagination } from '@/composables/useTablePagination'
+import { useTableSelection } from '@/composables/useTableSelection'
 
 const route = useRoute()
-const router = useRouter()
 
 const loading = ref(false)
 const formNavigationVisible = ref(false)
@@ -97,7 +89,7 @@ const navigations = ref<any[]>([])
 const total = ref(0)
 const searchFormFields = ref<any[]>([])
 const tableListFields = ref<any[]>([])
-const selectedRow = ref<any[]>([])
+const { selectedRow, selectRow } = useTableSelection()
 const navigation = ref<any>({ id: 0 })
 const navigationForm = ref<any>()
 
@@ -138,19 +130,7 @@ async function fetchList() {
   loading.value = false
 }
 
-function handleSizeChange(val: number) {
-  search.value.size = val
-  router.push({
-    query: search.value,
-  })
-}
-
-function handlePageChange(val: number) {
-  search.value.page = val
-  router.push({
-    query: search.value,
-  })
-}
+const { handleSizeChange, handlePageChange } = useTablePagination(search)
 
 const { onSearch } = useSearchNav(search, fetchList)
 
@@ -220,10 +200,6 @@ function deleteRow(row: any) {
       }
     })
     .catch(() => {})
-}
-
-function selectRow(rows: any[]) {
-  selectedRow.value = rows
 }
 
 function initSearchForm() {

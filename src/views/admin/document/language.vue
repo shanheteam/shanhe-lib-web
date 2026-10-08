@@ -48,21 +48,12 @@
       />
     </el-card>
 
-    <el-card shadow="never" class="mgt-20px">
-      <div class="text-right">
-        <el-pagination
-          background
-          :current-page="search.page"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="search.size"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handlePageChange"
-        >
-        </el-pagination>
-      </div>
-    </el-card>
+    <TablePagination
+      :search="search"
+      :total="total"
+      @size-change="handleSizeChange"
+      @page-change="handlePageChange"
+    />
     <el-drawer
       v-model="formLanguageVisible"
       direction="rtl"
@@ -99,6 +90,8 @@ import {
 } from '@/api/language'
 import { createLatestGuard } from '@/utils/latest'
 import { parseQueryIntArray } from '@/utils/utils'
+import { useTablePagination } from '@/composables/useTablePagination'
+import { useTableSelection } from '@/composables/useTableSelection'
 
 const route = useRoute()
 const router = useRouter()
@@ -112,7 +105,7 @@ const languages = ref<any[]>([])
 const language = ref<any>({})
 const searchFormFields = ref<any[]>([])
 const tableListFields = ref<any[]>([])
-const selectedRow = ref<any[]>([])
+const { selectedRow, selectRow } = useTableSelection()
 const formLanguageVisible = ref(false)
 const total = ref(0)
 
@@ -133,15 +126,10 @@ async function fetchList() {
   loading.value = false
 }
 
-function handleSizeChange(size: number) {
-  search.value = { ...search.value, size, page: 1 }
-  fetchList()
-}
-
-function handlePageChange(page: number) {
-  search.value = { ...search.value, page }
-  fetchList()
-}
+const { handleSizeChange, handlePageChange } = useTablePagination(search, {
+  mode: 'fetch',
+  fetchList,
+})
 
 function onSearch(searchParams: any) {
   search.value = { ...search.value, ...searchParams, page: 1 }
@@ -232,10 +220,6 @@ function batchStatus(cmd: number) {
 function editRow(row: any) {
   language.value = row
   formLanguageVisible.value = true
-}
-
-function selectRow(rows: any[]) {
-  selectedRow.value = rows
 }
 
 function initSearchForm() {

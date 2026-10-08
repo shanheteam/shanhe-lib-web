@@ -40,21 +40,12 @@
       </TableListV2>
     </el-card>
 
-    <el-card shadow="never" class="mgt-20px">
-      <div class="text-right">
-        <el-pagination
-          background
-          :current-page="search.page"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="search.size"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handlePageChange"
-        >
-        </el-pagination>
-      </div>
-    </el-card>
+    <TablePagination
+      :search="search"
+      :total="total"
+      @size-change="handleSizeChange"
+      @page-change="handlePageChange"
+    />
     <el-drawer
       v-model="formUserVisible"
       direction="rtl"
@@ -129,6 +120,7 @@ import { listGroup } from '@/api/group'
 import { createLatestGuard } from '@/utils/latest'
 import { parseQueryIntArray, genLinkHTML } from '@/utils/utils'
 import { useSearchNav } from '@/composables/useSearchNav'
+import { useTablePagination } from '@/composables/useTablePagination'
 
 const route = useRoute()
 const router = useRouter()
@@ -192,19 +184,9 @@ async function fetchGroups() {
   }
 }
 
-function handleSizeChange(val: number) {
-  search.value.size = val
-  router.push({
-    query: search.value,
-  })
-}
+const { handleSizeChange, handlePageChange } = useTablePagination(search)
 
-function handlePageChange(val: number) {
-  search.value.page = val
-  router.push({
-    query: search.value,
-  })
-}
+
 
 const { onSearch } = useSearchNav(search, fetchList)
 

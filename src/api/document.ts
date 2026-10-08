@@ -7,7 +7,6 @@ export const setDocumentReconvert = (data?: any) => service({ url: '/api/v1/docu
 export const deleteDocument = (params: any) => service({ url: '/api/v1/document', method: 'delete', params })
 export const getDocument = (params: any) => service({ url: '/api/v1/document', method: 'get', params })
 export const getRelatedDocuments = (params: any) => service({ url: '/api/v1/document/related', method: 'get', params })
-export const listDocumentForHome = (params: any) => service({ url: '/api/v1/document/home', method: 'get', params })
 export const listDocument = (params: any) => service({ url: '/api/v1/document/list', method: 'get', params })
 export const searchDocument = (params: any) => service({ url: '/api/v1/document/search', method: 'get', params })
 export const downloadDocument = (params: any) => service({ url: '/api/v1/document/download', method: 'get', params })

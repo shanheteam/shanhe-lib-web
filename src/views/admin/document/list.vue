@@ -165,21 +165,12 @@
         </template>
       </TableListV2>
     </el-card>
-    <el-card shadow="never" class="mgt-20px">
-      <div class="text-right">
-        <el-pagination
-          background
-          :current-page="search.page"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="search.size"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handlePageChange"
-        >
-        </el-pagination>
-      </div>
-    </el-card>
+    <TablePagination
+      :search="search"
+      :total="total"
+      @size-change="handleSizeChange"
+      @page-change="handlePageChange"
+    />
     <el-drawer
       v-model="formVisible"
       direction="rtl"
@@ -291,6 +282,8 @@ import {
 } from '@/utils/utils'
 import { documentStatusOptions, boolOptions } from '@/utils/enum'
 import { useSearchNav } from '@/composables/useSearchNav'
+import { useTablePagination } from '@/composables/useTablePagination'
+import { useTableSelection } from '@/composables/useTableSelection'
 
 const route = useRoute()
 const router = useRouter()
@@ -309,7 +302,7 @@ const categoryMap = ref<Record<string, any>>({})
 const total = ref(0)
 const searchFormFields = ref<any[]>([])
 const tableListFields = ref<any[]>([])
-const selectedRow = ref<any[]>([])
+const { selectedRow, selectRow } = useTableSelection()
 const document = ref<any>({ id: 0 })
 const formDocumentsCategoryVisible = ref(false)
 const categoryDocuments = ref<any[]>([])
@@ -386,19 +379,7 @@ async function fetchList() {
   loading.value = false
 }
 
-function handleSizeChange(val: number) {
-  search.value.size = val
-  router.push({
-    query: search.value,
-  })
-}
-
-function handlePageChange(val: number) {
-  search.value.page = val
-  router.push({
-    query: search.value,
-  })
-}
+const { handleSizeChange, handlePageChange } = useTablePagination(search)
 
 const { onSearch } = useSearchNav(search, fetchList)
 
@@ -536,10 +517,6 @@ function deleteRow(row: any) {
       }
     })
     .catch(() => {})
-}
-
-function selectRow(rows: any[]) {
-  selectedRow.value = rows
 }
 
 async function approveDocument(cmd: number) {

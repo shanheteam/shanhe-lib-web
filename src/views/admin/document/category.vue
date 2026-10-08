@@ -60,6 +60,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useCategoryStore } from '@/store/category'
 import * as categoryApi from '@/api/category'
 import { categoryToTrees, parseQueryIntArray } from '@/utils/utils'
+import { useTableSelection } from '@/composables/useTableSelection'
 
 const route = useRoute()
 const router = useRouter()
@@ -76,7 +77,7 @@ const trees = ref<any[]>([])
 const total = ref(0)
 const searchFormFields = ref<any[]>([])
 const tableListFields = ref<any[]>([])
-const selectedRow = ref<any[]>([])
+const { selectedRow, selectRow } = useTableSelection()
 const category = ref<any>({ id: 0, title: '', cover: '', sort: '', icon: '' })
 const categoryTypeDocument = [0]
 
@@ -194,10 +195,6 @@ function deleteRow(row: any) {
       }
     })
     .catch(() => {})
-}
-
-function selectRow(rows: any[]) {
-  selectedRow.value = rows
 }
 
 function initSearchForm() {

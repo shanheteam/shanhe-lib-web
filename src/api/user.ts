@@ -2,8 +2,6 @@ import service from '@/utils/request'
 
 export const logout = (params?: any) => service({ url: '/api/v1/user/logout', method: 'delete', params })
 export const getUser = (params?: any) => service({ url: '/api/v1/user', method: 'get', params })
-export const canIUploadDocument = () => service({ url: '/api/v1/user/caniuploaddocument', method: 'get' })
-export const canIPublishArticle = () => service({ url: '/api/v1/user/canipublisharticle', method: 'get' })
 export const updateUserProfile = (data: any) => service({ url: '/api/v1/user/profile', method: 'put', data })
 export const deleteUser = (params: any) => service({ url: '/api/v1/user', method: 'delete', params })
 export const addUser = (data: any) => service({ url: '/api/v1/user', method: 'post', data })

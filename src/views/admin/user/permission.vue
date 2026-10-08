@@ -25,21 +25,12 @@
         @editRow="editRow"
       />
     </el-card>
-    <el-card shadow="never" class="mgt-20px">
-      <div class="text-right">
-        <el-pagination
-          background
-          :current-page="search.page"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="search.size"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handlePageChange"
-        >
-        </el-pagination>
-      </div>
-    </el-card>
+    <TablePagination
+      :search="search"
+      :total="total"
+      @size-change="handleSizeChange"
+      @page-change="handlePageChange"
+    />
     <el-drawer
       v-model="formVisible"
       direction="rtl"
@@ -60,14 +51,14 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { listPermission, getPermission } from '@/api/permission'
 import { createLatestGuard } from '@/utils/latest'
 import { methodOptions } from '@/utils/enum'
 import { useSearchNav } from '@/composables/useSearchNav'
+import { useTablePagination } from '@/composables/useTablePagination'
 
 const route = useRoute()
-const router = useRouter()
 
 const loading = ref(false)
 const formVisible = ref(false)
@@ -100,19 +91,9 @@ async function fetchList() {
   loading.value = false
 }
 
-function handleSizeChange(val: number) {
-  search.value.size = val
-  router.push({
-    query: search.value,
-  })
-}
+const { handleSizeChange, handlePageChange } = useTablePagination(search)
 
-function handlePageChange(val: number) {
-  search.value.page = val
-  router.push({
-    query: search.value,
-  })
-}
+
 
 const { onSearch } = useSearchNav(search, fetchList)
 

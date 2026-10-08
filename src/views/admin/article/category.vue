@@ -62,6 +62,7 @@ import { useCategoryStore } from '@/store/category'
 import * as categoryApi from '@/api/category'
 import { categoryToTrees, parseQueryIntArray } from '@/utils/utils'
 import { useSearchNav } from '@/composables/useSearchNav'
+import { useTableSelection } from '@/composables/useTableSelection'
 
 const route = useRoute()
 const categoryStore = useCategoryStore()
@@ -77,7 +78,7 @@ const trees = ref<any[]>([])
 const total = ref(0)
 const searchFormFields = ref<any[]>([])
 const tableListFields = ref<any[]>([])
-const selectedRow = ref<any[]>([])
+const { selectedRow, selectRow } = useTableSelection()
 const category = ref<any>({ id: 0, title: '', cover: '', sort: '', icon: '' })
 const categoryTypeArticle = [1]
 
@@ -176,10 +177,6 @@ function deleteRow(row: any) {
       }
     })
     .catch(() => {})
-}
-
-function selectRow(rows: any[]) {
-  selectedRow.value = rows
 }
 
 function initSearchForm() {

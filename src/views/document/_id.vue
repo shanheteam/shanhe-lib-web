@@ -261,8 +261,8 @@
                 来源
               </template>
               <a
-                v-if="document.source_url"
-                :href="document.source_url"
+                v-if="safeHref(document.source_url)"
+                :href="safeHref(document.source_url)"
                 rel="nofollow"
                 target="_blank"
                 class="el-link el-link--default"
@@ -631,6 +631,7 @@ import { setPageMeta } from '@/router'
 import { creditName } from '@/utils/credit'
 import FormDownload from '@/components/FormDownload.vue'
 import CommentList from '@/components/CommentList.vue'
+import { safeHref } from '@/utils/url'
 
 const route = useRoute()
 const router = useRouter()

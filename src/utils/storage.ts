@@ -12,18 +12,6 @@ export const STORAGE_KEYS = {
   OAUTH_NONCE: 'oauth_nonce',
 } as const
 
-export function getLocal(key: string): string | null {
-  return localStorage.getItem(key)
-}
-
-export function setLocal(key: string, value: string): void {
-  localStorage.setItem(key, value)
-}
-
-export function removeLocal(key: string): void {
-  localStorage.removeItem(key)
-}
-
 /**
  * 清空站点自身的全部持久化数据（登出 / 登录态失效时调用）。
  * 刻意保留 OAuth PKCE 参数：它们是登录流程中的临时数据，

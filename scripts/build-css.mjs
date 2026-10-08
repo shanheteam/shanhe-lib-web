@@ -15,6 +15,7 @@ import { readFileSync, writeFileSync, readdirSync, statSync, mkdirSync, unlinkSy
 import { createHash } from 'node:crypto'
 import { join, extname, resolve } from 'node:path'
 import { compileString } from 'sass'
+import { transformSync } from 'esbuild'
 
 const CLIENT = resolve(import.meta.dirname, '..')
 const SRC = join(CLIENT, 'src')
@@ -57,8 +58,13 @@ const cssLinks = {}
  * 同时清理历史遗留的 {name}.{hash8}.css 产物（旧方案），避免仓库与产物目录里残留死文件。
  */
 function emitCss(name, css) {
-  const hash = createHash('md5').update(css).digest('hex').slice(0, 8)
-  writeFileSync(join(OUT_CSS, `${name}.css`), css)
+  // 压缩：sass 默认输出 expanded（带缩进与注释），三个产物都阻塞首屏。
+  // 实测 components.css 136KB→109KB、app.css 11KB→7KB（gzip 合计约 −4.4KB）。
+  // 用 esbuild 统一处理（Vite 自带依赖），它对 CSS 的压缩是保守的，不改语义。
+  // 注意：分节注释 /* ===== ... ===== */ 会被去掉，已确认无脚本依赖这些标记。
+  const minified = transformSync(css, { loader: 'css', minify: true }).code
+  const hash = createHash('md5').update(minified).digest('hex').slice(0, 8)
+  writeFileSync(join(OUT_CSS, `${name}.css`), minified)
   for (const f of readdirSync(OUT_CSS)) {
     if (new RegExp(`^${name}\\.[0-9a-f]{8}\\.css$`).test(f)) unlinkSync(join(OUT_CSS, f))
   }
@@ -113,10 +119,11 @@ console.log('[build-css] app.css：骨架样式 + tokens.scss + app.scss 已生�
 // 改由对应组件自行 import（见 TableListV2.vue、RichEditor.vue），由 Vite 切进各自的异步 chunk：
 // 既避免所有公开页首屏渲染阻塞地加载用不到的样式（曾合计 639KB 原始 / 108KB gzip），
 // 也让 vxe-table 样式里的 url("./iconfont.*") 交由 Vite 解析并产出字体（此前手工合并会导致字体 404）。
+// markdown.css（Editor.md 预览样式，59KB）同理：.markdown-body 全站只用于文章详情页
+// （src/views/article/_id.vue），已移入 src/assets/css/ 并由该视图 import，随文章路由异步加载。
 const vendorFiles = [
   'node_modules/element-plus/dist/index.css',
   'node_modules/element-plus/theme-chalk/display.css',
-  'public/assets/css/markdown.css',
 ]
 let vendorOut = ''
 for (const vf of vendorFiles) {

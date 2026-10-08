@@ -204,8 +204,8 @@
             <div>
               <span>{{ article.source }}</span>
               <a
-                v-if="article.source_url"
-                :href="article.source_url"
+                v-if="safeHref(article.source_url)"
+                :href="safeHref(article.source_url)"
                 target="_blank"
                 rel="noopener noreferrer"
                 >{{ article.source_url }}</a
@@ -292,6 +292,10 @@ import { useUserStore } from '@/store/user'
 import { isMobile } from '@/utils/responsive'
 import { setPageMeta, toCanonicalUrl, toAbsoluteUrl, upsertJsonLd } from '@/router'
 import CommentList from '@/components/CommentList.vue'
+import { safeHref } from '@/utils/url'
+// Editor.md 预览样式（.markdown-body）：全站只有本页用到，随本路由异步加载，
+// 不进首屏 vendor.css（省 59KB 原始 / 12KB gzip）
+import '@/assets/css/markdown.css'
 
 const route = useRoute()
 const router = useRouter()

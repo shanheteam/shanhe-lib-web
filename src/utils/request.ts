@@ -1,7 +1,7 @@
 import axios, { type AxiosInstance } from 'axios'
-import qs from 'qs'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user'
+import { stringifyParams } from '@/utils/params'
 
 // 删除下划线的无效参数
 const removeUnderscoreParams = (obj: any): any => {
@@ -54,7 +54,9 @@ const service: AxiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
   paramsSerializer(params) {
-    return qs.stringify(params, { arrayFormat: 'repeat' })
+    // 等价替代 qs.stringify(params, { arrayFormat: 'repeat' })，
+    // 详见 utils/params.ts（qs 经 side-channel 拉入 Node 侧依赖，占首屏约 41 KB）
+    return stringifyParams(params)
   },
 })
 

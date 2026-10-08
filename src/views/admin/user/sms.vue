@@ -46,21 +46,12 @@
         :actions-min-width="80"
       />
     </el-card>
-    <el-card shadow="never" class="mgt-20px">
-      <div class="text-right">
-        <el-pagination
-          background
-          :current-page="search.page"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="search.size"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handlePageChange"
-        >
-        </el-pagination>
-      </div>
-    </el-card>
+    <TablePagination
+      :search="search"
+      :total="total"
+      @size-change="handleSizeChange"
+      @page-change="handlePageChange"
+    />
   </div>
 </template>
 
@@ -73,6 +64,7 @@ import { listUser } from '@/api/user'
 import { createLatestGuard } from '@/utils/latest'
 import { genLinkHTML, parseQueryIntArray } from '@/utils/utils'
 import { smsTypeOptions, smsStatusOptions, smsProviderOptions } from '@/utils/enum'
+import { useTablePagination } from '@/composables/useTablePagination'
 
 defineOptions({ name: 'AdminUserSms' })
 
@@ -134,14 +126,8 @@ async function fetchList() {
   loading.value = false
 }
 
-function handleSizeChange(val: number) {
-  search.value.size = val
-  router.push({ query: search.value })
-}
-function handlePageChange(val: number) {
-  search.value.page = val
-  router.push({ query: search.value })
-}
+const { handleSizeChange, handlePageChange } = useTablePagination(search)
+
 function onSearch(params: any) {
   search.value = { ...search.value, ...params, user_id: search.value.user_id, page: 1 }
   router.push({ query: search.value })

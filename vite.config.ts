@@ -3,6 +3,33 @@ import vue from '@vitejs/plugin-vue'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { fileURLToPath, URL } from 'node:url'
+import * as ElementPlusIcons from '@element-plus/icons-vue'
+
+/**
+ * Element Plus 图标按需解析器。
+ *
+ * 背景：模板里大量使用 <Link /> <Document /> 这类图标标签。此前这些图标全部在 main.ts 里
+ * 逐个 import 并 app.component() 全局注册，导致 81 个图标无条件进入首屏 entry 包
+ * （实测约 48KB 原始）。本解析器让 unplugin-vue-components 把静态标签按需解析为
+ * `import { X } from '@element-plus/icons-vue'`，图标随之进入「实际用到它的页面」的 chunk。
+ *
+ * 注意：`<component :is="menu.icon" />` 这类**动态字符串**用法无法被解析器处理，
+ * 它们仍依赖 main.ts 的全局注册（main.ts 中只保留这批动态图标）。
+ * 新增菜单图标时，需同步补充 main.ts 的 APP_ICONS。
+ */
+const EP_ICON_NAMES = new Set(
+  Object.keys(ElementPlusIcons).filter((name) => /^[A-Z]/.test(name)),
+)
+
+function ElementPlusIconsResolver() {
+  return {
+    type: 'component' as const,
+    resolve: (name: string) => {
+      if (!EP_ICON_NAMES.has(name)) return
+      return { name, from: '@element-plus/icons-vue' }
+    },
+  }
+}
 
 /**
  * 依赖分包规则：只被特定页面（后台表格、图表面板、富文本编辑器）用到的重型依赖
@@ -52,6 +79,8 @@ export default defineConfig(({ mode }) => {
           // importStyle 设为 false：样式仍由 main.ts 统一全量引入 element-plus/dist/index.css，
           // 使 app.scss 对组件样式的覆盖顺序与改造前完全一致（只做 JS 层面的按需引入）。
           ElementPlusResolver({ importStyle: false, directives: true }),
+          // 图标按需：静态 <Link /> 等标签随页面 chunk 引入（动态 :is 仍靠 main.ts 全局注册）
+          ElementPlusIconsResolver(),
         ],
       }),
     ],
