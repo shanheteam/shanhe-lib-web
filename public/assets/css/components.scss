@@ -4975,10 +4975,12 @@
   .section-block .section-header h2 {
     font-size: 24px;
   }
+  // 移动端「最新内容」「分类浏览」保持单列（与样式抽取前的原始实现一致）。
+  // 抽取时这里曾被误并入下面的 .recommend-grid 规则，变成两列并多出 gap: 12px；
+  // 此处不设 gap，沿用基类的 gap: 16px。
   .latest-grid,
   .category-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    grid-template-columns: 1fr;
   }
   .recommend-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
