@@ -83,7 +83,13 @@
         >{{ settings.system.sec_icp }}</el-link
       >
     </div>
-    <FixedRightBar />
+    <!--
+      此处原先还有 <FixedRightBar />，但它已经在全局页脚 GlobalFooter 里渲染
+      （layouts/default.vue 与 layouts/article.vue 都会挂 <global-footer />），
+      本组件又只被 views/article/index.vue 使用、而该页用的正是 article 布局，
+      于是 /article 页面上悬浮条被渲染两次 —— 表现为右下角按钮重复。故删除本处，
+      悬浮条统一由布局中的 GlobalFooter 提供。
+    -->
   </div>
 </template>
 <script setup lang="ts">
