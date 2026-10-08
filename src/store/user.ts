@@ -63,7 +63,10 @@ export const useUserStore = defineStore('user', {
       this.user = user
     },
     setGroups(groups: any[]) {
-      this.groups = groups
+      // 必须保证 state.groups 恒为数组：页面直接读 state（不走带兜底的 getGroups），
+      // 而 pinia 持久化会把 localStorage 里的旧值合并进来，一旦是 null/非数组，
+      // 页面里的 groups.some(...) 会在渲染期抛异常 —— 表现为整页白屏。
+      this.groups = Array.isArray(groups) ? groups : []
     },
     mergeUser(user: any) {
       this.user = { ...this.user, ...user }

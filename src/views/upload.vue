@@ -542,7 +542,7 @@ const settingStore = useSettingStore()
 
 const token = computed(() => userStore.token)
 const user = computed(() => userStore.user)
-const groups = computed(() => userStore.groups)
+const groups = computed(() => userStore.groups || [])
 const categoryTrees = computed(() => categoryStore.categoryTrees)
 const settings = computed(() => settingStore.settings)
 
@@ -600,7 +600,7 @@ const allowExtDisplay = computed(
 )
 const canIUploadDocument = computed(() => {
   if (!user.value || !user.value.id) return false
-  return groups.value.some((group: any) => group.enable_upload)
+  return (groups.value || []).some((group: any) => group.enable_upload)
 })
 // 当前步骤计算
 const currentStepComputed = computed(() => {
@@ -618,7 +618,13 @@ watch(
 )
 
 onMounted(async () => {
-  await Promise.all([categoryStore.getCategories(), userStore.getUserGroups()])
+  // 初始化请求失败不应让页面卡死/白屏：包一层兜底并把真实异常打到控制台
+  try {
+    await Promise.all([categoryStore.getCategories(), userStore.getUserGroups()])
+  } catch (e) {
+    console.error('[upload] 初始化请求失败：', e)
+    ElMessage.error('页面初始化失败，请刷新重试')
+  }
   try {
     const configuredExt = settings.value.security.document_allowed_ext
     // settings 接口对未配置项返回 []，空数组是 truthy，直接赋值会把默认格式清空导致所有文件被拒绝

@@ -96,14 +96,14 @@ const article = ref<any>({
 })
 
 const user = computed(() => userStore.user)
-const groups = computed(() => userStore.groups)
+const groups = computed(() => userStore.groups || [])
 const categoryTrees = computed(() => categoryStore.categoryTrees)
 const trees = computed(() =>
   categoryTrees.value.filter((item: any) => item.type === 1)
 )
 const canIPublish = computed(() => {
   if (!user.value || user.value.id <= 0) return false
-  return groups.value.some((group: any) => group.enable_article)
+  return (groups.value || []).some((group: any) => group.enable_article)
 })
 
 const getArticleById = async () => {
@@ -132,8 +132,16 @@ const back = () => {
 }
 
 onMounted(async () => {
-  await userStore.getUserGroups()
-  await Promise.all([getArticleById(), categoryStore.getCategories()])
-  loading.value = false
+  // 任一 await 抛异常时，原先会永远停在 loading：模板两个分支都以 loading 为前提，
+  // 结果是整页白屏、控制台之外没有任何提示。这里保证 loading 一定结束并打出真实异常。
+  try {
+    await userStore.getUserGroups()
+    await Promise.all([getArticleById(), categoryStore.getCategories()])
+  } catch (e) {
+    console.error('[post] 初始化失败：', e)
+    ElMessage.error('页面初始化失败，请刷新重试')
+  } finally {
+    loading.value = false
+  }
 })
 </script>
