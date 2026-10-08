@@ -1187,25 +1187,6 @@
 }
 
 /* ===== src/components/FormSpiderUrl.vue ===== */
-.com-form-spiderurl .el-textarea__inner {
-  white-space: nowrap;
-}
-
-.generator-container {
-  padding: 20px;
-  border: 1px dashed var(--app-color-warning-strong);
-  border-radius: 5px;
-}
-
-.generator-tip {
-  line-height: 1;
-  padding: 5px 10px;
-  margin-top: 10px;
-  background: var(--app-bg-warning);
-  border: 1px solid var(--app-border-color-warning);
-  border-radius: 5px;
-}
-
 /* ===== src/components/FormUpdateArticlesCategory.vue ===== */
 .com-form-update-articles-category .document-list ul,
 .com-form-update-articles-category .document-list li {
@@ -1745,7 +1726,6 @@
     width: 100%;
   }
 }
-.oauth-login-loading,
 .oauth-list {
   width: 100%;
   display: flex;
@@ -4790,6 +4770,12 @@
 .recommend-card,
 .latest-panel,
 .category-card,
+.publish-entry {
+  border-radius: 14px;
+  background: var(--el-color-white);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+}
+
 .recommend-card {
   display: flex;
   flex-direction: column;
@@ -6601,10 +6587,6 @@
   font-size: 15px;
 }
 
-/* 登录弹窗：左右分栏（左品牌区固定宽 + 右表单区固定宽），覆盖 .oauth-login-body 的居中布局 */
-/* 装饰：右上角同心圆环 */
-/* 装饰：底部网点 */
-/* 登录 tab 下方：前往注册链接 */
 /* 注册失败原因提示（展示于注册表单顶部） */
 .uc-reg-error {
   width: 100%;
@@ -6617,7 +6599,6 @@
   line-height: 1.5;
 }
 
-/* 注册 tab：内联注册表单（GlobalHeader），样式务必写在公共 css，勿在 .vue 内加 <style> */
 .uc-reg-stud {
   width: 100%;
   display: flex;

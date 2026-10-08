@@ -5,8 +5,6 @@ export const STORAGE_KEYS = {
   USER: 'user',
   SETTING: 'setting',
   CATEGORY: 'category',
-  // 采集发布表单记住的发布者 id
-  USER_ID: 'user_id',
   // OAuth PKCE 参数（window.open 跨窗口共享，与登录态无关）
   OAUTH_CODE_VERIFIER: 'oauth_code_verifier',
   OAUTH_STATE: 'oauth_state',

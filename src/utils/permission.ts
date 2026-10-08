@@ -95,7 +95,6 @@ const customPermissionMap: Record<string, any> = {
       '/admin/config/email',
       '/admin/config/captcha',
       '/admin/config/search',
-      '/admin/config/spider',
       '/admin/config/vip',
       '/admin/config/miniprogram',
       '/admin/config/oauth',
@@ -127,18 +126,6 @@ const customPermissionMap: Record<string, any> = {
     path: 'ListNavigation',
     children: [],
     pages: ['/admin/navigation'],
-  },
-  'api.v1.SpiderAPI': {
-    label: '采集管理',
-    path: 'ListSpiderUrl',
-    children: [],
-    pages: [
-      '/admin/spider',
-      '/admin/spider/url',
-      '/admin/spider/articlelist',
-      '/admin/spider/articledetail',
-      '/admin/spider/document',
-    ],
   },
   'api.v1.OrderAPI': {
     label: '订单管理',
@@ -222,17 +209,6 @@ export const adminMenus: any[] = [
       { page: '/admin/user/sms', title: '短信记录', icon: 'Message' },
     ],
   },
-  {
-    page: '/admin/spider',
-    title: '采集管理',
-    icon: 'Connection',
-    children: [
-      { page: '/admin/spider/url', title: '文档嗅探', icon: 'Link' },
-      { page: '/admin/spider/document', title: '采集文档', icon: 'Document' },
-      { page: '/admin/spider/articlelist', title: '文章嗅探', icon: 'Reading' },
-      { page: '/admin/spider/articledetail', title: '文章采集', icon: 'Notebook' },
-    ],
-  },
   { page: '/admin/order', title: '订单管理', icon: 'Tickets' },
   {
     title: '运营管理',
@@ -263,7 +239,6 @@ export const adminMenus: any[] = [
       { title: '积分配置', page: '/admin/config/score', icon: 'Coin' },
       { title: '邮箱配置', page: '/admin/config/email', icon: 'Message' },
       { title: '全文搜索', page: '/admin/config/search', icon: 'Search' },
-      { title: '采集配置', page: '/admin/config/spider', icon: 'Connection' },
       { title: 'VIP配置', page: '/admin/config/vip', icon: 'GoldMedal' },
       { title: '小程序配置', page: '/admin/config/miniprogram', icon: 'Cellphone' },
       { title: 'Oauth配置', page: '/admin/config/oauth', icon: 'Key' },

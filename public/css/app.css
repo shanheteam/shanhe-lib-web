@@ -103,7 +103,6 @@
   --app-bg-fade: #fbfcfe; /* 卡片底部渐隐 */
   --app-bg-grad-end: #f5f8fc; /* 渐变收尾浅色（分类页/搜索页卡片头） */
   --app-bg-footer: #1c2b40; /* 页脚深蓝底 */
-  --app-bg-warning: #fff7e6; /* 警告提示底 */
   /* ===== 中性边框 ===== */
   --app-border-color: #ddd; /* 常规边框 */
   --app-border-color-light: #efefef; /* 浅边框（列表分割线） */
@@ -117,7 +116,6 @@
   --app-border-color-soft-6: #ebedf0; /* 柔和边框（页头） */
   --app-border-color-soft-7: #edf2f7; /* 柔和边框（首页/侧栏分割线） */
   --app-border-color-soft-8: #e9ecef; /* 柔和边框（搜索页） */
-  --app-border-color-warning: #ffe58f; /* 警告边框 */
   /* ===== 文档扩展名徽标 ===== */
   --app-ext-other: #70c9ad; /* EPUB/CODE/MOBI/UMD/OTHER */
   --app-ext-pdf: #ec6660;

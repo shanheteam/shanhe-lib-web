@@ -279,48 +279,6 @@ export const paymentTypeOptions: OptionItem[] = [
   { label: '广告支付', value: 10 },
 ]
 
-// 文档嗅探链接状态
-export const spiderUrlStatusOptions: OptionItem[] = [
-  { label: '待嗅探', value: 0, type: 'info' },
-  { label: '嗅探中', value: 1, type: 'primary' },
-  { label: '嗅探完成', value: 2, type: 'success' },
-  { label: '嗅探失败', value: 3, type: 'warning' },
-]
-
-// 文章列表页嗅探状态
-export const spiderArticleListStatusOptions: OptionItem[] = [
-  { label: '待嗅探', value: 0, type: 'info' },
-  { label: '嗅探中', value: 1, type: 'primary' },
-  { label: '嗅探完成', value: 2, type: 'success' },
-  { label: '嗅探失败', value: 3, type: 'warning' },
-]
-
-// 采集文章状态
-export const spiderArticleDetailStatusOptions: OptionItem[] = [
-  { label: '待采集', value: 0, type: 'info' },
-  { label: '采集队列', value: 1, type: 'primary' },
-  { label: '采集中', value: 2, type: 'primary' },
-  { label: '采集成功', value: 3, type: 'success' },
-  { label: '采集失败', value: 4, type: 'warning' },
-  { label: '发布队列', value: 5, type: 'primary' },
-  { label: '发布中', value: 6, type: 'primary' },
-  { label: '发布成功', value: 7, type: 'success' },
-  { label: '发布失败', value: 8, type: 'danger' },
-]
-
-// 采集文档状态
-export const spiderDocumentStatusOptions: OptionItem[] = [
-  { label: '待下载', value: 0, type: 'info' },
-  { label: '下载队列', value: 1, type: 'primary' },
-  { label: '下载中..', value: 2, type: 'primary' },
-  { label: '下载成功', value: 3, type: 'success' },
-  { label: '下载失败', value: 4, type: 'warning' },
-  { label: '发布队列', value: 5, type: 'primary' },
-  { label: '发布中', value: 6, type: 'primary' },
-  { label: '发布成功', value: 7, type: 'success' },
-  { label: '发布失败', value: 8, type: 'danger' },
-]
-
 // VIP 类型
 export const vipTypeOptions: OptionItem[] = [
   { label: '年卡VIP', value: 0, type: 'success' },
