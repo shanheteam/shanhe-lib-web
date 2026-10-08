@@ -57,13 +57,13 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useCategoryStore } from '@/store/category'
 import * as categoryApi from '@/api/category'
 import { categoryToTrees, parseQueryIntArray } from '@/utils/utils'
+import { useSearchNav } from '@/composables/useSearchNav'
 
 const route = useRoute()
-const router = useRouter()
 const categoryStore = useCategoryStore()
 
 const loading = ref(false)
@@ -102,21 +102,7 @@ async function fetchList() {
   loading.value = false
 }
 
-function onSearch(searchParams: any) {
-  search.value = { ...searchParams, ...search.value, page: 1 }
-  if (
-    location.pathname + location.search ===
-    router.resolve({
-      query: search.value,
-    }).href
-  ) {
-    fetchList()
-  } else {
-    router.push({
-      query: search.value,
-    })
-  }
-}
+const { onSearch } = useSearchNav(search, fetchList)
 
 function onCreate() {
   category.value = {

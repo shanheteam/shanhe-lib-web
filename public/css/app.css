@@ -72,16 +72,11 @@
   --app-text-error-strong: #47494e; /* 错误页代码文本 */
   --app-color-tag-warning: #ff9900; /* 文档状态标签文字（审核中） */
   /* ===== 品牌/平台标识色（单处使用，保持原值）===== */
-  --app-brand-weixin: #07c160;
-  --app-brand-gitlab: #fc6d26;
-  --app-brand-google: #4285f4;
-  --app-brand-blue: #12b7f5;
   --app-share-telegram: #208de1;
   --app-share-turquoise: #1abc9c;
   /* ===== 强调色/渐变（单处使用，保持原值）===== */
   --app-color-primary-deep: #3a7be0; /* 搜索页链接 */
   --app-color-primary-faint: #8fb3d9; /* 分类页选中链接 */
-  --app-color-green: #2eb85c; /* 首页徽标绿 */
   --app-color-danger-light: #f78989; /* 上传失败提示 */
   --app-grad-warm-a: #ff8a5b; /* 首页暖色渐变 */
   --app-grad-warm-b: #ff6b57;
@@ -90,7 +85,6 @@
   --app-grad-red: #ff7a59; /* 首页红色徽标 */
   --app-bg-navbar: #21293c14; /* 文章导航栏半透明底 */
   --app-border-avatar: #ddddddae; /* 头像描边（带透明度） */
-  --app-border-navy: #0d2b4d; /* 用户卡片描边 */
   --app-error-svg: #dbe1ec; /* 错误页插画填充 */
   /* ===== 中性背景 ===== */
   --app-bg-page: #f4f5f7; /* 页面底色（与 var.scss $background-grey-light 一致） */
@@ -105,9 +99,7 @@
   --app-bg-soft-6: #f9fbfe; /* 柔和底（分类页） */
   --app-bg-soft-7: #f2f5f9; /* 柔和底（分类页卡片） */
   --app-bg-header: #f7fbff; /* 表格表头底 */
-  --app-bg-grey-weak: #f5f7fa; /* 极浅灰底（面板） */
   --app-bg-blue-weak: #ecf5ff; /* 极浅蓝底（选中态） */
-  --app-bg-soft-9: #e8edf5; /* 柔和底（用户卡片渐变） */
   --app-bg-fade: #fbfcfe; /* 卡片底部渐隐 */
   --app-bg-grad-end: #f5f8fc; /* 渐变收尾浅色（分类页/搜索页卡片头） */
   --app-bg-footer: #1c2b40; /* 页脚深蓝底 */
@@ -132,12 +124,6 @@
   --app-ext-xls: #27ae60;
   --app-ext-doc: #6095f7;
   --app-ext-txt: #34495e;
-  /* ===== 山河大学账号密码登录表单（GlobalHeader，SSO 入口）===== */
-  --app-sso-grad-a: #123f9e; /* 渐变起始深蓝 */
-  --app-sso-grad-b: #2b6aff;
-  --app-sso-grad-c: #4f8bff;
-  --app-sso-grad-d: #7aa0ff; /* 渐变收尾亮蓝 */
-  --app-sso-text-strong: #1f2329; /* 弹窗标题 */
   --app-sso-bg: #f5f6f7; /* 表单浅底/分隔 */
   /* ===== 滚动条 ===== */
   --app-scrollbar-thumb: rgba(50, 50, 50, 0.4);

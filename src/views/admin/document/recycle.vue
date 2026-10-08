@@ -98,6 +98,7 @@ import {
 import { createLatestGuard } from '@/utils/latest'
 import { categoryToTrees, parseQueryIntArray, genLinkHTML } from '@/utils/utils'
 import { documentStatusOptions } from '@/utils/enum'
+import { useSearchNav } from '@/composables/useSearchNav'
 
 const route = useRoute()
 const router = useRouter()
@@ -185,21 +186,7 @@ function handlePageChange(val: number) {
   })
 }
 
-function onSearch(searchParams: any) {
-  search.value = { ...search.value, ...searchParams, page: 1 }
-  if (
-    location.pathname + location.search ===
-    router.resolve({
-      query: search.value,
-    }).href
-  ) {
-    fetchList()
-  } else {
-    router.push({
-      query: search.value,
-    })
-  }
-}
+const { onSearch } = useSearchNav(search, fetchList)
 
 function recoverRow(row: any) {
   ElMessageBox.confirm(`您确定要恢复文档【${row.title}】吗？`, '温馨提示', {

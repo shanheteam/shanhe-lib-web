@@ -83,6 +83,7 @@ import {
 import { attachmentTypeOptions } from '@/utils/enum'
 import { createLatestGuard } from '@/utils/latest'
 import { parseQueryIntArray } from '@/utils/utils'
+import { useSearchNav } from '@/composables/useSearchNav'
 
 const route = useRoute()
 const router = useRouter()
@@ -132,21 +133,7 @@ function handlePageChange(val: number) {
   })
 }
 
-function onSearch(searchParams: any) {
-  search.value = { ...search.value, ...searchParams, page: 1 }
-  if (
-    location.pathname + location.search ===
-    router.resolve({
-      query: search.value,
-    }).href
-  ) {
-    fetchList()
-  } else {
-    router.push({
-      query: search.value,
-    })
-  }
-}
+const { onSearch } = useSearchNav(search, fetchList)
 
 async function editRow(row: any) {
   const res: any = await getAttachment({ id: row.id })

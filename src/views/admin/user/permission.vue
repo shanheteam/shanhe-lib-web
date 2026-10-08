@@ -64,6 +64,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { listPermission, getPermission } from '@/api/permission'
 import { createLatestGuard } from '@/utils/latest'
 import { methodOptions } from '@/utils/enum'
+import { useSearchNav } from '@/composables/useSearchNav'
 
 const route = useRoute()
 const router = useRouter()
@@ -113,21 +114,7 @@ function handlePageChange(val: number) {
   })
 }
 
-function onSearch(searchParams: any) {
-  search.value = { ...search.value, ...searchParams, page: 1 }
-  if (
-    location.pathname + location.search ===
-    router.resolve({
-      query: search.value,
-    }).href
-  ) {
-    fetchList()
-  } else {
-    router.push({
-      query: search.value,
-    })
-  }
-}
+const { onSearch } = useSearchNav(search, fetchList)
 
 async function editRow(row: any) {
   const res: any = await getPermission({ id: row.id })

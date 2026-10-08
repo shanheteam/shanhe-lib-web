@@ -76,6 +76,7 @@ import { listReport, deleteReport } from '@/api/report'
 import { reportOptions } from '@/utils/enum'
 import { createLatestGuard } from '@/utils/latest'
 import { parseQueryIntArray, genLinkHTML } from '@/utils/utils'
+import { useSearchNav } from '@/composables/useSearchNav'
 
 const route = useRoute()
 const router = useRouter()
@@ -137,21 +138,7 @@ function handlePageChange(val: number) {
   })
 }
 
-function onSearch(searchParams: any) {
-  search.value = { ...search.value, ...searchParams, page: 1 }
-  if (
-    location.pathname + location.search ===
-    router.resolve({
-      query: search.value,
-    }).href
-  ) {
-    fetchList()
-  } else {
-    router.push({
-      query: search.value,
-    })
-  }
-}
+const { onSearch } = useSearchNav(search, fetchList)
 
 function onCreate() {
   report.value = { id: 0 }

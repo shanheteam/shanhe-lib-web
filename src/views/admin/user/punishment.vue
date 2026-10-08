@@ -121,6 +121,7 @@ import { createLatestGuard } from '@/utils/latest'
 import { genLinkHTML, parseQueryIntArray } from '@/utils/utils'
 import { punishmentTypeOptions } from '@/utils/enum'
 import { listUser } from '@/api/user'
+import { useSearchNav } from '@/composables/useSearchNav'
 
 const route = useRoute()
 const router = useRouter()
@@ -218,26 +219,7 @@ function handlePageChange(val: number) {
   })
 }
 
-function onSearch(searchParams: any) {
-  search.value = {
-    ...search.value,
-    ...searchParams,
-    user_id: search.value.user_id,
-    page: 1,
-  }
-  if (
-    location.pathname + location.search ===
-    router.resolve({
-      query: search.value,
-    }).href
-  ) {
-    fetchList()
-  } else {
-    router.push({
-      query: search.value,
-    })
-  }
-}
+const { onSearch } = useSearchNav(search, fetchList)
 
 function onCreate() {
   punishment.value = { id: 0, type: [], enable: true }
