@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { deleteSearchRecord, listSearchRecord } from '@/api/searchrecord'
 import { createLatestGuard } from '@/utils/latest'
@@ -49,6 +49,7 @@ import { genLinkHTML } from '@/utils/utils'
 import { useSearchNav } from '@/composables/useSearchNav'
 import { useTablePagination } from '@/composables/useTablePagination'
 import { useTableSelection } from '@/composables/useTableSelection'
+import { useDeleteConfirm } from '@/composables/useDeleteConfirm'
 
 const route = useRoute()
 
@@ -100,49 +101,17 @@ const { handleSizeChange, handlePageChange } = useTablePagination(search)
 
 const { onSearch } = useSearchNav(search, fetchList)
 
+const { confirmBatch, confirmOne } = useDeleteConfirm({
+  remove: (ids) => deleteSearchRecord({ id: ids }),
+  onDone: fetchList,
+})
+
 function batchDelete() {
-  ElMessageBox.confirm(
-    `您确定要删除选中的【${selectedRow.value.length}条】搜索记录吗？删除之后将不可恢复。`,
-    '温馨提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  )
-    .then(async () => {
-      const ids = selectedRow.value.map((item) => item.id)
-      const res: any = await deleteSearchRecord({ id: ids })
-      if (res.status === 200) {
-        ElMessage.success('删除成功')
-        fetchList()
-      } else {
-        ElMessage.error(res.data.message)
-      }
-    })
-    .catch(() => {})
+  return confirmBatch(selectedRow.value, `您确定要删除选中的【${selectedRow.value.length}条】搜索记录吗？删除之后将不可恢复。`)
 }
 
 function deleteRow(row: any) {
-  ElMessageBox.confirm(
-    `您确定要搜索记录【${row.keywords}(ID:${row.id})】吗？删除之后将不可恢复。`,
-    '温馨提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  )
-    .then(async () => {
-      const res: any = await deleteSearchRecord({ id: row.id })
-      if (res.status === 200) {
-        ElMessage.success('删除成功')
-        fetchList()
-      } else {
-        ElMessage.error(res.data.message)
-      }
-    })
-    .catch(() => {})
+  return confirmOne(row, `您确定要搜索记录【${row.keywords}(ID:${row.id})】吗？删除之后将不可恢复。`)
 }
 
 function initSearchForm() {

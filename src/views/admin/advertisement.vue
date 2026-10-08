@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import {
   listAdvertisement,
@@ -72,6 +72,7 @@ import { genLinkHTML, parseQueryIntArray } from '@/utils/utils'
 import { advertisementPositions } from '@/utils/enum'
 import { useTablePagination } from '@/composables/useTablePagination'
 import { useTableSelection } from '@/composables/useTableSelection'
+import { useDeleteConfirm } from '@/composables/useDeleteConfirm'
 
 const route = useRoute()
 const router = useRouter()
@@ -154,49 +155,17 @@ function formAdvertisementSuccess() {
   fetchList()
 }
 
+const { confirmBatch, confirmOne } = useDeleteConfirm({
+  remove: (ids) => deleteAdvertisement({ id: ids }),
+  onDone: fetchList,
+})
+
 function batchDelete() {
-  ElMessageBox.confirm(
-    `您确定要删除选中的【${selectedRow.value.length}条】广告吗？删除之后不可恢复！`,
-    '温馨提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  )
-    .then(async () => {
-      const ids = selectedRow.value.map((item) => item.id)
-      const res: any = await deleteAdvertisement({ id: ids })
-      if (res.status === 200) {
-        ElMessage.success('删除成功')
-        fetchList()
-      } else {
-        ElMessage.error(res.data.message)
-      }
-    })
-    .catch(() => {})
+  return confirmBatch(selectedRow.value, `您确定要删除选中的【${selectedRow.value.length}条】广告吗？删除之后不可恢复！`)
 }
 
 function deleteRow(row: any) {
-  ElMessageBox.confirm(
-    `您确定要删除广告【${row.title}】吗？删除之后不可恢复！`,
-    '温馨提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  )
-    .then(async () => {
-      const res: any = await deleteAdvertisement({ id: row.id })
-      if (res.status === 200) {
-        ElMessage.success('删除成功')
-        fetchList()
-      } else {
-        ElMessage.error(res.data.message)
-      }
-    })
-    .catch(() => {})
+  return confirmOne(row, `您确定要删除广告【${row.title}】吗？删除之后不可恢复！`)
 }
 
 function initSearchForm() {

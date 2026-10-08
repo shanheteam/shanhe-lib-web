@@ -81,7 +81,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import {
   listLanguage,
@@ -92,6 +92,7 @@ import { createLatestGuard } from '@/utils/latest'
 import { parseQueryIntArray } from '@/utils/utils'
 import { useTablePagination } from '@/composables/useTablePagination'
 import { useTableSelection } from '@/composables/useTableSelection'
+import { useDeleteConfirm } from '@/composables/useDeleteConfirm'
 
 const route = useRoute()
 const router = useRouter()
@@ -153,48 +154,16 @@ function onCreate() {
 }
 
 function deleteRow(row: any) {
-  ElMessageBox.confirm(
-    `您确定要删除语言【${row.language}】吗？删除之后不可恢复`,
-    '提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  )
-    .then(async () => {
-      const res: any = await deleteLanguage({ id: row.id })
-      if (res.status === 200) {
-        ElMessage.success('删除成功')
-        fetchList()
-      } else {
-        ElMessage.error(res.data.message)
-      }
-    })
-    .catch(() => {})
+  return confirmOne(row, `您确定要删除语言【${row.language}】吗？删除之后不可恢复`, { title: '提示' })
 }
 
+const { confirmBatch, confirmOne } = useDeleteConfirm({
+  remove: (ids) => deleteLanguage({ id: ids }),
+  onDone: fetchList,
+})
+
 function batchDelete() {
-  const ids = selectedRow.value.map((item) => item.id)
-  ElMessageBox.confirm(
-    `您确定要删除选中的【${selectedRow.value.length}条】语言吗？删除之后不可恢复`,
-    '提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  )
-    .then(async () => {
-      const res: any = await deleteLanguage({ id: ids })
-      if (res.status === 200) {
-        ElMessage.success('删除成功')
-        fetchList()
-      } else {
-        ElMessage.error(res.data.message)
-      }
-    })
-    .catch(() => {})
+  return confirmBatch(selectedRow.value, `您确定要删除选中的【${selectedRow.value.length}条】语言吗？删除之后不可恢复`, { title: '提示' })
 }
 
 async function update(status: boolean) {

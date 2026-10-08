@@ -82,7 +82,7 @@
 
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { Coordinate } from '@element-plus/icons-vue'
 import { listGroup, deleteGroup, getGroup } from '@/api/group'
@@ -90,6 +90,7 @@ import { createLatestGuard } from '@/utils/latest'
 import { useSearchNav } from '@/composables/useSearchNav'
 import { useTablePagination } from '@/composables/useTablePagination'
 import { useTableSelection } from '@/composables/useTableSelection'
+import { useDeleteConfirm } from '@/composables/useDeleteConfirm'
 
 const route = useRoute()
 
@@ -169,48 +170,16 @@ function success() {
 }
 
 function deleteRow(row: any) {
-  ElMessageBox.confirm(
-    `您是否要删除【${row.title}】分组？删除之后不可恢复！`,
-    '提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  )
-    .then(async () => {
-      const res: any = await deleteGroup({ id: row.id })
-      if (res.status === 200) {
-        ElMessage.success('删除成功')
-        fetchList()
-      } else {
-        ElMessage.error(res.data.message)
-      }
-    })
-    .catch(() => {})
+  return confirmOne(row, `您是否要删除【${row.title}】分组？删除之后不可恢复！`, { title: '提示' })
 }
 
+const { confirmBatch, confirmOne } = useDeleteConfirm({
+  remove: (ids) => deleteGroup({ id: ids }),
+  onDone: fetchList,
+})
+
 function batchDelete() {
-  ElMessageBox.confirm(
-    `您是否要删除选择的【${selectedRow.value.length}个】分组?删除之后不可恢复！`,
-    '提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  )
-    .then(async () => {
-      const ids = selectedRow.value.map((item) => item.id)
-      const res: any = await deleteGroup({ id: ids })
-      if (res.status === 200) {
-        ElMessage.success('删除成功')
-        fetchList()
-      } else {
-        ElMessage.error(res.data.message)
-      }
-    })
-    .catch(() => {})
+  return confirmBatch(selectedRow.value, `您是否要删除选择的【${selectedRow.value.length}个】分组?删除之后不可恢复！`, { title: '提示' })
 }
 
 function initGroup() {

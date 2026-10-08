@@ -145,7 +145,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { Edit, CircleCheck, Bell } from '@element-plus/icons-vue'
 import {
@@ -161,6 +161,7 @@ import { createLatestGuard } from '@/utils/latest'
 import { useSearchNav } from '@/composables/useSearchNav'
 import { useTablePagination } from '@/composables/useTablePagination'
 import { useTableSelection } from '@/composables/useTableSelection'
+import { useDeleteConfirm } from '@/composables/useDeleteConfirm'
 import {
   genLinkHTML,
   categoryToTrees,
@@ -299,49 +300,17 @@ function formSuccess() {
   fetchList()
 }
 
+const { confirmBatch, confirmOne } = useDeleteConfirm({
+  remove: (ids) => deleteArticle({ id: ids }),
+  onDone: fetchList,
+})
+
 function batchDelete() {
-  ElMessageBox.confirm(
-    `您确定要删除选中的【${selectedRow.value.length}篇】文章吗？删除之后将会在回收站！`,
-    '温馨提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  )
-    .then(async () => {
-      const ids = selectedRow.value.map((item) => item.id)
-      const res: any = await deleteArticle({ id: ids })
-      if (res.status === 200) {
-        ElMessage.success('删除成功')
-        fetchList()
-      } else {
-        ElMessage.error(res.data.message)
-      }
-    })
-    .catch(() => {})
+  return confirmBatch(selectedRow.value, `您确定要删除选中的【${selectedRow.value.length}篇】文章吗？删除之后将会在回收站！`)
 }
 
 function deleteRow(row: any) {
-  ElMessageBox.confirm(
-    `您确定要删除文章【${row.title}】吗？删除之后不可恢复！`,
-    '温馨提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  )
-    .then(async () => {
-      const res: any = await deleteArticle({ id: row.id })
-      if (res.status === 200) {
-        ElMessage.success('删除成功')
-        fetchList()
-      } else {
-        ElMessage.error(res.data.message)
-      }
-    })
-    .catch(() => {})
+  return confirmOne(row, `您确定要删除文章【${row.title}】吗？删除之后不可恢复！`)
 }
 
 function initSearchForm() {

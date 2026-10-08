@@ -92,6 +92,7 @@ import { documentStatusOptions } from '@/utils/enum'
 import { useSearchNav } from '@/composables/useSearchNav'
 import { useTablePagination } from '@/composables/useTablePagination'
 import { useTableSelection } from '@/composables/useTableSelection'
+import { useDeleteConfirm } from '@/composables/useDeleteConfirm'
 
 const route = useRoute()
 
@@ -231,49 +232,17 @@ function batchRecover() {
     .catch(() => {})
 }
 
+const { confirmBatch, confirmOne } = useDeleteConfirm({
+  remove: (ids) => deleteRecycleDocument({ id: ids }),
+  onDone: fetchList,
+})
+
 function batchDelete() {
-  ElMessageBox.confirm(
-    `您确定要从回收站中删除选中的【${selectedRow.value.length}个】文档吗？删除之后不可恢复！`,
-    '温馨提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'info',
-    }
-  )
-    .then(async () => {
-      const ids = selectedRow.value.map((item) => item.id)
-      const res: any = await deleteRecycleDocument({ id: ids })
-      if (res.status === 200) {
-        ElMessage.success('删除成功')
-        fetchList()
-      } else {
-        ElMessage.error(res.data.message)
-      }
-    })
-    .catch(() => {})
+  return confirmBatch(selectedRow.value, `您确定要从回收站中删除选中的【${selectedRow.value.length}个】文档吗？删除之后不可恢复！`, { type: 'info' })
 }
 
 function deleteRow(row: any) {
-  ElMessageBox.confirm(
-    `您确定要从回收站中删除文档【${row.title}】吗？删除之后不可恢复！`,
-    '告警',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  )
-    .then(async () => {
-      const res: any = await deleteRecycleDocument({ id: row.id })
-      if (res.status === 200) {
-        ElMessage.success('删除成功')
-        fetchList()
-      } else {
-        ElMessage.error(res.data.message)
-      }
-    })
-    .catch(() => {})
+  return confirmOne(row, `您确定要从回收站中删除文档【${row.title}】吗？删除之后不可恢复！`, { title: '告警' })
 }
 
 function initSearchForm() {

@@ -284,6 +284,7 @@ import { documentStatusOptions, boolOptions } from '@/utils/enum'
 import { useSearchNav } from '@/composables/useSearchNav'
 import { useTablePagination } from '@/composables/useTablePagination'
 import { useTableSelection } from '@/composables/useTableSelection'
+import { useDeleteConfirm } from '@/composables/useDeleteConfirm'
 
 const route = useRoute()
 const router = useRouter()
@@ -437,27 +438,13 @@ function formSuccess() {
   fetchList()
 }
 
+const { confirmBatch, confirmOne } = useDeleteConfirm({
+  remove: (ids) => deleteDocument({ id: ids }),
+  onDone: fetchList,
+})
+
 function batchDelete() {
-  ElMessageBox.confirm(
-    `您确定要删除选中的【${selectedRow.value.length}个】文档吗？删除之后将会进入到回收站，可以在回收站中恢复。`,
-    '温馨提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  )
-    .then(async () => {
-      const ids = selectedRow.value.map((item) => item.id)
-      const res: any = await deleteDocument({ id: ids })
-      if (res.status === 200) {
-        ElMessage.success('删除成功')
-        fetchList()
-      } else {
-        ElMessage.error(res.data.message)
-      }
-    })
-    .catch(() => {})
+  return confirmBatch(selectedRow.value, `您确定要删除选中的【${selectedRow.value.length}个】文档吗？删除之后将会进入到回收站，可以在回收站中恢复。`)
 }
 
 function batchRecommend(cmd: number) {
@@ -498,25 +485,7 @@ function batchUpdateDocumentsLanguage() {
 }
 
 function deleteRow(row: any) {
-  ElMessageBox.confirm(
-    `您确定要删除文档【${row.title}】吗？删除之后将会进入到回收站，可以在回收站中恢复。`,
-    '温馨提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  )
-    .then(async () => {
-      const res: any = await deleteDocument({ id: row.id })
-      if (res.status === 200) {
-        ElMessage.success('删除成功')
-        fetchList()
-      } else {
-        ElMessage.error(res.data.message)
-      }
-    })
-    .catch(() => {})
+  return confirmOne(row, `您确定要删除文档【${row.title}】吗？删除之后将会进入到回收站，可以在回收站中恢复。`)
 }
 
 async function approveDocument(cmd: number) {
