@@ -11,7 +11,8 @@
     "check:modes": "node scripts/check-file-modes.mjs",
     "lint": "eslint \"src/**/*.{vue,ts,tsx}\" --fix",
     "lint:css": "node scripts/check-no-hex.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prerender": "node scripts/prerender.mjs"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
