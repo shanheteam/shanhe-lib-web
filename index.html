@@ -8,6 +8,10 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
     />
     <meta name="format-detection" content="telephone=no" />
+    <!-- 静态兜底：不执行 JS 的爬虫与首屏渲染前也有标题/描述可用。
+         运行时会由 router/index.ts 的 afterEach 守卫与各详情页的 setPageMeta 覆盖为更精确的值。 -->
+    <title>图书馆 - 山河大学</title>
+    <meta name="description" content="图书馆 - 山河大学" />
     <!-- SEO 元信息全动态化：title/description/keywords/robots/canonical 及 Open Graph、Twitter 等标签均由
          router/index.ts 的 afterEach 守卫与 setPageMeta 在运行时统一注入，不再在此写死，避免与后台站点
          配置（sitename/logo 等）不一致；也保证社交分享图使用后台配置的绝对 URL -->

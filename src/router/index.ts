@@ -342,7 +342,11 @@ router.afterEach((to) => {
     if (robotsEl) robotsEl.remove()
   }
 
-  const title = meta.title ? `${meta.title} - ${sitename}` : sitename
+  // 路由显式声明了 title（列表/静态页）→ 由守卫统一设置；
+  // 未声明 title 的通常是**详情页**（/article/:id、/document/:id），其标题依赖接口数据，
+  // 由页面在数据到达后自行 setPageMeta。此时若用「裸站点名」覆盖，会把页面已设好的
+  // 文章/文档标题冲掉，表现为「SEO 标题只有站点名称」。
+  const title = meta.title ? `${meta.title} - ${sitename}` : ''
   // Open Graph 站点名与分享图：站点名来自后台配置，分享图统一为绝对 URL。
   // index.html 已不再静态写入 og:site_name，故"不存在则创建"
   let ogSiteName = document.querySelector<HTMLMetaElement>('meta[property="og:site_name"]')
@@ -377,7 +381,9 @@ router.afterEach((to) => {
   } else {
     removeJsonLd('site')
   }
-  setPageMeta(title, meta.description || sitename, undefined, toAbsoluteUrl(logo), canonicalUrl)
+  // 详情页（title 为空）只更新 canonical/og，不动已有标题；已有标题也不为空时保持不变
+  const finalTitle = title || document.title || sitename
+  setPageMeta(finalTitle, meta.description || sitename, undefined, toAbsoluteUrl(logo), canonicalUrl)
 })
 
 export default router
