@@ -90,7 +90,7 @@
           </span>
         </span>
         <span>|</span>
-        <a target="_blank" title="站点地图" href="/sitemap/sitemap.xml"
+        <a target="_blank" title="站点地图" :href="assetUrl('/sitemap/sitemap.xml')"
           >站点地图</a
         >
         <a
@@ -129,6 +129,7 @@ import { useSettingStore } from '@/store/setting'
 import { listFriendlink } from '@/api/friendlink'
 import { getAdvertisementByPosition } from '@/api/advertisement'
 import { advertisementPositions } from '@/utils/enum'
+import { assetUrl } from '@/utils/asset'
 
 const route = useRoute()
 const settingStore = useSettingStore()

@@ -111,6 +111,12 @@ export default defineConfig(({ mode }) => {
           target: proxyTarget,
           changeOrigin: true,
         },
+        // 站点地图由后端生成并挂载在 /sitemap 下（见 server/src/main.ts 的 useStaticAssets）。
+        // 页脚链接走 assetUrl()，生产指向后端域名；本地 base 为空时需要这条代理才能访问到。
+        '/sitemap': {
+          target: proxyTarget,
+          changeOrigin: true,
+        },
       },
     },
     build: {

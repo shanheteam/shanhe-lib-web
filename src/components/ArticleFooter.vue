@@ -40,7 +40,7 @@
         underline="never"
         target="_blank"
         title="站点地图"
-        href="/sitemap.xml"
+        :href="assetUrl('/sitemap/sitemap.xml')"
         >站点地图</el-link
       >
     </div>
@@ -95,6 +95,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useSettingStore } from '@/store/setting'
+import { assetUrl } from '@/utils/asset'
 
 const settingStore = useSettingStore()
 const settings = computed(() => settingStore.settings)
