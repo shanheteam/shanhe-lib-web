@@ -407,6 +407,7 @@ async function getArticle() {
     articleData.keywords,
     undefined,
     canonicalUrl,
+    'article',
   )
   // NewsArticle 结构化数据（文章无独立封面，分享图复用站点 logo 绝对 URL）
   upsertJsonLd(`article:${articleData.identifier}`, {

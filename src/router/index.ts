@@ -18,6 +18,8 @@ export function setPageMeta(
   keywords?: string,
   ogImage?: string,
   ogUrl?: string,
+  /** og:type。文章/文档详情页传 'article'，其余保持默认 'website'（社交平台据此选择卡片样式）。 */
+  ogType = 'website',
 ) {
   if (typeof document === 'undefined') return
   document.title = title
@@ -40,14 +42,23 @@ export function setPageMeta(
     el.setAttribute('content', content)
   }
 
+  const removeMeta = (name: string) =>
+    document.querySelector<HTMLMetaElement>(`meta[name="${name}"]`)?.remove()
+  const removeProp = (property: string) =>
+    document.querySelector<HTMLMetaElement>(`meta[property="${property}"]`)?.remove()
+
   // 固定社交身份标签（og 用 property、twitter 用 name），随每次 setPageMeta 保证存在
   setProp('og:locale', 'zh_CN')
-  setProp('og:type', 'website')
-  setMeta('twitter:card', 'summary')
+  setProp('og:type', ogType)
+  // 有分享图时用大图卡（卡片展示封面），否则退回小图卡
+  setMeta('twitter:card', ogImage ? 'summary_large_image' : 'summary')
 
-  // 常规 SEO 标签
+  // 常规 SEO 标签。未提供时**移除**标签 —— 否则从文章页跳到无描述页时，
+  // 搜索/社交抓取仍会读到上一页残留的 description/keywords。
   if (description) setMeta('description', description)
+  else removeMeta('description')
   if (keywords) setMeta('keywords', keywords)
+  else removeMeta('keywords')
 
   // 标题/描述同步到 Open Graph 与 Twitter
   setProp('og:title', title)
@@ -55,13 +66,20 @@ export function setPageMeta(
   if (description) {
     setProp('og:description', description)
     setMeta('twitter:description', description)
+  } else {
+    removeProp('og:description')
+    removeMeta('twitter:description')
   }
-  // 分享图：统一绝对 URL（由调用方经 toAbsoluteUrl 转换）
+  // 分享图：统一绝对 URL（由调用方经 toAbsoluteUrl 转换）；无图时移除残留
   if (ogImage) {
     setProp('og:image', ogImage)
     setMeta('twitter:image', ogImage)
+  } else {
+    removeProp('og:image')
+    removeMeta('twitter:image')
   }
   if (ogUrl) setProp('og:url', ogUrl)
+  else removeProp('og:url')
 }
 
 // 生成规范 URL（canonical）：origin + path，去掉 query/hash 与多余尾斜杠（首页保留根 "/"）

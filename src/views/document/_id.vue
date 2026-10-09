@@ -627,7 +627,7 @@ import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
 import { assetUrl } from '@/utils/asset'
-import { setPageMeta } from '@/router'
+import { setPageMeta, toCanonicalUrl } from '@/router'
 import { creditName } from '@/utils/credit'
 import FormDownload from '@/components/FormDownload.vue'
 import CommentList from '@/components/CommentList.vue'
@@ -930,7 +930,15 @@ async function getDocument(withAllContent = false) {
     : 0
   // SEURL：文档标题与描述
   const sitename = settingStore.settings?.system?.sitename || '图书馆 - 山河大学'
-  setPageMeta(`${doc.title} - ${sitename}`, doc.description || doc.summary || '')
+  // 文档详情页同样声明 og:type=article，并补上 canonical（此前完全没设，利于去重）
+  setPageMeta(
+    `${doc.title} - ${sitename}`,
+    doc.description || doc.summary || '',
+    doc.keywords,
+    undefined,
+    toCanonicalUrl(`/document/${doc.uuid || doc.id}`),
+    'article',
+  )
 
   if (doc.status !== 2) {
     // 2 为文档已转换成功，不需要展示提示
