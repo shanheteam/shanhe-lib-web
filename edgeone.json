@@ -36,5 +36,11 @@
         }
       ]
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/sitemap/*",
+      "destination": "https://apilib.shanhe.co/sitemap/:splat"
+    }
   ]
 }
