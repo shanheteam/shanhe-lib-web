@@ -11,5 +11,7 @@ Disallow: /search
 Disallow: /upload
 Disallow: /post
 
-# sitemap 已迁移至 OSS（后台"更新站点地图"自动上传，详见 config.controller updateSitemap）
-Sitemap: https://att-lib.shanhe.co/sitemap/sitemap.xml
+# 站点地图由后端生成并挂载在 /sitemap 下，前台经 EdgeOne 边缘函数反向代理到后端
+# （见 client/functions/sitemap/[[default]].js）。此处必须写站点自身域名——后端自 91683c9
+# 起已移除 OSS 依赖（sitemap.service 仅写本地磁盘），原先指向的 att-lib.shanhe.co 已 404。
+Sitemap: https://lib.shanhe.co/sitemap/sitemap.xml
