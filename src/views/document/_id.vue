@@ -612,7 +612,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import QRCode from 'qrcode'
 import * as documentApi from '@/api/document'
-import * as favoriteApi from '@/api/favorite'
 import {
   formatDatetime,
   formatBytes,
@@ -632,6 +631,8 @@ import { creditName } from '@/utils/credit'
 import FormDownload from '@/components/FormDownload.vue'
 import CommentList from '@/components/CommentList.vue'
 import { safeHref } from '@/utils/url'
+import { useDocumentFavorite } from '@/composables/useDocumentFavorite'
+import { useDocumentScore } from '@/composables/useDocumentScore'
 
 const route = useRoute()
 const router = useRouter()
@@ -657,8 +658,6 @@ const document = ref<any>({
 })
 const updateDocument = ref<any>({})
 const showContent = ref(false)
-const score = ref<any>(null)
-const disabledScore = ref(false)
 const downloadVisible = ref(false)
 
 const routeId = route.params.id as string
@@ -672,7 +671,6 @@ const pageWidth = ref(0)
 const currentPage = ref(1)
 const currentPageFullscreen = ref(1)
 const breadcrumbs = ref<any[]>([])
-const favorite = ref<any>({ id: 0 })
 const scaleSpan = ref(18)
 const loadingImage = '/static/images/loading.svg'
 const reportVisible = ref(false)
@@ -724,6 +722,18 @@ const accessForbiden = computed(() => {
       .length > 0
   )
 })
+
+// —— 收藏 / 评分（抽至 composables）——
+const { favorite, getFavorite, deleteFavorite, createFavorite } =
+  useDocumentFavorite(
+    () => document.value.id,
+    () => document.value
+  )
+const { score, disabledScore, setDocumentScore, getDocumentScore } =
+  useDocumentScore(
+    () => document.value.id,
+    () => user.value.id > 0
+  )
 
 // —— 公共方法 ——
 function getEl(refVal: any): any {
@@ -1222,41 +1232,6 @@ function fullscreenchange() {
   })
 }
 
-async function getFavorite() {
-  const res: any = await favoriteApi.getFavorite({
-    document_id: document.value.id,
-  })
-  if (res.status === 200) {
-    favorite.value = res.data || { id: 0 }
-  }
-}
-
-// 取消收藏
-async function deleteFavorite() {
-  const res: any = await favoriteApi.deleteFavorite({ id: favorite.value.id })
-  if (res.status === 200) {
-    ElMessage.success('取消收藏成功')
-    favorite.value = { id: 0 }
-    document.value.favorite_count--
-  } else {
-    ElMessage.error(res.data.message)
-  }
-}
-
-// 添加收藏
-async function createFavorite() {
-  const res: any = await favoriteApi.createFavorite({
-    document_id: document.value.id,
-  })
-  if (res.status === 200) {
-    ElMessage.success('收藏成功')
-    favorite.value = res.data
-    document.value.favorite_count++
-  } else {
-    ElMessage.error(res.data.message)
-  }
-}
-
 function continueRead() {
   const pagesPerReadVal =
     settings.value.display.pages_per_read || pagesPerRead
@@ -1281,43 +1256,6 @@ function continueRead() {
       lazySrc: src,
       alt: `${document.value.title} 第${i + 1}页`,
     })
-  }
-}
-
-async function setDocumentScore() {
-  if (!score.value) {
-    return
-  }
-  const res: any = await documentApi.setDocumentScore({
-    document_id: document.value.id,
-    score: score.value * 100,
-  })
-  if (res.status === 200) {
-    ElMessage.success('提交评分成功')
-    disabledScore.value = true
-  } else {
-    ElMessage.error(res.data.message)
-  }
-}
-
-async function getDocumentScore() {
-  // 判断用户是否已登录
-  let userId = 0
-  try {
-    userId = user.value.id || 0
-  } catch (error) {
-    // ignore
-  }
-  if (!userId) {
-    return
-  }
-  const res: any = await documentApi.getDocumentScore({
-    document_id: document.value.id,
-  })
-  if (res.status === 200) {
-    const s = res.data.score / 100 || null
-    score.value = s
-    if (s) disabledScore.value = true
   }
 }
 

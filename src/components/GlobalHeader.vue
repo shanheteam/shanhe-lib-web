@@ -387,44 +387,11 @@
       ></iframe>
     </el-dialog>
 
-    <div
-      class="search-modal-overlay"
-      :class="{ show: searchModalVisible }"
-      @click="closeSearchModal"
-    >
-      <div class="search-modal" @click.stop>
-        <div class="search-modal-header">
-          <h3>搜索</h3>
-          <button class="close-btn" type="button" @click="closeSearchModal">
-            <el-icon><Close /></el-icon>
-          </button>
-        </div>
-        <div class="search-modal-body">
-          <el-input
-            ref="searchModalInput"
-            v-model="search.wd"
-            class="search-modal-input"
-            size="large"
-            :placeholder="searchPlaceholder"
-            @keydown.enter="onSearch"
-          >
-            <template #prefix>
-              <el-icon class="el-input__icon"><Search /></el-icon>
-            </template>
-          </el-input>
-          <el-button
-            type="primary"
-            class="search-submit-btn"
-            :disabled="!search.wd"
-            :icon="Search"
-            @click="onSearch"
-          >
-            搜索
-          </el-button>
-        </div>
-        <div class="search-modal-footer">按 Enter 键快速搜索</div>
-      </div>
-    </div>
+    <SearchModal
+      v-model="searchModalVisible"
+      :placeholder="searchPlaceholder"
+      @search="handleSearch"
+    />
   </div>
 </template>
 
@@ -453,6 +420,7 @@ import { useUserStore } from '@/store/user'
 import { useSettingStore } from '@/store/setting'
 import { useCategoryStore } from '@/store/category'
 import { OPEN_LOGIN_EVENT, openLoginDialog } from '@/utils/login'
+import SearchModal from '@/components/SearchModal.vue'
 
 defineOptions({ name: 'GlobalHeader' })
 
@@ -485,7 +453,6 @@ const isHeaderVisible = ref(true)
 const lastScrollTop = ref(0)
 
 const advertisements = ref<any[]>([])
-const searchModalInput = ref<any>()
 const popover0 = ref<any>()
 const popover1 = ref<any>()
 
@@ -546,17 +513,19 @@ const syncSearchType = () => {
 
 const openSearchModal = () => {
   syncSearchType()
-  search.value.wd = ''
   searchModalVisible.value = true
-  nextTick(() => {
-    setTimeout(() => {
-      searchModalInput.value?.focus()
-    }, 300)
-  })
 }
 
-const closeSearchModal = () => {
-  searchModalVisible.value = false
+const handleSearch = (wd: string) => {
+  menuDrawerVisible.value = false
+  router.push({
+    path: '/search',
+    query: {
+      wd,
+      type: search.value.type,
+    },
+  })
+  search.value.wd = ''
 }
 
 const showMenuDrawer = () => {
@@ -697,21 +666,6 @@ const signToday = async () => {
   }
 }
 
-const onSearch = () => {
-  const wd = (search.value.wd || '').trim()
-  if (!wd) return
-  menuDrawerVisible.value = false
-  searchModalVisible.value = false
-  router.push({
-    path: '/search',
-    query: {
-      wd,
-      type: search.value.type,
-    },
-  })
-  search.value.wd = ''
-}
-
 const logout = async () => {
   await userStore.logoutWithSso()
 }
@@ -750,7 +704,7 @@ watch(
     resetActivePath()
     syncSearchType()
     if (to !== from) {
-      closeSearchModal()
+      searchModalVisible.value = false
     }
   },
 )
