@@ -436,6 +436,8 @@ const deleteDocumentRow = (row: any) => {
         message: '删除成功!',
       })
       getDocuments()
+      // 删除自己上传的文档会扣除积分，刷新用户信息同步余额
+      userStore.getUser().catch(() => {})
     }
   })
 }

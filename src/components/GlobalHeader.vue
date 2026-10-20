@@ -767,8 +767,21 @@ const ssoProbe = () => {
   if (userStore.token) void userStore.ssoSessionProbe()
   else void userStore.silentSsoCheck()
 }
+// 刷新用户信息：持久化的 credit_count/doc_count 可能是旧值（上传奖励在其他标签页产生、
+// 或用户中心消费了金币），挂载、窗口重新获得焦点/可见时同步一次。5s 去抖避免频繁请求。
+let userRefreshAt = 0
+const refreshUserInfo = () => {
+  if (!userStore.token) return
+  const now = Date.now()
+  if (now - userRefreshAt < 5000) return
+  userRefreshAt = now
+  void userStore.getUser().catch(() => {})
+}
 const handleVisibility = () => {
-  if (!document.hidden) ssoProbe()
+  if (!document.hidden) {
+    ssoProbe()
+    refreshUserInfo()
+  }
 }
 
 onMounted(() => {
@@ -777,17 +790,20 @@ onMounted(() => {
   window.addEventListener('message', handleUcMessage)
   window.addEventListener(OPEN_LOGIN_EVENT, showLoginDialog)
   window.addEventListener('focus', ssoProbe)
+  window.addEventListener('focus', refreshUserInfo)
   window.addEventListener('visibilitychange', handleVisibility)
   ssoProbeTimer = setInterval(() => {
     ssoProbe()
   }, 60000)
   ssoProbe() // user 已登录时静默建 lib 会话；本机已登录时探测共享 cookie
+  refreshUserInfo() // 同步侧栏、个人中心等处的余额/文档数
   handleScroll()
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('focus', handleWindowFocus)
   window.removeEventListener('focus', ssoProbe)
+  window.removeEventListener('focus', refreshUserInfo)
   window.removeEventListener('scroll', handleScroll)
   window.removeEventListener('message', handleUcMessage)
   window.removeEventListener(OPEN_LOGIN_EVENT, showLoginDialog)

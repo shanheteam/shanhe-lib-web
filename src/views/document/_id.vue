@@ -862,6 +862,8 @@ function deleteDocument() {
       const res: any = await documentApi.deleteDocument({ id: document.value.id })
       if (res.status === 200) {
         ElMessage({ type: 'success', message: '删除成功!' })
+        // 删除自己上传的文档会扣除积分，刷新用户信息同步余额
+        userStore.getUser().catch(() => {})
         // 跳转到首页
         router.push('/')
       } else {

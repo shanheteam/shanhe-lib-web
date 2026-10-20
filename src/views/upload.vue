@@ -811,6 +811,8 @@ const createDocument = async (doc: any) => {
     // 从 fileList 中剔除 attachment_id 与当前文档相同的文档
     ElMessage.success(`《${doc.title}》上传成功`)
     removeFile(doc)
+    // 上传成功后会获得积分，刷新用户信息让侧栏/个人中心的余额与文档数同步更新
+    await userStore.getUser().catch(() => {})
   } else {
     ElMessage.error(`《${doc.title}》上传失败 ` + res.data.message)
   }
